@@ -1,0 +1,6 @@
+require:
+  - rubocop-rake
+  - rubocop-minitest
+
+AllCops:
+  NewCops: enable
