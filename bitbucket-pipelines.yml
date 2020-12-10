@@ -1,7 +1,18 @@
 image: ruby:2.7.1
 pipelines:
   default:
-    - step:
-        script:
-          - bundle install
-          - bundle exec rake
+    - parallel:
+      - step:
+          name: Test
+          script:
+            - bundle install
+            - bundle exec rake test
+      - step:
+          name: Rubocop
+          script:
+            - bundle install
+            - bundle exec rake rubocop
+      - step:
+          name: Lint code
+          script:
+            - ruby -wc **/*.rb
