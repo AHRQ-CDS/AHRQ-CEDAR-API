@@ -1,0 +1,7 @@
+image: ruby:2.7.1
+pipelines:
+  default:
+    - step:
+        script:
+          - bundle install
+          - bundle exec rake
