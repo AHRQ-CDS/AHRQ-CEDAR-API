@@ -1,0 +1,33 @@
+{
+  "resourceType": "CapabilityStatement",
+  "id": "cedar-cs",
+  "version": "0.0.1",
+  "name": "CEDAR_RI",
+  "status": "draft",
+  "date": "2020-12-17",
+  "kind": "instance",
+  "implementation": {
+    "description": "CEDAR Reference Implementation"
+  },
+  "fhirVersion": "4.0.1",
+  "format":[
+    "json"
+  ],
+  "rest":[
+    {
+      "mode": "server",
+      "resource": [
+        {
+          "type": "PlanDefinition",
+          "profile": "http://hl7.org/fhir/uv/cpg/StructureDefinition/cpg-shareableplandefinition",
+          "interaction": [
+            {
+              "code": "read"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+
+}

@@ -2,12 +2,15 @@
 
 source 'https://rubygems.org'
 
+gem 'fhir_models'
+gem 'pry'
 gem 'rake'
 gem 'sinatra'
 gem 'pg'
 gem 'sequel'
 gem 'json'
 gem 'erb'
+gem 'sinatra-contrib'
 
 group :test do
   gem 'minitest', require: false

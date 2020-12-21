@@ -1,0 +1,43 @@
+{
+  "resourceType": "Group",
+  "id": "group-female-21-65",
+  "identifier":[
+    {
+      "system": "urn:ietf:rfc:3986",
+      "value": "urn:uuid:5691fda0-4164-11eb-b378-0242ac130002"
+    }
+  ],
+  "type": "person",
+  "actual": true,
+  "name": "Female aged 21 to 65",
+  "characteristic": [
+    {
+      "code": {
+        "text": "gender"
+      },
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://hl7.org/fhir/administrative-gender",
+            "code": "female"
+          }
+        ]
+      },
+      "exclude": false
+    },
+    {
+      "code": {
+        "text": "age"
+      },
+      "valueRange": {
+        "low": {
+          "value":21
+        },
+        "high": {
+          "value": 65
+        }
+      },
+      "exclude": false
+    }
+  ]
+}
