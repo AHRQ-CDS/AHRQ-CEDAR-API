@@ -19,7 +19,8 @@
         "coding": [
           {
             "system": "http://hl7.org/fhir/administrative-gender",
-            "code": "female"
+            "code": "female",
+            "display": "Female"
           }
         ]
       },
@@ -31,10 +32,16 @@
       },
       "valueRange": {
         "low": {
-          "value":21
+          "value":21,
+          "unit": "Year",
+          "system": "http://unitsofmeasure.org",
+          "code": "a"
         },
         "high": {
-          "value": 65
+          "value": 65,
+          "unit": "Year",
+          "system": "http://unitsofmeasure.org",
+          "code": "a"
         }
       },
       "exclude": false
