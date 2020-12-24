@@ -30,12 +30,12 @@ namespace '/fhir' do
 
   get '/Citation/?:id?' do
     id = "citation-#{params[:id].nil? ? '323' : params[:id]}"
-    get_resource(id, is_fhir_resource:false)
+    get_resource(id, use_fhir_parser:false)
   end
 
   get '/EvidenceReport/?:id?' do
     id = "evidencereport-#{params[:id].nil? ? 'cervical-cancer' : params[:id]}"
-    get_resource(id, is_fhir_resource:false)
+    get_resource(id, use_fhir_parser:false)
   end
 
   get '/Group/?:id?' do
@@ -48,9 +48,9 @@ namespace '/fhir' do
     get_resource(id)
   end
 
-  def get_resource(id, is_fhir_resource: true)
+  def get_resource(id, use_fhir_parser: true)
     json = File.read("resources/#{id}.json")
-    resource = is_fhir_resource ? FHIR.from_contents(json) : JSON.parse(json)
+    resource = use_fhir_parser ? FHIR.from_contents(json) : JSON.parse(json)
     resource.to_json
   end
 end
