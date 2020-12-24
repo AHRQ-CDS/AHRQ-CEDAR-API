@@ -27,18 +27,23 @@ namespace '/fhir' do
     return cs.to_json
   end
 
-  get '/ActivityDefinition/?:id?' do
-    id = params[:id].nil? ? 'activitydefinition-cervical-cancer' : params[:id]
+  get '/Citation/?:id?' do
+    id = "citation-#{params[:id].nil? ? '323' : params[:id]}"
     get_resource(id)
   end
 
   get '/EvidenceReport/?:id?' do
-    id = params[:id].nil? ? 'evidencereport-cervical-cancer' : params[:id]
+    id = "evidencereport-#{params[:id].nil? ? 'cervical-cancer' : params[:id]}"
     get_resource(id)
   end
 
   get '/Group/?:id?' do
-    id = params[:id].nil? ? 'group-female-21-65' : params[:id]
+    id = "group-#{params[:id].nil? ? 'female-21-65' : params[:id]}"
+    get_resource(id)
+  end
+
+  get '/PlanDefinition/?:id?' do
+    id = "plandefinition-#{params[:id].nil? ? 'cervical-cancer' : params[:id]}"
     get_resource(id)
   end
 

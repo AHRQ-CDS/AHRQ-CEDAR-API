@@ -1,6 +1,6 @@
 {
   "resourceType": "ActivityDefinition",
-  "id": "activitydefinition-cervical-cancer",
+  "id": "cervical-cancer",
   "meta":{
     "profile": [
       "http://hl7.org/fhir/uv/cpg/StructureDefinition/cpg-activitydefinition"
@@ -40,7 +40,7 @@
     }
   ],
   "version": "2020.1",
-  "name": "Plandefinition_cervical_cancer",
+  "name": "ActivityDefinition_cervical_cancer",
   "title": "Cervical Cancer: Screening --Women aged 21 to 65 years",
   "status": "active",
   "experimental": false,

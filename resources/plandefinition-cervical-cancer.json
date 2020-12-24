@@ -1,9 +1,9 @@
 {
   "resourceType": "PlanDefinition",
-  "id": "plandefinition-cervical-cancer",
+  "id": "cervical-cancer",
   "meta":{
     "profile": [
-      "http://hl7.org/fhir/uv/cpg/StructureDefinition/cpg-plandefinition"
+      "http://hl7.org/fhir/uv/cpg/StructureDefinition/cpg-computableplandefinition"
     ]
   },
   "text": {
@@ -11,6 +11,18 @@
     "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>The USPSTF recommends screening for cervical cancer every 3 years with cervical cytology alone in women aged 21 to 29 years.</p>\r\n<p>For women aged 30 to 65 years, the USPSTF recommends screening every 3 years with cervical cytology alone, every 5 years with high-risk human papillomavirus (hrHPV) testing alone, or every 5 years with hrHPV testing in combination with cytology (cotesting).</p>\r\n<p>&nbsp;</p>\r\n<p>See the&nbsp;<a href=\"https://www.uspreventiveservicestaskforce.org/Page/Document/RecommendationStatementFinal/cervical-cancer-screening2#consider\">Clinical Considerations section</a><span>&nbsp;for the relative benefits and harms of alternative screening strategies for women 21 years or older</span></p>\r\n<p>&nbsp;</p></div>"    
   },
   "extension": [
+    {
+      "url": "http://hl7.org/fhir/uv/cpg/StructureDefinition/cpg-knowledgeCapability",
+      "valueCode": "computable"
+    },
+    {
+      "url": "http://hl7.org/fhir/uv/cpg/StructureDefinition/cpg-knowledgeRepresentationLevel",
+      "valueCode": "narrative"
+    },
+    {
+      "url": "http://hl7.org/fhir/uv/cpg/StructureDefinition/cpg-enabled",
+      "valueBoolean": true
+    },
     {
       "url": "http://example.com/cedar-risk-name",
       "valueString": "Age"
@@ -32,7 +44,7 @@
     }
   ],
   "version": "2020.1",
-  "name": "Plandefinition_cervical_cancer",
+  "name": "PlanDefinition_cervical_cancer",
   "title": "Cervical Cancer: Screening --Women aged 21 to 65 years",
   "type": {
     "coding": [
@@ -54,11 +66,37 @@
   "description": "<p>The USPSTF recommends screening for cervical cancer every 3 years with cervical cytology alone in women aged 21 to 29 years.<br/>For women aged 30 to 65 years, the USPSTF recommends screening every 3 years with cervical cytology alone, every 5 years with high-risk human papillomavirus (hrHPV) testing alone, or every 5 years with hrHPV testing in combination with cytology (cotesting).<br/><br/>See the <a href=\"https://www.uspreventiveservicestaskforce.org/Page/Document/RecommendationStatementFinal/cervical-cancer-screening2#consider\">Clinical Considerations section</a> for the relative benefits and harms of alternative screening strategies for women 21 years or older</p>",
   "relatedArtifact":[
     {
-      "url": ""
+      "type": "justification",
+      "display": "Screening for Cervical Cancer",
+      "url": "http://example.com/fhir/EvidenceReport/evidencereport-cervical-cancer"
+    },
+    {
+      "type": "citation",
+      "display": "Cervical Cancer Screening - Clinical Summary (PDF)",
+      "url": "http://example.com/fhir/Citation/citation-323"
+    },
+    {
+      "type": "citation",
+      "display": "Cervical Cancer Screening - Patient Page",
+      "url": "http://example.com/fhir/Citation/citation-324"
     }
   ],
   "action": [
     {
+      "extension":[
+        {
+          "url": "http://hl7.org/fhir/StructureDefinition/cqf-strengthOfRecommendation",
+          "valueCodeableConcept": {
+            "coding":[
+              {
+                "system": "https://www.uspreventiveservicestaskforce.org/grade",
+                "code": "A",
+                "display": "The USPSTF recommends against routinely providing [the service] to asymptomatic patients. The USPSTF found at least fair evidence that [the service] is ineffective or that harms outweigh benefits."
+              }
+            ]
+          }
+        }
+      ],
       "title": "screening for cervical cancer",
       "textEquivalent": "screening for cervical cancer every 3 years with cervical cytology alone in women aged 21 to 29 years. For women aged 30 to 65 years, the USPSTF recommends screening every 3 years with cervical cytology alone, every 5 years with high-risk human papillomavirus (hrHPV) testing alone, or every 5 years with hrHPV testing in combination with cytology (cotesting)"
     }
