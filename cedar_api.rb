@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 require 'sinatra'
 require 'json'
 
@@ -29,22 +28,19 @@ namespace '/fhir' do
   end
 
   get '/ActivityDefinition/?:id?' do
-    binding.pry
-    id = params[:id].nil? ? 'activitydefinition-cervical-cancer' :params[:id] 
+    id = params[:id].nil? ? 'activitydefinition-cervical-cancer' : params[:id]
     get_resource(id)
   end
 
   get '/EvidenceReport/?:id?' do
-    binding.pry
-    id = params[:id].nil? ? 'evidencereport-cervical-cancer' :params[:id] 
+    id = params[:id].nil? ? 'evidencereport-cervical-cancer' : params[:id]
     get_resource(id)
   end
 
   get '/Group/?:id?' do
-    id = params[:id].nil? ? 'group-female-21-65' : params[:id] 
+    id = params[:id].nil? ? 'group-female-21-65' : params[:id]
     get_resource(id)
   end
-
 
   def get_resource(id)
     json = File.read("resources/#{id}.json")
