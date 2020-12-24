@@ -6,6 +6,7 @@ require 'json'
 require_relative 'database/models'
 require 'sinatra/namespace'
 require 'fhir_models'
+require 'json'
 require 'pry'
 
 get '/' do
@@ -29,12 +30,12 @@ namespace '/fhir' do
 
   get '/Citation/?:id?' do
     id = "citation-#{params[:id].nil? ? '323' : params[:id]}"
-    get_resource(id)
+    get_resource(id, is_fhir_resource:false)
   end
 
   get '/EvidenceReport/?:id?' do
     id = "evidencereport-#{params[:id].nil? ? 'cervical-cancer' : params[:id]}"
-    get_resource(id)
+    get_resource(id, is_fhir_resource:false)
   end
 
   get '/Group/?:id?' do
@@ -47,9 +48,9 @@ namespace '/fhir' do
     get_resource(id)
   end
 
-  def get_resource(id)
+  def get_resource(id, is_fhir_resource: true)
     json = File.read("resources/#{id}.json")
-    pd = FHIR.from_contents(json)
-    pd.to_json
+    resource = is_fhir_resource ? FHIR.from_contents(json) : JSON.parse(json)
+    resource.to_json
   end
 end
