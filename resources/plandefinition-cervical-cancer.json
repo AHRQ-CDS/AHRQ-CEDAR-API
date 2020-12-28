@@ -30,10 +30,6 @@
     {
       "url": "http://example.com/cedar-risk-text",
       "valueMarkdown": "All women aged 21 to 65 years are at risk for cervical cancer because of potential exposure to high-risk HPV types (hrHPV) through sexual intercourse and should be screened. Certain risk factors further increase risk for cervical cancer, including HIV infection, a compromised immune system, in utero exposure to diethylstilbestrol, and previous treatment of a high-grade precancerous lesion or cervical cancer. Women with these risk factors should receive individualized follow-up."
-    },
-    {
-      "url": "http://example.com/cedar-recommendation-grade",
-      "valueCode": "A"
     }
   ],
   "url": "http://example.com/fhir/PlanDefinition/plandefinition-cervical-cancer",

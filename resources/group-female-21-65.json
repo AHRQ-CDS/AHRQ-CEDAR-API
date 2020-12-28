@@ -1,6 +1,11 @@
 {
   "resourceType": "Group",
   "id": "female-21-65",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/uv/cpg/StructureDefinition/cpg-groupdefinition"
+    ]
+  },
   "identifier":[
     {
       "system": "urn:ietf:rfc:3986",
@@ -8,7 +13,7 @@
     }
   ],
   "type": "person",
-  "actual": true,
+  "actual": false,
   "name": "Female aged 21 to 65",
   "characteristic": [
     {

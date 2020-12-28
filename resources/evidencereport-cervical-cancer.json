@@ -1,8 +1,6 @@
 {
   "resourceType": "EvidenceReport",
   "id": "cervical-cancer",
-  "extension":[
-  ],
   "identifier":[
     {
       "system": "https://www.uspreventiveservicestaskforce.org/general-recommendation",

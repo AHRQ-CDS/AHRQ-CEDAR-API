@@ -18,15 +18,40 @@
       "mode": "server",
       "resource": [
         {
+          "type": "Citation",
+          "interaction": [
+            {
+              "code": "read"
+            }
+          ]
+        },
+        {
+          "type": "EvidenceReport",
+          "interaction": [
+            {
+              "code": "read"
+            }
+          ]
+        },
+        {
+          "type": "Group",
+          "profile": "http://hl7.org/fhir/uv/cpg/StructureDefinition/cpg-groupdefinition",
+          "interaction": [
+            {
+              "code": "read"
+            }
+          ]
+        },
+        {
           "type": "PlanDefinition",
-          "profile": "http://hl7.org/fhir/uv/cpg/StructureDefinition/cpg-shareableplandefinition",
+          "profile": "http://hl7.org/fhir/uv/cpg/StructureDefinition/cpg-computableplandefinition",
           "interaction": [
             {
               "code": "read"
             }
           ]
         }
-      ]
+     ]
     }
   ]
 
