@@ -4,6 +4,10 @@ source 'https://rubygems.org'
 
 gem 'rake'
 gem 'sinatra'
+gem 'pg'
+gem 'sequel'
+gem 'json'
+gem 'erb'
 
 group :test do
   gem 'minitest', require: false
@@ -11,5 +15,7 @@ group :test do
   gem 'rubocop', require: false
   gem 'rubocop-minitest', require: false
   gem 'rubocop-rake', require: false
+  gem 'rubocop-sequel', require: false
   gem 'simplecov', require: false
+  gem 'sqlite3'
 end
