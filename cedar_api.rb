@@ -74,13 +74,13 @@ namespace '/fhir' do
   end
 
   def create_citation(artifact)
-    remote_id = artifact[:remote_id]
+    remote_identifier = artifact[:remote_identifier]
     citation = {
       id: artifact[:id],
       identifier: [
         {
           system: 'https://www.uspreventiveservicestaskforce.org/tool',
-          value: remote_id[12..]
+          value: remote_identifier[12..]
         }
       ],
       title: artifact[:title],
@@ -94,14 +94,14 @@ namespace '/fhir' do
   end
 
   def create_general_recommendation(artifact)
-    remote_id = artifact[:remote_id]
+    remote_identifier = artifact[:remote_identifier]
 
     evidence_rpt = {
       id: artifact[:id],
       identifier: [
         {
           system: 'https://www.uspreventiveservicestaskforce.org/general-recommendation',
-          value: remote_id[10..]
+          value: remote_identifier[10..]
         }
       ],
       title: artifact[:title],
@@ -128,7 +128,7 @@ namespace '/fhir' do
   end
 
   def create_plan_definition(artifact)
-    remote_id = artifact[:remote_id]
+    remote_identifier = artifact[:remote_identifier]
 
     plan_def = FHIR::PlanDefinition.new(
       id: artifact[:id],
@@ -159,7 +159,7 @@ namespace '/fhir' do
       identifier: [
         {
           system: 'https://www.uspreventiveservicestaskforce.org/specific-recommendation',
-          value: remote_id[10..]
+          value: remote_identifier[10..]
         }
       ],
       title: artifact[:title],
