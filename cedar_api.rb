@@ -76,6 +76,7 @@ namespace '/fhir' do
   def create_citation(artifact)
     remote_identifier = artifact[:remote_identifier]
     citation = {
+      resourceType: 'Citation',
       id: remote_identifier,
       identifier: [
         {
@@ -97,6 +98,7 @@ namespace '/fhir' do
     remote_identifier = artifact[:remote_identifier]
 
     evidence_rpt = {
+      resourceType: 'EvidenceReport',
       id: remote_identifier,
       identifier: [
         {
