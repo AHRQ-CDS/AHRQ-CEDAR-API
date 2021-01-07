@@ -90,7 +90,7 @@ namespace '/fhir' do
       }
     }
 
-    citation.to_json
+    JSON.pretty_generate(citation)
   end
 
   def create_general_recommendation(artifact)
@@ -124,7 +124,7 @@ namespace '/fhir' do
       ]
     }
 
-    evidence_rpt.to_json
+    JSON.pretty_generate(evidence_rpt)
   end
 
   def create_plan_definition(artifact)
