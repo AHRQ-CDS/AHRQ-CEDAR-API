@@ -13,8 +13,10 @@ get '/' do
   "Artifact count: #{Artifact.count}"
 end
 
-get '/:id' do |id|
-  Artifact[id].to_json
+namspace '/artifact' do
+  get '/:id' do |id|
+    Artifact[id].to_json
+  end
 end
 
 namespace '/fhir' do
