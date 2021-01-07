@@ -13,7 +13,7 @@ get '/' do
   "Artifact count: #{Artifact.count}"
 end
 
-namspace '/artifact' do
+namespace '/artifact' do
   get '/:id' do |id|
     Artifact[id].to_json
   end
@@ -46,6 +46,7 @@ namespace '/fhir' do
   end
 
   get '/PlanDefinition/?:id?' do
+    binding.pry
     id = "plandefinition-#{params[:id].nil? ? 'cervical-cancer' : params[:id]}"
     get_resource(id)
   end
