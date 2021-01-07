@@ -1,0 +1,8 @@
+production:
+  database_url: <%= ENV["DATABASE_URL"] %>
+
+development:
+  database_url: "postgres://localhost/cedar_admin_development"
+
+test:
+  database_url: "sqlite:" # In memory database for testing
