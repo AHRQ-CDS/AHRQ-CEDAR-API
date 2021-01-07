@@ -12,6 +12,17 @@ get '/' do
   "Artifact count: #{Artifact.count}"
 end
 
+get '/demo' do
+  content_type 'text/html'
+  <<~DEMO_LINKS
+    <ul>
+      <li><a href='/fhir/EvidenceReport/USPSTF-GR-198'>USPSTF General Recommendation - Atrial Fibrillation Screening</a></li>
+      <li><a href='/fhir/PlanDefinition/USPSTF-SR-358'>USPSTF Specific Recommendation - Cervical Cancer Screening</a></li>
+      <li><a href='/fhir/Citation/USPSTF-TOOL-323'>USPSTF Tool - Cervical Cancer Screening</a></li>
+    </ul>
+  DEMO_LINKS
+end
+
 namespace '/artifact' do
   get '/:id' do |id|
     Artifact[id].to_json
@@ -20,7 +31,7 @@ end
 
 namespace '/fhir' do
   before do
-    content_type 'application/fhir+json'
+    content_type 'application/fhir+json; charset=utf-8'
   end
 
   get '/metadata' do
