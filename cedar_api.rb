@@ -58,7 +58,7 @@ namespace '/fhir' do
   end
 
   def get_resource_from_artifact(id)
-    artifact = Artifact[id]
+    artifact = Artifact.first(remote_identifier: id)
     return nil if artifact.nil?
 
     artifact_type = artifact[:artifact_type]
@@ -76,11 +76,11 @@ namespace '/fhir' do
   def create_citation(artifact)
     remote_identifier = artifact[:remote_identifier]
     citation = {
-      id: artifact[:id],
+      id: remote_identifier,
       identifier: [
         {
           system: 'https://www.uspreventiveservicestaskforce.org/tool',
-          value: remote_identifier[12..]
+          value: remote_identifier
         }
       ],
       title: artifact[:title],
@@ -97,11 +97,11 @@ namespace '/fhir' do
     remote_identifier = artifact[:remote_identifier]
 
     evidence_rpt = {
-      id: artifact[:id],
+      id: remote_identifier,
       identifier: [
         {
           system: 'https://www.uspreventiveservicestaskforce.org/general-recommendation',
-          value: remote_identifier[10..]
+          value: remote_identifier
         }
       ],
       title: artifact[:title],
@@ -131,7 +131,7 @@ namespace '/fhir' do
     remote_identifier = artifact[:remote_identifier]
 
     plan_def = FHIR::PlanDefinition.new(
-      id: artifact[:id],
+      id: remote_identifier,
       meta: {
         profile: [
           'http://hl7.org/fhir/uv/cpg/StructureDefinition/cpg-computableplandefinition'
@@ -159,7 +159,7 @@ namespace '/fhir' do
       identifier: [
         {
           system: 'https://www.uspreventiveservicestaskforce.org/specific-recommendation',
-          value: remote_identifier[10..]
+          value: remote_identifier
         }
       ],
       title: artifact[:title],
