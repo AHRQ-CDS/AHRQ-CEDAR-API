@@ -13,7 +13,7 @@ class CedarApiTest < MiniTest::Test
   end
 
   def test_id_return_json
-    get '/1'
+    get '/artifact/1'
     assert last_response.ok?
     assert_equal({ 'id' => 1 }, JSON.parse(last_response.body))
   end

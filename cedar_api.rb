@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
-require 'sinatra'
-require 'json'
-
-require_relative 'database/models'
-require 'sinatra/namespace'
 require 'fhir_models'
 require 'json'
 require 'pry'
+require 'sinatra'
+require 'sinatra/namespace'
+
+require_relative 'database/models'
 
 get '/' do
   "Artifact count: #{Artifact.count}"
