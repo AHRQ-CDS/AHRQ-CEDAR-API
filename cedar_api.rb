@@ -155,7 +155,7 @@ namespace '/fhir' do
           valueBoolean: true
         }
       ],
-      url: "http://example.com/fhir/PlanDefinition/#{artifact[:id]}",
+      url: "http://example.com/fhir/PlanDefinition/#{artifact[:remote_identifier]}",
       identifier: [
         {
           system: 'https://www.uspreventiveservicestaskforce.org/specific-recommendation',
