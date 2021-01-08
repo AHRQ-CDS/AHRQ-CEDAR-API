@@ -23,9 +23,15 @@ get '/demo' do
   DEMO_LINKS
 end
 
+not_found do
+  'Not found'
+end
+
 namespace '/artifact' do
   get '/:id' do |id|
-    Artifact[id].to_json
+    artifact = Artifact[id]
+    halt(404) if artifact.nil?
+    artifact.to_json
   end
 end
 
@@ -70,7 +76,7 @@ namespace '/fhir' do
 
   def get_resource_from_artifact(id)
     artifact = Artifact.first(remote_identifier: id)
-    return nil if artifact.nil?
+    halt(404) if artifact.nil?
 
     artifact_type = artifact[:artifact_type]
 
