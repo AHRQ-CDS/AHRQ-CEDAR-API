@@ -133,6 +133,10 @@ namespace '/fhir' do
           }
         ]
       },
+      relatedArtifact: {
+        type: 'documentation',
+        url: artifact[:url]
+      },
       section: [
         {
           text: {
@@ -199,7 +203,11 @@ namespace '/fhir' do
         {
           title: artifact[:title]
         }
-      ]
+      ],
+      relatedArtifact: {
+        type: 'documentation',
+        url: artifact[:url]
+      }
     )
 
     plan_def.to_json
