@@ -1,0 +1,62 @@
+{
+  "resourceType": "ActivityDefinition",
+  "id": "cervical-cancer",
+  "meta":{
+    "profile": [
+      "http://hl7.org/fhir/uv/cpg/StructureDefinition/cpg-activitydefinition"
+    ]
+  },
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>The USPSTF recommends screening for cervical cancer every 3 years with cervical cytology alone in women aged 21 to 29 years.</p>\r\n<p>For women aged 30 to 65 years, the USPSTF recommends screening every 3 years with cervical cytology alone, every 5 years with high-risk human papillomavirus (hrHPV) testing alone, or every 5 years with hrHPV testing in combination with cytology (cotesting).</p>\r\n<p>&nbsp;</p>\r\n<p>See the&nbsp;<a href=\"https://www.uspreventiveservicestaskforce.org/Page/Document/RecommendationStatementFinal/cervical-cancer-screening2#consider\">Clinical Considerations section</a><span>&nbsp;for the relative benefits and harms of alternative screening strategies for women 21 years or older</span></p>\r\n<p>&nbsp;</p></div>"    
+  },
+  "extension": [
+    {
+      "url": "http://example.com/cedar-risk-name",
+      "valueString": "Age"
+    },
+    {
+      "url": "http://example.com/cedar-risk-text",
+      "valueMarkdown": "All women aged 21 to 65 years are at risk for cervical cancer because of potential exposure to high-risk HPV types (hrHPV) through sexual intercourse and should be screened. Certain risk factors further increase risk for cervical cancer, including HIV infection, a compromised immune system, in utero exposure to diethylstilbestrol, and previous treatment of a high-grade precancerous lesion or cervical cancer. Women with these risk factors should receive individualized follow-up."
+    },
+    {
+      "url": "http://hl7.org/fhir/StructureDefinition/cqf-strengthOfRecommendation",
+      "valueCodeableConcept": {
+        "coding":[
+          {
+            "system": "https://www.uspreventiveservicestaskforce.org/grade",
+            "code": "A",
+            "display": "The USPSTF recommends against routinely providing [the service] to asymptomatic patients. The USPSTF found at least fair evidence that [the service] is ineffective or that harms outweigh benefits."
+          }
+        ]
+      }
+    }
+  ],
+  "url": "http://example.com/fhir/PlanDefinition/plandefinition-cervical-cancer",
+  "identifier": [
+    {
+      "system": "https://www.uspreventiveservicestaskforce.org/specific-recommendation",
+      "value": "358"
+    }
+  ],
+  "version": "2020.1",
+  "name": "ActivityDefinition_cervical_cancer",
+  "title": "Cervical Cancer: Screening --Women aged 21 to 65 years",
+  "status": "active",
+  "experimental": false,
+  "subjectReference": {
+    "reference": "Group/group-female-21-65",
+    "display": "Female aged between 21 and 65"
+  },
+  "date": "2020-12-21",
+  "publisher": "USPSTF",
+  "description": "<p>The USPSTF recommends screening for cervical cancer every 3 years with cervical cytology alone in women aged 21 to 29 years.<br/>For women aged 30 to 65 years, the USPSTF recommends screening every 3 years with cervical cytology alone, every 5 years with high-risk human papillomavirus (hrHPV) testing alone, or every 5 years with hrHPV testing in combination with cytology (cotesting).<br/><br/>See the <a href=\"https://www.uspreventiveservicestaskforce.org/Page/Document/RecommendationStatementFinal/cervical-cancer-screening2#consider\">Clinical Considerations section</a> for the relative benefits and harms of alternative screening strategies for women 21 years or older</p>",
+  "relatedArtifact":[
+    {
+      "type": "justification",
+      "display": "Screening for Cervical Cancer",
+      "url": "http://example.com/fhir/EvidenceReport/evidencereport-cervical-cancer"
+    }
+  ],
+  "kind":"Task"
+}

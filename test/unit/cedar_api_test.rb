@@ -13,8 +13,33 @@ class CedarApiTest < MiniTest::Test
   end
 
   def test_id_return_json
-    get '/1'
+    get '/artifact/1'
     assert last_response.ok?
-    assert_equal({ 'id' => 1 }, JSON.parse(last_response.body))
+    assert_equal({ 'id' => 1, 'remote_identifier' => 1 }, JSON.parse(last_response.body))
+  end
+
+  def test_root_not_found
+    get '/foobar'
+    assert last_response.not_found?
+  end
+
+  def test_artifact_not_found
+    get '/artifact/1000'
+    assert last_response.not_found?
+  end
+
+  def test_evidence_not_found
+    get '/fhir/EvidenceReport/1000'
+    assert last_response.not_found?
+  end
+
+  def test_plan_not_found
+    get '/fhir/PlanDefinition/1000'
+    assert last_response.not_found?
+  end
+
+  def test_citation_not_found
+    get '/fhir/Citation/1000'
+    assert last_response.not_found?
   end
 end
