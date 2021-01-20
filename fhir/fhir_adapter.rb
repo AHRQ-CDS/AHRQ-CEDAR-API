@@ -17,13 +17,14 @@ class FHIRAdapter
 
   def self.create_citation(artifact)
     remote_identifier = artifact[:remote_identifier]
+    original_id = get_original_identifier(remote_identifier)
     citation = {
       resourceType: 'Citation',
       id: remote_identifier,
       identifier: [
         {
           system: 'https://www.uspreventiveservicestaskforce.org/tool',
-          value: remote_identifier
+          value: original_id
         }
       ],
       title: artifact[:title],
@@ -136,5 +137,10 @@ class FHIRAdapter
     )
 
     plan_def.to_json
+  end
+
+  def get_original_identifier(remote_identifier)
+    substr = remote_identifier.split('-', 3)
+    return substr[2]
   end
 end
