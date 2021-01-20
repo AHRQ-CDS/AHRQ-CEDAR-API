@@ -46,23 +46,16 @@ namespace '/fhir' do
     return cs.to_json
   end
 
-  get '/Citation/?:id?' do
-    id = params[:id].nil? ? 'citation-323' : params[:id]
+  get '/Citation/:id' do
+    id = params[:id]
     get_resource(id)
   end
 
-  get '/EvidenceReport/?:id?' do
-    id = params[:id].nil? ? 'evidencereport-cervical-cancer' : params[:id]
-    get_resource(id)
-  end
-
-  get '/Group/?:id?' do
-    id = "group-#{params[:id].nil? ? 'female-21-65' : params[:id]}"
+  get '/EvidenceReport/:id' do
     get_resource(id)
   end
 
   get '/PlanDefinition/?:id?' do
-    id = params[:id].nil? ? 'plandefinition-cervical-cancer' : params[:id]
     get_resource(id)
   end
 
