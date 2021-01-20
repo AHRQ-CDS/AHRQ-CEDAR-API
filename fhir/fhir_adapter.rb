@@ -1,15 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../database/models'
-
 # Service to read artifact from database and convert to FHIR resources
 class FHIRAdapter
-  def get_resource(id)
-    return nil if id.nil?
-
-    artifact = Artifact.first(remote_identifier: id)
-    return nil if artifact.nil?
-
+  def self.parse_to_fhir(artifact)
     artifact_type = artifact[:artifact_type]
 
     case artifact_type
@@ -22,7 +15,7 @@ class FHIRAdapter
     end
   end
 
-  def create_citation(artifact)
+  def self.create_citation(artifact)
     remote_identifier = artifact[:remote_identifier]
     citation = {
       resourceType: 'Citation',
@@ -43,7 +36,7 @@ class FHIRAdapter
     JSON.pretty_generate(citation)
   end
 
-  def create_general_recommendation(artifact)
+  def self.create_general_recommendation(artifact)
     remote_identifier = artifact[:remote_identifier]
 
     evidence_rpt = {
@@ -82,7 +75,7 @@ class FHIRAdapter
     JSON.pretty_generate(evidence_rpt)
   end
 
-  def create_plan_definition(artifact)
+  def self.create_plan_definition(artifact)
     remote_identifier = artifact[:remote_identifier]
 
     plan_def = FHIR::PlanDefinition.new(

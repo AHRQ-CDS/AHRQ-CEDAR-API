@@ -6,6 +6,7 @@ require 'pry'
 require 'sinatra'
 require 'sinatra/namespace'
 
+require_relative 'database/models'
 require_relative 'fhir/fhir_adapter'
 
 get '/' do
@@ -62,7 +63,9 @@ namespace '/fhir' do
   end
 
   def get_resource(id)
-    resource = FHIRAdapter.new.get_resource(id)
-    resource.nil? ? halt(404) : resource
+    artifact = Artifact.first(remote_identifier: id)
+    halt(404) if artifact.nil?
+
+    artifact.to_fhir
   end
 end
