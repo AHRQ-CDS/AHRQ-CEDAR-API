@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 require_relative '../database/models'
 
 # Service to read artifact from database and convert to FHIR resources

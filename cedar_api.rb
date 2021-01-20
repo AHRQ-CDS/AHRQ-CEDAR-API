@@ -64,6 +64,5 @@ namespace '/fhir' do
   def get_resource(id)
     resource = FHIRAdapter.new.get_resource(id)
     resource.nil? ? halt(404) : resource
-    
   end
 end
