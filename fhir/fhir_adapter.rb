@@ -3,16 +3,7 @@
 # Service to read artifact from database and convert to FHIR resources
 class FHIRAdapter
   def self.parse_to_fhir(artifact)
-    artifact_type = artifact[:artifact_type]
-
-    case artifact_type
-    when 'specific_recommendation'
-      create_plan_definition(artifact)
-    when 'general_recommendation'
-      create_general_recommendation(artifact)
-    when 'tool'
-      create_citation(artifact)
-    end
+    create_citation(artifact)
   end
 
   def self.create_citation(artifact)
@@ -23,12 +14,14 @@ class FHIRAdapter
       id: remote_identifier,
       identifier: [
         {
-          system: 'https://www.uspreventiveservicestaskforce.org/tool',
+          system: 'https://www.uspreventiveservicestaskforce.org/',
           value: original_id
         }
       ],
       title: artifact[:title],
+      description: artifact[:description],
       status: 'active',
+      publisher: 'USPSTF',
       webLocation: {
         url: artifact[:url]
       }
@@ -139,7 +132,7 @@ class FHIRAdapter
     plan_def.to_json
   end
 
-  def get_original_identifier(remote_identifier)
+  def self.get_original_identifier(remote_identifier)
     substr = remote_identifier.split('-', 3)
     return substr[2]
   end
