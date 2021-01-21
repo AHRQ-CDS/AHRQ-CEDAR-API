@@ -4,10 +4,11 @@ require_relative './citation'
 
 # Service to read artifact from database and convert to FHIR resources
 class FHIRAdapter
-  def self.create_citation(artifact)
+  def self.create_citation(artifact, artifact_base_url)
     remote_identifier = artifact[:remote_identifier]
     Citation.new(
       id: remote_identifier,
+      url: "#{artifact_base_url}/#{remote_identifier}",
       identifier: [
         {
           system: 'https://www.uspreventiveservicestaskforce.org/',
@@ -15,16 +16,19 @@ class FHIRAdapter
         }
       ],
       title: artifact[:title],
+      status: 'active',
+      date: artifact[:published],
+      publisher: artifact.repository.name,
       webLocation: Citation::WebLocation.new(url: artifact[:url])
     )
   end
 
-  def self.create_citation_bundle(artifacts)
+  def self.create_citation_bundle(artifacts, artifact_base_url)
     bundle = FHIR::Bundle.new(
       type: 'searchset'
     )
     artifacts.each do |artifact|
-      citation = create_citation(artifact)
+      citation = create_citation(artifact, artifact_base_url)
       entry = FHIR::Bundle::Entry.new(
         resource: citation
       )

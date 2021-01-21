@@ -18,6 +18,9 @@ class Citation < FHIR::Model
     'url' => {'type'=>'uri', 'path'=>'Citation.url', 'min'=>0, 'max'=>1},
     'identifier' => {'type'=>'Identifier', 'path'=>'Citation.identifier', 'min'=>0, 'max'=>Float::INFINITY},
     'title' => {'type'=>'string', 'path'=>'Citation.title', 'min'=>0, 'max'=>1},
+    'status' => {'valid_codes'=>{'http://hl7.org/fhir/publication-status'=>['draft', 'active', 'retired', 'unknown']}, 'type'=>'code', 'path'=>'Citation.status', 'min'=>1, 'max'=>1, 'binding'=>{'strength'=>'required', 'uri'=>'http://hl7.org/fhir/ValueSet/publication-status'}},
+    'date' => {'type'=>'date', 'path'=>'Citation.date', 'min'=>0, 'max'=>1},
+    'publisher' => {'type'=>'string', 'path'=>'Citation.publisher', 'min'=>0, 'max'=>1},
     'description' => {'type'=>'markdown', 'path'=>'Citation.description', 'min'=>0, 'max'=>1},
     'webLocation' => {'type'=>'Citation::WebLocation', 'path'=>'Citation.webLocation', 'min'=>0, 'max'=>1}
   }
@@ -51,6 +54,9 @@ class Citation < FHIR::Model
   attr_accessor :url                # 0-1 uri
   attr_accessor :identifier         # 0-* [ Identifier ]
   attr_accessor :title              # 0-1 string
+  attr_accessor :status             # 1-1 code
+  attr_accessor :date               # 0-1 date
+  attr_accessor :publisher          # 0-1 publisher
   attr_accessor :description        # 0-1 markdown
   attr_accessor :webLocation        # 0-1 WebLocation
 

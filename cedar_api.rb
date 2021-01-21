@@ -64,13 +64,13 @@ namespace '/fhir' do
     # TODO: Get general recommendation related to specical recommendation
     # category and keywords are saved in general recommendation
 
-    citation = FHIRAdapter.create_citation(artifact)
+    citation = FHIRAdapter.create_citation(artifact, uri('fhir/Citation'))
     citation.to_json
   end
 
   def find_resources(text)
-    artifacts = Artifact.where(Sequel.join(%i[title description]).ilike("%#{text}%")).all
-    bundle = FHIRAdapter.create_citation_bundle(artifacts)
+    artifacts = Artifact.association_join(:repository).where(Sequel.join(%i[title description]).ilike("%#{text}%")).all
+    bundle = FHIRAdapter.create_citation_bundle(artifacts, uri('fhir/Citation'))
     bundle.to_json
   end
 end
