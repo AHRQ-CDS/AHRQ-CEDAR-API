@@ -15,13 +15,14 @@ end
 
 get '/demo' do
   content_type 'text/html'
-  <<~DEMO_LINKS
+  <<~DEMO_FORM
+    <form action="/fhir/Citation" method="get">
+      <label for="_content">Search Text:</label>
+      <input type="text" id="_content" name="_content">
+      <button type="submit">Search</button>
+    </form>
     <ul>
-      <li><a href='/fhir/EvidenceReport/USPSTF-GR-198'>USPSTF General Recommendation - Atrial Fibrillation Screening</a></li>
-      <li><a href='/fhir/PlanDefinition/USPSTF-SR-358'>USPSTF Specific Recommendation - Cervical Cancer Screening</a></li>
-      <li><a href='/fhir/Citation/USPSTF-TOOL-323'>USPSTF Tool - Cervical Cancer Screening</a></li>
-    </ul>
-  DEMO_LINKS
+  DEMO_FORM
 end
 
 not_found do
@@ -52,14 +53,8 @@ namespace '/fhir' do
     get_resource(id)
   end
 
-  get '/EvidenceReport/:id' do
-    id = params[:id]
-    get_resource(id)
-  end
-
-  get '/PlanDefinition/:id' do
-    id = params[:id]
-    get_resource(id)
+  get '/Citation' do
+    find_resources(params['_content'])
   end
 
   def get_resource(id)
@@ -69,6 +64,13 @@ namespace '/fhir' do
     # TODO: Get general recommendation related to specical recommendation
     # category and keywords are saved in general recommendation
 
-    artifact.to_fhir
+    citation = FHIRAdapter.create_citation(artifact)
+    citation.to_json
+  end
+
+  def find_resources(text)
+    artifacts = Artifact.where(Sequel.join(%i[title description]).ilike("%#{text}%")).all
+    bundle = FHIRAdapter.create_citation_bundle(artifacts)
+    bundle.to_json
   end
 end

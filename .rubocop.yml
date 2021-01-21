@@ -5,6 +5,8 @@ require:
 
 AllCops:
   NewCops: enable
+  Exclude:
+    - 'fhir/citation.rb' # FHIR model conventions trigger many cops
 
 Bundler/OrderedGems:
   Enabled: false
@@ -17,3 +19,4 @@ Metrics/ClassLength:
 
 Metrics/MethodLength:
   Enabled: false
+  
