@@ -16,6 +16,7 @@ class FHIRAdapter
         }
       ],
       title: artifact[:title],
+      description: artifact[:description],
       status: 'active',
       date: artifact[:published],
       publisher: artifact.repository.name,
