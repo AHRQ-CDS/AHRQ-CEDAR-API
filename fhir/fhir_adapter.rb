@@ -3,31 +3,25 @@
 # Service to read artifact from database and convert to FHIR resources
 class FHIRAdapter
   def self.parse_to_fhir(artifact)
-    artifact_type = artifact[:artifact_type]
-
-    case artifact_type
-    when 'specific_recommendation'
-      create_plan_definition(artifact)
-    when 'general_recommendation'
-      create_general_recommendation(artifact)
-    when 'tool'
-      create_citation(artifact)
-    end
+    create_citation(artifact)
   end
 
   def self.create_citation(artifact)
     remote_identifier = artifact[:remote_identifier]
+    original_id = get_original_identifier(remote_identifier)
     citation = {
       resourceType: 'Citation',
       id: remote_identifier,
       identifier: [
         {
-          system: 'https://www.uspreventiveservicestaskforce.org/tool',
-          value: remote_identifier
+          system: 'https://www.uspreventiveservicestaskforce.org/',
+          value: original_id
         }
       ],
       title: artifact[:title],
+      description: artifact[:description],
       status: 'active',
+      publisher: 'USPSTF',
       webLocation: {
         url: artifact[:url]
       }
@@ -136,5 +130,11 @@ class FHIRAdapter
     )
 
     plan_def.to_json
+  end
+
+  def self.get_original_identifier(remote_identifier)
+    # TODO: Should update pattern with new repo adopted.
+    # OR replace with original id saved in database
+    remote_identifier.split('-', 3).last
   end
 end

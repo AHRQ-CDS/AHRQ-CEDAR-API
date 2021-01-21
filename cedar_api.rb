@@ -66,6 +66,9 @@ namespace '/fhir' do
     artifact = Artifact.first(remote_identifier: id)
     halt(404) if artifact.nil?
 
+    # TODO: Get general recommendation related to specical recommendation
+    # category and keywords are saved in general recommendation
+
     artifact.to_fhir
   end
 end
