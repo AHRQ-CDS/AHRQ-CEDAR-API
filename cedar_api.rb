@@ -67,7 +67,7 @@ namespace '/fhir' do
     halt(404) if artifact.nil?
 
     # Get general recommendation related to specical recommendation
-    # if (artifact[:repository_id] == 1)    
+    # if (artifact[:repository_id] == 1)
     # end
 
     artifact.to_fhir

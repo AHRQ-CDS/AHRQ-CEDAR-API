@@ -133,7 +133,9 @@ class FHIRAdapter
   end
 
   def self.get_original_identifier(remote_identifier)
+    # TODO: Should update pattern with new repo adopted.
+    # OR replace with original id saved in database
     substr = remote_identifier.split('-', 3)
-    return substr[2]
+    substr[2]
   end
 end
