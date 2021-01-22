@@ -15,7 +15,9 @@ class CedarApiTest < MiniTest::Test
   def test_id_return_json
     get '/artifact/1'
     assert last_response.ok?
-    assert_equal({ 'id' => 1, 'remote_identifier' => 1 }, JSON.parse(last_response.body))
+    record = JSON.parse(last_response.body)
+    assert_equal(1, record['id'])
+    assert_equal(1, record['remote_identifier'])
   end
 
   def test_root_not_found

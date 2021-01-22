@@ -4,7 +4,9 @@ require_relative 'setup'
 
 # Data models
 class Artifact < Sequel::Model
-  def to_fhir
-    FHIRAdapter.parse_to_fhir(self)
-  end
+  many_to_one :repository
+end
+
+class Repository < Sequel::Model
+  one_to_many :artifacts
 end
