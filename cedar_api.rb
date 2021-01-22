@@ -63,6 +63,8 @@ namespace '/fhir' do
 
     # TODO: Get general recommendation related to specical recommendation
     # category and keywords are saved in general recommendation
+    # This should probably be done in the importer so that the API doesn't
+    # need repository-specific logic
 
     citation = FHIRAdapter.create_citation(artifact, uri('fhir/Citation'))
     citation.to_json

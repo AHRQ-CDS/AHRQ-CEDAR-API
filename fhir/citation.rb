@@ -33,8 +33,8 @@ class Citation < FHIR::Model
     include FHIR::Xml
 
     METADATA = {
-      'id' => {'type'=>'id', 'path'=>'Citation.id', 'min'=>0, 'max'=>1},
-      'extension' => {'type'=>'Extension', 'path'=>'Citation.extension', 'min'=>0, 'max'=>Float::INFINITY},
+      'id' => {'type'=>'id', 'path'=>'WebLocation.id', 'min'=>0, 'max'=>1},
+      'extension' => {'type'=>'Extension', 'path'=>'WebLocation.extension', 'min'=>0, 'max'=>Float::INFINITY},
       'modifierExtension' => {'type'=>'Extension', 'path'=>'Citation.modifierExtension', 'min'=>0, 'max'=>Float::INFINITY},
       'type' => {'valid_codes'=>{'http://terminology.hl7.org/CodeSystem/article-url-type'=>['abstract', 'abstract-cited', 'DOI-based', 'full-text', 'full-text-cited', 'PDF', 'PDF-cited', 'not-specified', 'JSON', 'XML']}, 'type'=>'CodeableConcept', 'path'=>'WebLocation.type', 'min'=>0, 'max'=>1, 'binding'=>{'strength'=>'extensible', 'uri'=>'http://hl7.org/fhir/ValueSet/article-url-type'}},
       'url' => {'type'=>'uri', 'path'=>'WebLocation.url', 'min'=>0, 'max'=>1}
@@ -51,8 +51,11 @@ class Citation < FHIR::Model
     include FHIR::Xml
 
     METADATA = {
-      'owner' => {'type'=>'string', 'path'=>'Citation.keywordList.owner', 'min'=>0, 'max'=>1},
-      'keyword' => {'type'=>'Citation::KeywordList::Keyword', 'path'=>'Citation.keywordList.keyword', 'min'=>0, 'max'=>Float::INFINITY}
+      'id' => {'type'=>'id', 'path'=>'KeywordList.id', 'min'=>0, 'max'=>1},
+      'extension' => {'type'=>'Extension', 'path'=>'KeywordList.extension', 'min'=>0, 'max'=>Float::INFINITY},
+      'modifierExtension' => {'type'=>'Extension', 'path'=>'KeywordList.modifierExtension', 'min'=>0, 'max'=>Float::INFINITY},
+      'owner' => {'type'=>'string', 'path'=>'KeywordList.owner', 'min'=>0, 'max'=>1},
+      'keyword' => {'type'=>'Citation::KeywordList::Keyword', 'path'=>'KeywordList.keyword', 'min'=>0, 'max'=>Float::INFINITY}
     }
 
     class Keyword < FHIR::Model
@@ -62,8 +65,11 @@ class Citation < FHIR::Model
       include FHIR::Xml
 
       METADATA = {
-        'majorTopic' => {'type'=>'boolean', 'path'=>'Citation.keywordList.keyword.majorTopic', 'min'=>0, 'max'=>1},
-        'value' => {'type'=>'string', 'path'=>'Citation.keywordList.keyword.value', 'min'=>1, 'max'=>1}
+        'id' => {'type'=>'id', 'path'=>'Keyword.id', 'min'=>0, 'max'=>1},
+        'extension' => {'type'=>'Extension', 'path'=>'Keyword.extension', 'min'=>0, 'max'=>Float::INFINITY},
+        'modifierExtension' => {'type'=>'Extension', 'path'=>'Keyword.modifierExtension', 'min'=>0, 'max'=>Float::INFINITY},
+        'majorTopic' => {'type'=>'boolean', 'path'=>'Keyword.majorTopic', 'min'=>0, 'max'=>1},
+        'value' => {'type'=>'string', 'path'=>'Keyword.value', 'min'=>1, 'max'=>1}
       }
 
       attr_accessor :majorTopic
