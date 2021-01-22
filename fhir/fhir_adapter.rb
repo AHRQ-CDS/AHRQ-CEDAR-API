@@ -16,7 +16,7 @@ class FHIRAdapter
       identifier: [
         {
           system: 'https://www.uspreventiveservicestaskforce.org/',
-          value: original_id
+          value: get_original_identifier(remote_identifier)
         }
       ],
       title: artifact[:title],
