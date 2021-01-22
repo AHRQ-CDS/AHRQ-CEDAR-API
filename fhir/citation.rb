@@ -22,7 +22,8 @@ class Citation < FHIR::Model
     'date' => {'type'=>'date', 'path'=>'Citation.date', 'min'=>0, 'max'=>1},
     'publisher' => {'type'=>'string', 'path'=>'Citation.publisher', 'min'=>0, 'max'=>1},
     'description' => {'type'=>'markdown', 'path'=>'Citation.description', 'min'=>0, 'max'=>1},
-    'webLocation' => {'type'=>'Citation::WebLocation', 'path'=>'Citation.webLocation', 'min'=>0, 'max'=>1}
+    'webLocation' => {'type'=>'Citation::WebLocation', 'path'=>'Citation.webLocation', 'min'=>0, 'max'=>1},
+    'keywordList' => {'type'=>'Citation::KeywordList', 'path'=>'Citation.keywordList', 'min'=>0, 'max'=>Float::INFINITY}
   }
   
   class WebLocation < FHIR::Model
@@ -41,6 +42,36 @@ class Citation < FHIR::Model
     
     attr_accessor :type
     attr_accessor :url
+  end
+
+  class KeywordList < FHIR::Model
+
+    include FHIR::Hashable
+    include FHIR::Json
+    include FHIR::Xml
+
+    METADATA = {
+      'owner' => {'type'=>'string', 'path'=>'Citation.keywordList.owner', 'min'=>0, 'max'=>1},
+      'keyword' => {'type'=>'Citation::KeywordList::Keyword', 'path'=>'Citation.keywordList.keyword', 'min'=>0, 'max'=>Float::INFINITY}
+    }
+
+    class Keyword < FHIR::Model
+
+      include FHIR::Hashable
+      include FHIR::Json
+      include FHIR::Xml
+
+      METADATA = {
+        'majorTopic' => {'type'=>'boolean', 'path'=>'Citation.keywordList.keyword.majorTopic', 'min'=>0, 'max'=>1},
+        'value' => {'type'=>'string', 'path'=>'Citation.keywordList.keyword.value', 'min'=>1, 'max'=>1}
+      }
+
+      attr_accessor :majorTopic
+      attr_accessor :value
+    end
+
+    attr_accessor :owner
+    attr_accessor :keyword
   end
 
   attr_accessor :id                 # 0-1 id

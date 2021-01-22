@@ -6,6 +6,10 @@ require_relative './citation'
 class FHIRAdapter
   def self.create_citation(artifact, artifact_base_url)
     remote_identifier = artifact[:remote_identifier]
+    # TODO: Put handling of JSONP array into model
+    # TODO: Separate different types of keywords
+    keywords = JSON.parse(artifact.keywords) | JSON.parse(artifact.mesh_keywords)
+    keyword_list = Citation::KeywordList.new(keyword: keywords.map { |k| Citation::KeywordList::Keyword.new(value: k) })
     Citation.new(
       id: remote_identifier,
       url: "#{artifact_base_url}/#{remote_identifier}",
@@ -18,9 +22,10 @@ class FHIRAdapter
       title: artifact[:title],
       description: artifact[:description],
       status: 'active',
-      date: artifact[:published],
+      date: artifact[:published_on],
       publisher: artifact.repository.name,
-      webLocation: Citation::WebLocation.new(url: artifact[:url])
+      webLocation: Citation::WebLocation.new(url: artifact[:url]),
+      keywordList: keyword_list
     )
   end
 
