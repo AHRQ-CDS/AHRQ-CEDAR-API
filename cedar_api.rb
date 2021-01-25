@@ -5,9 +5,15 @@ require 'json'
 require 'pry'
 require 'sinatra'
 require 'sinatra/namespace'
+require 'sinatra/cross_origin'
 
 require_relative 'database/models'
 require_relative 'fhir/fhir_adapter'
+
+configure do
+  # Support cross-origin requests to allow JavaScript-based UIs hosted on different servers
+  enable :cross_origin
+end
 
 get '/' do
   "Artifact count: #{Artifact.count}"
@@ -40,6 +46,7 @@ end
 namespace '/fhir' do
   before do
     content_type 'application/fhir+json; charset=utf-8'
+    response.headers['Access-Control-Allow-Origin'] = '*'
   end
 
   get '/metadata' do

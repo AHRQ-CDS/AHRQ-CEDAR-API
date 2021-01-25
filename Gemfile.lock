@@ -85,6 +85,7 @@ GEM
       rack-protection (= 2.1.0)
       sinatra (= 2.1.0)
       tilt (~> 2.0)
+    sinatra-cross_origin (0.4.0)
     sqlite3 (1.4.2)
     tilt (2.0.10)
     unicode-display_width (1.7.0)
@@ -110,6 +111,7 @@ DEPENDENCIES
   simplecov
   sinatra
   sinatra-contrib
+  sinatra-cross_origin
   sqlite3
 
 BUNDLED WITH
