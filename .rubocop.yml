@@ -22,4 +22,6 @@ Metrics/ClassLength:
 
 Metrics/MethodLength:
   Enabled: false
-  
+
+Minitest/MultipleAssertions:
+  Max: 10

@@ -35,14 +35,6 @@ not_found do
   'Not found'
 end
 
-namespace '/artifact' do
-  get '/:id' do |id|
-    artifact = Artifact[id]
-    halt(404) if artifact.nil?
-    artifact.to_json
-  end
-end
-
 namespace '/fhir' do
   before do
     content_type 'application/fhir+json; charset=utf-8'
@@ -65,20 +57,18 @@ namespace '/fhir' do
   end
 
   def get_resource(id)
-    artifact = Artifact.first(remote_identifier: id)
+    artifact = Artifact.first(cedar_identifier: id)
     halt(404) if artifact.nil?
-
-    # TODO: Get general recommendation related to specical recommendation
-    # category and keywords are saved in general recommendation
-    # This should probably be done in the importer so that the API doesn't
-    # need repository-specific logic
 
     citation = FHIRAdapter.create_citation(artifact, uri('fhir/Citation'))
     citation.to_json
   end
 
   def find_resources(text)
-    artifacts = Artifact.where(Sequel.join(%i[title description]).ilike("%#{text}%")).all
+    artifacts = Artifact.join(:repositories, id: :repository_id).where(
+      Sequel.ilike(:title, "%#{text}%") |
+      Sequel.ilike(:description, "%#{text}%")
+    ).all
     bundle = FHIRAdapter.create_citation_bundle(artifacts, uri('fhir/Citation'))
     bundle.to_json
   end
