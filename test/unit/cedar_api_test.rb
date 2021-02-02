@@ -12,12 +12,13 @@ class CedarApiTest < MiniTest::Test
     assert_equal 'Artifact count: 1', last_response.body
   end
 
-  def test_id_return_json
-    get '/artifact/1'
+  def test_citation_found
+    get '/fhir/Citation/abc-1'
     assert last_response.ok?
     record = JSON.parse(last_response.body)
-    assert_equal(1, record['id'])
-    assert_equal(1, record['remote_identifier'])
+    assert_equal('Citation', record['resourceType'])
+    assert_equal('abc-1', record['id'])
+    assert_equal('active', record['status'])
   end
 
   def test_root_not_found
@@ -25,18 +26,8 @@ class CedarApiTest < MiniTest::Test
     assert last_response.not_found?
   end
 
-  def test_artifact_not_found
-    get '/artifact/1000'
-    assert last_response.not_found?
-  end
-
-  def test_evidence_not_found
+  def test_other_resource_not_found
     get '/fhir/EvidenceReport/1000'
-    assert last_response.not_found?
-  end
-
-  def test_plan_not_found
-    get '/fhir/PlanDefinition/1000'
     assert last_response.not_found?
   end
 
