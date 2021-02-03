@@ -9,8 +9,10 @@ class FHIRAdapter
     # TODO: Put handling of JSONP array into model
     # TODO: Separate different types of keywords
     keywords = JSON.parse(artifact.keywords) | JSON.parse(artifact.mesh_keywords)
-    keyword_list = Citation::KeywordList.new(keyword: keywords.map { |k| Citation::KeywordList::Keyword.new(value: k) })
-    Citation.new(
+    keyword_list = FHIR::Citation::KeywordList.new(
+      keyword: keywords.map { |k| FHIR::Citation::KeywordList::Keyword.new(value: k) }
+    )
+    FHIR::Citation.new(
       id: cedar_identifier,
       url: "#{artifact_base_url}/#{cedar_identifier}",
       identifier: [
@@ -28,7 +30,7 @@ class FHIRAdapter
       status: artifact.artifact_status,
       date: artifact.published_on,
       publisher: artifact.repository.name,
-      webLocation: Citation::WebLocation.new(url: artifact.url),
+      webLocation: FHIR::Citation::WebLocation.new(url: artifact.url),
       keywordList: keyword_list
     )
   end
