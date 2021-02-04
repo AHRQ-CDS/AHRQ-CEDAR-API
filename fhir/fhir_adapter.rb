@@ -37,7 +37,8 @@ class FHIRAdapter
 
   def self.create_citation_bundle(artifacts, artifact_base_url)
     bundle = FHIR::Bundle.new(
-      type: 'searchset'
+      type: 'searchset',
+      total: artifacts.size
     )
     artifacts.each do |artifact|
       citation = create_citation(artifact, artifact_base_url)

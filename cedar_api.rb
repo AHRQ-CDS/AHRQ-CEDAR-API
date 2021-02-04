@@ -53,7 +53,7 @@ namespace '/fhir' do
   end
 
   get '/Citation' do
-    find_resources(params['_content'])
+    find_resources(params)
   end
 
   def get_resource(id)
@@ -64,11 +64,22 @@ namespace '/fhir' do
     citation.to_json
   end
 
-  def find_resources(text)
-    artifacts = Artifact.join(:repositories, id: :repository_id).where(
-      Sequel.ilike(:title, "%#{text}%") |
-      Sequel.ilike(:description, "%#{text}%")
-    ).all
+  def find_resources(params)
+    filter = Artifact.join(:repositories, id: :repository_id)
+
+    binding.pry
+    params&.each do |key, value|
+      case key
+      when '_content'
+        filter = filter.where(Sequel.ilike(:title, "%#{value}%") | Sequel.ilike(:description, "%#{value}%"))
+      when 'title'
+        filter = filter.where(Sequel.ilike(:title, "#{value}%"))
+      when 'title:contains'
+        filter = filter.where(Sequel.ilike(:title, "%#{value}%"))
+      end
+    end
+
+    artifacts = filter.all
     bundle = FHIRAdapter.create_citation_bundle(artifacts, uri('fhir/Citation'))
     bundle.to_json
   end

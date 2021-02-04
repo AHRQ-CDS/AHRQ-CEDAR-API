@@ -9,7 +9,7 @@ class CedarApiTest < MiniTest::Test
   def test_root_return_count
     get '/'
     assert last_response.ok?
-    assert_equal 'Artifact count: 1', last_response.body
+    assert_equal 'Artifact count: 3', last_response.body
   end
 
   def test_citation_found
@@ -19,6 +19,33 @@ class CedarApiTest < MiniTest::Test
     assert_equal('Citation', record['resourceType'])
     assert_equal('abc-1', record['id'])
     assert_equal('active', record['status'])
+  end
+
+  def test_citation_saerch_by_content
+    get '/fhir/Citation?_content=cancer'
+    assert last_response.ok?
+    record = JSON.parse(last_response.body)
+    assert_equal('Bundle', record['resourceType'])
+    assert_equal('searchset', record['type'])
+    assert_equal(1, record['total'])
+  end
+
+  def test_citation_saerch_by_title
+    get '/fhir/Citation?title=diabetes'
+    assert last_response.ok?
+    record = JSON.parse(last_response.body)
+    assert_equal('Bundle', record['resourceType'])
+    assert_equal('searchset', record['type'])
+    assert_equal(1, record['total'])
+  end
+
+  def test_citation_saerch_by_title_contains
+    get '/fhir/Citation?title:contains=diabetes'
+    assert last_response.ok?
+    record = JSON.parse(last_response.body)
+    assert_equal('Bundle', record['resourceType'])
+    assert_equal('searchset', record['type'])
+    assert_equal(2, record['total'])
   end
 
   def test_root_not_found
