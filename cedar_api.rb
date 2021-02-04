@@ -67,7 +67,6 @@ namespace '/fhir' do
   def find_resources(params)
     filter = Artifact.join(:repositories, id: :repository_id)
 
-    binding.pry
     params&.each do |key, value|
       case key
       when '_content'
