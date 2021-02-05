@@ -68,18 +68,31 @@ namespace '/fhir' do
     filter = Artifact.join(:repositories, id: :repository_id)
 
     params&.each do |key, value|
+      search_terms = value.split(',')
       case key
       when '_content'
         filter = filter.where(Sequel.ilike(:title, "%#{value}%") | Sequel.ilike(:description, "%#{value}%"))
       when 'title'
-        filter = filter.where(Sequel.ilike(:title, "#{value}%"))
+        search_terms.map! { |term| "#{term.strip}%" }
+        filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
       when 'title:contains'
-        filter = filter.where(Sequel.ilike(:title, "%#{value}%"))
+        search_terms.map! { |term| "%#{term.strip}%" }
+        filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
       end
     end
 
     artifacts = filter.all
     bundle = FHIRAdapter.create_citation_bundle(artifacts, uri('fhir/Citation'))
     bundle.to_json
+  end
+
+  def append_boolean_expression(operator, target, search_terms, filter)
+    if search_terms.length == 1
+      filter = filter.where(Sequel::SQL::BooleanExpression.new(operator, target, search_terms.first))
+    else
+      args = search_terms.map { |term| Sequel::SQL::BooleanExpression.new(operator, target, term) }
+      filter = filter.where(Sequel::SQL::BooleanExpression.new(:OR, *args))
+    end
+    filter
   end
 end

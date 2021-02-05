@@ -39,6 +39,15 @@ class CedarApiTest < MiniTest::Test
     assert_equal(1, record['total'])
   end
 
+  def test_citation_saerch_by_title_or
+    get '/fhir/Citation?title=cancer,diabetes'
+    assert last_response.ok?
+    record = JSON.parse(last_response.body)
+    assert_equal('Bundle', record['resourceType'])
+    assert_equal('searchset', record['type'])
+    assert_equal(2, record['total'])
+  end
+
   def test_citation_saerch_by_title_contains
     get '/fhir/Citation?title:contains=diabetes'
     assert last_response.ok?
