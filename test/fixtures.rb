@@ -10,7 +10,9 @@ DB[:artifacts].insert(
   title: 'cancer',
   keywords: '[]',
   mesh_keywords: '[]',
-  repository_id: 1
+  repository_id: 1,
+  created_at: timestamp,
+  updated_at: timestamp
 )
 DB[:artifacts].insert(
   id: 2,
@@ -20,7 +22,9 @@ DB[:artifacts].insert(
   title: 'Diabetes',
   keywords: '[]',
   mesh_keywords: '[]',
-  repository_id: 1
+  repository_id: 1,
+  created_at: timestamp,
+  updated_at: timestamp
 )
 DB[:artifacts].insert(
   id: 3,
