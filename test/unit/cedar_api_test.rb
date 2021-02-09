@@ -2,6 +2,43 @@
 
 require_relative '../test_helper'
 
+describe 'cedar_api' do
+  include Rack::Test::Methods
+  include CedarApi::TestHelper
+
+  describe 'root' do
+    it 'returns count of artifacts' do
+      get '/'
+      assert last_response.ok?
+      assert_equal 'Artifact count: 1', last_response.body
+    end
+
+    it 'returns not found when endpoint does not exist' do
+      get '/foobar'
+      assert last_response.not_found?
+    end
+  end
+
+  describe '/fhir/Citation' do
+    it 'returns resource when read with id' do
+      get '/fhir/Citation/abc-1'
+      
+      assert last_response.ok?
+      
+      record = JSON.parse(last_response.body)
+      
+      assert_equal('Citation', record['resourceType'])
+      assert_equal('abc-1', record['id'])
+      assert_equal('active', record['status'])
+    end
+
+    it 'returns not found when read with invalid id' do
+      get '/fhir/Citation/1000'
+      assert last_response.not_found?
+    end
+  end
+end
+
 class CedarApiTest < MiniTest::Test
   include Rack::Test::Methods
   include CedarApi::TestHelper
