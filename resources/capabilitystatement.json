@@ -3,8 +3,10 @@
   "id": "cedar-cs",
   "version": "0.0.1",
   "name": "CEDAR_RI",
+  "title": "CEDAR Reference Implementation Server",
   "status": "draft",
   "date": "2020-12-17",
+  "publisher": "CEDAR",
   "kind": "instance",
   "implementation": {
     "description": "CEDAR Reference Implementation"
@@ -26,16 +28,19 @@
             {
               "code": "search-type"
             }
+          ],
+          "searchParam": [
+            {
+              "name": "_content",
+              "type": "string"
+            },
+            {
+              "name": "title",
+              "type": "string"
+            }
           ]
-        }
-      ],
-      "searchParam":[
-        {
-          "name": "_content",
-          "type": "string"
         }
       ]
     }
   ]
-
 }
