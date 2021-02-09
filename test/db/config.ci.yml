@@ -1,0 +1,8 @@
+# ActiveRecord database config specific to running in the CI environment
+
+host: localhost
+adapter: postgresql
+encoding: unicode
+database: cedar_api_test
+username: postgres
+password: postgres

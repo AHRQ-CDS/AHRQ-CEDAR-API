@@ -1,6 +1,17 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    activemodel (6.0.3.4)
+      activesupport (= 6.0.3.4)
+    activerecord (6.0.3.4)
+      activemodel (= 6.0.3.4)
+      activesupport (= 6.0.3.4)
+    activesupport (6.0.3.4)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      i18n (>= 0.7, < 2)
+      minitest (~> 5.1)
+      tzinfo (~> 1.1)
+      zeitwerk (~> 2.2, >= 2.2.2)
     ast (2.4.1)
     bcp47 (0.3.3)
       i18n
@@ -86,14 +97,18 @@ GEM
       sinatra (= 2.1.0)
       tilt (~> 2.0)
     sinatra-cross_origin (0.4.0)
-    sqlite3 (1.4.2)
+    thread_safe (0.3.6)
     tilt (2.0.10)
+    tzinfo (1.2.9)
+      thread_safe (~> 0.1)
     unicode-display_width (1.7.0)
+    zeitwerk (2.4.2)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  activerecord (~> 6.0.3, >= 6.0.3.4)
   erb
   fhir_models
   json
@@ -112,7 +127,6 @@ DEPENDENCIES
   sinatra
   sinatra-contrib
   sinatra-cross_origin
-  sqlite3
 
 BUNDLED WITH
    2.1.4
