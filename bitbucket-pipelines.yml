@@ -4,11 +4,18 @@ pipelines:
     - parallel:
       - step:
           name: Test
+          caches:
+            - bundler
+          services:
+            - postgres
           script:
+            - cp test/db/config.ci.yml database/config.yml
             - bundle install
             - bundle exec rake test
       - step:
           name: Rubocop
+          caches:
+            - bundler
           script:
             - bundle install
             - bundle exec rake rubocop
@@ -16,3 +23,14 @@ pipelines:
           name: Lint code
           script:
             - ruby -wc **/*.rb
+
+definitions:
+  caches:
+    bundler: ./vendor
+  services:
+    postgres:
+      image: postgres
+      variables:
+        POSTGRES_DB: 'cedar_api_test'
+        POSTGRES_USER: 'postgres'
+        POSTGRES_PASSWORD: 'postgres'

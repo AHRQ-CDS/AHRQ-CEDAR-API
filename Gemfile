@@ -22,5 +22,5 @@ group :test do
   gem 'rubocop-rake', require: false
   gem 'rubocop-sequel', require: false
   gem 'simplecov', require: false
-  gem 'sqlite3'
+  gem 'activerecord', '~> 6.0.3', '>= 6.0.3.4'
 end

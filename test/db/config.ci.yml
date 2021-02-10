@@ -1,0 +1,9 @@
+# CI-specific database configuration file. The CI pipeline copies this to database/config.yml
+
+test:
+  host: localhost
+  adapter: postgres
+  encoding: unicode
+  database: cedar_api_test
+  username: postgres
+  password: postgres

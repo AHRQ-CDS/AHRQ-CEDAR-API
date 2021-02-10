@@ -1,27 +1,7 @@
 # frozen_string_literal: true
 
-# Very simple fixture to start with: one table with single entry
-DB.create_table :artifacts do
-  primary_key :id
-  foreign_key :repository_id, :repositories
-  string :cedar_identifier
-  string :remote_identifier
-  string :artifact_status
-  string :keywords
-  string :mesh_keywords
-  string :title
-  string :description
-  date :published_on
-  string :url
-end
-
-DB.create_table :repositories do
-  primary_key :id
-  string :name
-  string :home_page
-end
-
-DB[:repositories].insert(id: 1, name: 'USPSTF')
+timestamp = Date.today
+DB[:repositories].insert(id: 1, name: 'USPSTF', created_at: timestamp, updated_at: timestamp)
 DB[:artifacts].insert(
   id: 1,
   cedar_identifier: 'abc-1',
@@ -30,7 +10,9 @@ DB[:artifacts].insert(
   title: 'cancer',
   keywords: '[]',
   mesh_keywords: '[]',
-  repository_id: 1
+  repository_id: 1,
+  created_at: timestamp,
+  updated_at: timestamp
 )
 DB[:artifacts].insert(
   id: 2,
@@ -40,7 +22,9 @@ DB[:artifacts].insert(
   title: 'Diabetes',
   keywords: '[]',
   mesh_keywords: '[]',
-  repository_id: 1
+  repository_id: 1,
+  created_at: timestamp,
+  updated_at: timestamp
 )
 DB[:artifacts].insert(
   id: 3,
@@ -50,5 +34,7 @@ DB[:artifacts].insert(
   title: 'Type 2 Diabetes',
   keywords: '[]',
   mesh_keywords: '[]',
-  repository_id: 1
+  repository_id: 1,
+  created_at: timestamp,
+  updated_at: timestamp
 )
