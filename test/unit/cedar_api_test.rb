@@ -19,14 +19,28 @@ describe 'cedar_api' do
     end
   end
 
-  describe '/fhir/Citation' do
+  describe '/fhir endpoint' do
+    it 'returns CapabilityStatement from /metadata endpoint' do
+      get '/fhir/metadata'
+
+      assert last_response.ok?
+      resource = FHIR.from_contents(last_response.body)
+      refute_nil resource
+      assert resource.is_a?(FHIR::CapabilityStatement)
+    end
+
+    it 'returns not found for not supported resource type' do
+      get '/fhir/EvidenceReport/1000'
+      assert last_response.not_found?
+    end
+  end
+
+  describe '/fhir/Citation endpoint' do
     it 'returns resource when read with id' do
       get '/fhir/Citation/abc-1'
-      
+
       assert last_response.ok?
-      
       record = JSON.parse(last_response.body)
-      
       assert_equal('Citation', record['resourceType'])
       assert_equal('abc-1', record['id'])
       assert_equal('active', record['status'])
