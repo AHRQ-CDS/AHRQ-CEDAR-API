@@ -1,4 +1,0 @@
-# Sequel gem database configuration specific to CI environment
-
-test:
-  database_url: "postgres://postgres:postgres@localhost/cedar_api_test"

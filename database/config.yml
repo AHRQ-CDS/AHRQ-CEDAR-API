@@ -4,7 +4,13 @@ production:
   database_url: <%= ENV["DATABASE_URL"] %>
 
 development:
-  database_url: "postgres://localhost/cedar_admin_development"
+  host: localhost
+  adapter: postgres
+  encoding: unicode
+  database: cedar_admin_development
 
 test:
-  database_url: "postgres://localhost/cedar_api_test"
+  host: localhost
+  adapter: postgres
+  encoding: unicode
+  database: cedar_api_test

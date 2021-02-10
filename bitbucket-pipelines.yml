@@ -9,8 +9,7 @@ pipelines:
           services:
             - postgres
           script:
-            - cp test/db/config.ci.yml test/db/config.yml
-            - cp test/db/sequel-config.ci.yml database/config.yml
+            - cp test/db/config.ci.yml database/config.yml
             - bundle install
             - bundle exec rake test
       - step:

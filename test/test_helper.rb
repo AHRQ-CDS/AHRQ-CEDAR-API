@@ -8,13 +8,20 @@ require 'sinatra'
 set :environment, :test
 
 # Create the test database using the ActiveRecord database dump from cedar_admin
+# ActiveRecord uses a different name (postgresql) for the PostgreSQL adapter than
+# Sequel (postgres) so we have to patch that after loading the database config
 require 'active_record'
-db_config = YAML.safe_load(File.open('test/db/config.yml'))
-db_config_admin = db_config.merge(database: :postgres, schema_search_path: :public)
-ActiveRecord::Base.establish_connection(db_config_admin)
-ActiveRecord::Base.connection.drop_database(db_config['database'])
-ActiveRecord::Base.connection.create_database(db_config['database'])
-ActiveRecord::Base.establish_connection(db_config)
+test_db_config = YAML.safe_load(ERB.new(File.read('database/config.yml')).result)['test']
+test_db_config.merge!(adapter: :postgresql)
+
+# Drop and recreate the test database, to do this we need to connect to the PostgreSQL admin database called 'postgres'
+admin_db_config = test_db_config.merge(database: :postgres, schema_search_path: :public)
+ActiveRecord::Base.establish_connection(admin_db_config)
+ActiveRecord::Base.connection.drop_database(test_db_config['database'])
+ActiveRecord::Base.connection.create_database(test_db_config['database'])
+
+# Load the database schema dumped from cedar_admin
+ActiveRecord::Base.establish_connection(test_db_config)
 require_relative 'db/schema'
 
 # Load the Sequel gem database config and set up fixtures

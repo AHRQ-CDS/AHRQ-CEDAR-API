@@ -1,6 +1,0 @@
-# ActiveRecord database configuration information
-
-host: localhost
-adapter: postgresql
-encoding: unicode
-database: cedar_api_test
