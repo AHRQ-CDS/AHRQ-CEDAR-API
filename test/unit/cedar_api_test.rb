@@ -101,5 +101,27 @@ describe 'cedar_api' do
         entry.resource.title.downcase.include?('diabetes')
       end
     end
+
+    it 'support search by keyword' do
+      get '/fhir/Citation?keyword=diabetes'
+      bundle = assert_bundle
+      assert bundle.entry.all? do |entry|
+        entry.resource.keywordList.any? do |keyword_list|
+          keyword_list.keyword.any { |keyword| keyword.value.downcase == 'diabetes' }
+        end
+      end
+    end
+
+    it 'support search by keyword with multiple OR' do
+      get '/fhir/Citation?keyword=diabetes,Adult'
+      bundle = assert_bundle
+      assert bundle.entry.all? do |entry|
+        entry.resource.keywordList.any? do |keyword_list|
+          keyword_list.keyword.any do |keyword|
+            keyword.value.downcase == 'diabetes' || keyword.value.downcase == 'adult'
+          end
+        end
+      end
+    end
   end
 end

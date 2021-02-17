@@ -35,8 +35,22 @@
               "type": "string"
             },
             {
-              "name": "title",
+              "name": "keyword",
+              "definition": "http://ahrq.gov/cedar/SearchParameter/cedar-citiation-keyword",
               "type": "string"
+            },
+            {
+              "name": "title",
+              "definition": "http://ahrq.gov/cedar/SearchParameter/cedar-citiation-title",
+              "type": "string"
+            }
+          ]
+        },
+        {
+          "type": "SearchParameter",
+          "interaction": [
+            {
+              "code": "read"
             }
           ]
         }

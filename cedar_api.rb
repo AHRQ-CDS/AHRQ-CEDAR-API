@@ -68,15 +68,19 @@ namespace '/fhir' do
     filter = Artifact.join(:repositories, id: :repository_id)
 
     params&.each do |key, value|
-      search_terms = value.split(',')
+      search_terms = value.split(',').map { |term| term.strip.downcase.to_s }
+
       case key
       when '_content'
         filter = filter.where(Sequel.ilike(:title, "%#{value}%") | Sequel.ilike(:description, "%#{value}%"))
+      when 'keyword'
+        filter = append_placeholder_string('LOWER(keywords::text)::JSONB ?& array[:a1]', search_terms, filter)
+        # filter = filter.where(Sequel.lit("LOWER(keywords::text)::JSONB ?& array[:term]", term: value.downcase ))
       when 'title'
-        search_terms.map! { |term| "#{term.strip}%" }
+        search_terms.map! { |term| "#{term}%" }
         filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
       when 'title:contains'
-        search_terms.map! { |term| "%#{term.strip}%" }
+        search_terms.map! { |term| "%#{term}%" }
         filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
       end
     end
@@ -89,10 +93,21 @@ namespace '/fhir' do
   def append_boolean_expression(operator, target, search_terms, filter)
     if search_terms.length == 1
       filter = filter.where(Sequel::SQL::BooleanExpression.new(operator, target, search_terms.first))
-    else
+    elsif search_terms.length > 1
       args = search_terms.map { |term| Sequel::SQL::BooleanExpression.new(operator, target, term) }
       filter = filter.where(Sequel::SQL::BooleanExpression.new(:OR, *args))
     end
+    filter
+  end
+
+  def append_placeholder_string(str, search_terms, filter)
+    if search_terms.length == 1
+      filter = filter.where(Sequel::SQL::PlaceholderLiteralString.new(str, a1: search_terms.first))
+    elsif search_terms.length > 1
+      args = search_terms.map { |term| Sequel::SQL::PlaceholderLiteralString.new(str, a1: term) }
+      filter = filter.where(Sequel::SQL::BooleanExpression.new(:OR, *args))
+    end
+
     filter
   end
 end
