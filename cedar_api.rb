@@ -75,7 +75,6 @@ namespace '/fhir' do
         filter = filter.where(Sequel.ilike(:title, "%#{value}%") | Sequel.ilike(:description, "%#{value}%"))
       when 'keyword'
         filter = append_placeholder_string('LOWER(keywords::text)::JSONB ?& array[:a1]', search_terms, filter)
-        # filter = filter.where(Sequel.lit("LOWER(keywords::text)::JSONB ?& array[:term]", term: value.downcase ))
       when 'title'
         search_terms.map! { |term| "#{term}%" }
         filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
