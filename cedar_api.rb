@@ -74,7 +74,8 @@ namespace '/fhir' do
       when '_content'
         filter = filter.where(Sequel.ilike(:title, "%#{value}%") | Sequel.ilike(:description, "%#{value}%"))
       when 'keyword'
-        filter = append_placeholder_string('LOWER(keywords::text)::JSONB ?& array[:a1]', search_terms, filter)
+        search_terms.map! { |term| {p1: term} }
+        filter = append_placeholder_string('LOWER(keywords::text)::JSONB ?& array[:p1]', search_terms, filter)
       when 'title'
         search_terms.map! { |term| "#{term}%" }
         filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
@@ -101,9 +102,9 @@ namespace '/fhir' do
 
   def append_placeholder_string(str, search_terms, filter)
     if search_terms.length == 1
-      filter = filter.where(Sequel::SQL::PlaceholderLiteralString.new(str, a1: search_terms.first))
+      filter = filter.where(Sequel::SQL::PlaceholderLiteralString.new(str, search_terms.first))
     elsif search_terms.length > 1
-      args = search_terms.map { |term| Sequel::SQL::PlaceholderLiteralString.new(str, a1: term) }
+      args = search_terms.map { |term| Sequel::SQL::PlaceholderLiteralString.new(str, term) }
       filter = filter.where(Sequel::SQL::BooleanExpression.new(:OR, *args))
     end
 
