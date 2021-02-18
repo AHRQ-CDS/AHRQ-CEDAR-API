@@ -27,5 +27,8 @@ Metrics/CyclomaticComplexity:
 Metrics/MethodLength:
   Enabled: false
 
+Metrics/PerceivedComplexity:
+  Enabled: false
+  
 Minitest/MultipleAssertions:
   Max: 10

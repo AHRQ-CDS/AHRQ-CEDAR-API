@@ -74,7 +74,7 @@ namespace '/fhir' do
       when '_content'
         filter = filter.where(Sequel.ilike(:title, "%#{value}%") | Sequel.ilike(:description, "%#{value}%"))
       when 'keyword'
-        search_terms.map! { |term| {p1: term} }
+        search_terms.map! { |term| { p1: term } }
         filter = append_placeholder_string('LOWER(keywords::text)::JSONB ?& array[:p1]', search_terms, filter)
       when 'title'
         search_terms.map! { |term| "#{term}%" }
