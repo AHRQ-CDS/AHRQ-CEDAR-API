@@ -12,7 +12,8 @@ class FHIRAdapter
     keyword_list = FHIR::Citation::KeywordList.new(
       keyword: keywords.map { |k| FHIR::Citation::KeywordList::Keyword.new(value: k) }
     )
-    FHIR::Citation.new(
+
+    citation = FHIR::Citation.new(
       id: cedar_identifier,
       url: "#{artifact_base_url}/#{cedar_identifier}",
       identifier: [
@@ -23,13 +24,6 @@ class FHIRAdapter
       ],
       extension: [
         {
-          url: 'http://http://ahrq.gov/cedar/StructureDefinition/cedar-artifact-identifier',
-          valueIdentifier: {
-            system: artifact.repository.home_page,
-            value: artifact.remote_identifier
-          }
-        },
-        {
           url: 'http://http://ahrq.gov/cedar/StructureDefinition/cedar-artifact-status',
           valueCodeableConcept: {
             coding: [
@@ -39,10 +33,6 @@ class FHIRAdapter
           }
         }
       ],
-      text: {
-        status: 'generated',
-        div: "<div xmlns=\"http://www.w3.org/1999/xhtml\">#{artifact.description_html}</div>"
-      },
       status: 'active',
       title: artifact.title,
       articleTitle: {
@@ -76,6 +66,25 @@ class FHIRAdapter
         title: artifact.repository.name
       }
     )
+
+    unless artifact.remote_identifier.nil?
+      citation.extension << FHIR::Extension.new(
+        url: 'http://http://ahrq.gov/cedar/StructureDefinition/cedar-artifact-identifier',
+        valueIdentifier: {
+          system: artifact.repository.home_page,
+          value: artifact.remote_identifier
+        }
+      )
+    end
+
+    unless artifact.description_html.nil?
+      citation.text = FHIR::Narrative.new(
+        status: 'generated',
+        div: "<div xmlns=\"http://www.w3.org/1999/xhtml\">#{artifact.description_html}</div>"
+      )
+    end
+
+    citation
   end
 
   def self.create_citation_bundle(artifacts, artifact_base_url)
