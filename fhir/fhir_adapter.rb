@@ -19,19 +19,62 @@ class FHIRAdapter
         {
           system: 'http://ahrq.gov/cedar',
           value: cedar_identifier
-        },
-        {
-          system: artifact.repository.home_page,
-          value: artifact.remote_identifier
         }
       ],
+      extension: [
+        {
+          url: 'http://http://ahrq.gov/cedar/StructureDefinition/cedar-artifact-identifier',
+          valueIdentifier: {
+            system: artifact.repository.home_page,
+            value: artifact.remote_identifier
+          }
+        },
+        {
+          url: 'http://http://ahrq.gov/cedar/StructureDefinition/cedar-artifact-status',
+          valueCodeableConcept: {
+            coding: [
+              system: 'http://hl7.org/fhir/publication-status',
+              code: artifact.artifact_status
+            ]
+          }
+        }
+      ],
+      text: {
+        status: 'generated',
+        div: "<div xmlns=\"http://www.w3.org/1999/xhtml\">#{artifact.description_html}</div>"
+      },
+      status: 'active',
       title: artifact.title,
-      description: artifact.description,
-      status: artifact.artifact_status,
+      articleTitle: {
+        text: artifact.title
+      },
+      description: artifact.description_markdown,
       date: artifact.published_on,
       publisher: artifact.repository.name,
       webLocation: FHIR::Citation::WebLocation.new(url: artifact.url),
-      keywordList: keyword_list
+      keywordList: keyword_list,
+      publicationForm: {
+        publishingModel: {
+          coding: [
+            {
+              system: 'http://terminology.hl7.org/CodeSystem/publishing-model-type',
+              code: 'Electronic'
+            }
+          ]
+        },
+        publishedIn: {
+          type: {
+            coding: [
+              {
+                system: 'http://terminology.hl7.org/CodeSystem/published-in-type',
+                code: 'D019991',
+                display: 'Database'
+              }
+            ]
+          }
+        },
+        title: artifact.repository.name
+      }
     )
   end
 
