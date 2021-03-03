@@ -69,7 +69,7 @@ class FHIRAdapter
 
     unless artifact.remote_identifier.nil?
       citation.extension << FHIR::Extension.new(
-        url: 'http://http://ahrq.gov/cedar/StructureDefinition/cedar-artifact-identifier',
+        url: 'http://ahrq.gov/cedar/StructureDefinition/cedar-artifact-identifier',
         valueIdentifier: {
           system: artifact.repository.home_page,
           value: artifact.remote_identifier
