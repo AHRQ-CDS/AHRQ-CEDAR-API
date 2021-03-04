@@ -20,20 +20,13 @@ class FHIRAdapter
         {
           system: 'http://ahrq.gov/cedar',
           value: cedar_identifier
-        }
-      ],
-      extension: [
+        },
         {
-          url: 'http://http://ahrq.gov/cedar/StructureDefinition/cedar-artifact-status',
-          valueCodeableConcept: {
-            coding: [
-              system: 'http://hl7.org/fhir/publication-status',
-              code: artifact.artifact_status
-            ]
-          }
+          system: artifact.repository.home_page,
+          value: artifact.remote_identifier
         }
-      ],
-      status: 'active',
+      ]
+      status: artifact.artifact_status,
       title: artifact.title,
       articleTitle: {
         text: artifact.title
@@ -66,16 +59,6 @@ class FHIRAdapter
         title: artifact.repository.name
       }
     )
-
-    unless artifact.remote_identifier.nil?
-      citation.extension << FHIR::Extension.new(
-        url: 'http://ahrq.gov/cedar/StructureDefinition/cedar-artifact-identifier',
-        valueIdentifier: {
-          system: artifact.repository.home_page,
-          value: artifact.remote_identifier
-        }
-      )
-    end
 
     unless artifact.description_html.nil?
       citation.text = FHIR::Narrative.new(
