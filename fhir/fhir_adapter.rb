@@ -25,7 +25,7 @@ class FHIRAdapter
           system: artifact.repository.home_page,
           value: artifact.remote_identifier
         }
-      ]
+      ],
       status: artifact.artifact_status,
       title: artifact.title,
       articleTitle: {
