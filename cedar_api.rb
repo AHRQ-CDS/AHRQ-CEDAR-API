@@ -72,7 +72,11 @@ namespace '/fhir' do
 
       case key
       when '_content'
-        filter = filter.where(Sequel.ilike(:title, "%#{value}%") | Sequel.ilike(:description, "%#{value}%"))
+        search_term = search_terms.join(' | ')
+        filter = append_placeholder_string(
+          "to_tsvector('english', title || ' ' || description) @@ to_tsquery(:p1)",
+          [{ p1: search_term }], filter
+        )
       when 'keyword'
         search_terms.map! { |term| { p1: term } }
         filter = append_placeholder_string('LOWER(keywords::text)::JSONB ?& array[:p1]', search_terms, filter)
