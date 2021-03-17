@@ -72,6 +72,7 @@ namespace '/fhir' do
 
       case key
       when '_content'
+        search_terms.map! { |term| "#{term}:*" } # enable partial word for full text search
         opt = {
           language: 'english',
           rank: true
