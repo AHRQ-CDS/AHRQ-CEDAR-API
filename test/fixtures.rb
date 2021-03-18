@@ -11,6 +11,7 @@ DB[:artifacts].insert(
   description: 'Bladder cancer is similar to many other types of cancer in that it is a heterogeneous condition',
   keywords: '["Cancer", "adult"]',
   mesh_keywords: '[]',
+  keyword_text: 'Cancer, adult',
   repository_id: 1,
   created_at: timestamp,
   updated_at: timestamp
@@ -24,6 +25,7 @@ DB[:artifacts].insert(
   description: 'Lower vitamin D levels have been reported to increase risk for some types of cancer, diabetes.',
   keywords: '["Diabetes", "Adult"]',
   mesh_keywords: '[]',
+  keyword_text: 'Diabetes, Adult',
   repository_id: 1,
   created_at: timestamp,
   updated_at: timestamp
@@ -36,6 +38,7 @@ DB[:artifacts].insert(
   title: 'Type 2 Diabetes',
   keywords: '["diabetes"]',
   mesh_keywords: '[]',
+  keyword_text: 'diabetes',
   repository_id: 1,
   created_at: timestamp,
   updated_at: timestamp

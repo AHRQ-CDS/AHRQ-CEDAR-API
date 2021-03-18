@@ -81,8 +81,19 @@ namespace '/fhir' do
 
         filter = filter.full_text_search(:content_search, search_terms, opt)
       when 'keyword'
-        search_terms.map! { |term| { p1: term } }
-        filter = append_placeholder_string('LOWER(keywords::text)::JSONB ?& array[:p1]', search_terms, filter)
+        search_terms.map! { |term| "#{term.gsub(' ', '<->')}:*" } # enable partial word for full text search
+        opt = {
+          language: 'english',
+          rank: true
+        }
+        filter = filter.full_text_search([:keyword_text], search_terms, opt)
+      when 'classifier'
+        search_terms.map! { |term| "#{term.gsub(' ', '<->')}:*" } # enable partial word for full text search
+        opt = {
+          language: 'english',
+          rank: true
+        }
+        filter = filter.full_text_search([:mesh_keyword_text], search_terms, opt)
       when 'title'
         search_terms.map! { |term| "#{term}%" }
         filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
