@@ -75,9 +75,11 @@ namespace '/fhir' do
         search_terms.map! { |term| "#{term.gsub(' ', '<->')}" } # enable partial word for full text search
         opt = {
           language: 'english',
-          rank: true
+          rank: true,
+          tsvector: true
         }
-        filter = filter.full_text_search(%i[title description], search_terms, opt)
+        
+        filter = filter.full_text_search(:content_search, search_terms, opt)
       when 'keyword'
         search_terms.map! { |term| { p1: term } }
         filter = append_placeholder_string('LOWER(keywords::text)::JSONB ?& array[:p1]', search_terms, filter)
