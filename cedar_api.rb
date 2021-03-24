@@ -72,13 +72,13 @@ namespace '/fhir' do
 
       case key
       when '_content'
-        search_terms.map! { |term| "#{term.gsub(' ', '<->')}" } # enable partial word for full text search
+        search_terms.map! { |term| term.gsub(' ', '<->').to_s }
         opt = {
           language: 'english',
           rank: true,
           tsvector: true
         }
-        
+
         filter = filter.full_text_search(:content_search, search_terms, opt)
       when 'keyword'
         search_terms.map! { |term| { p1: term } }
