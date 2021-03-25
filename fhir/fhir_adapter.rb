@@ -8,7 +8,7 @@ class FHIRAdapter
     cedar_identifier = artifact[:cedar_identifier]
     # TODO: Put handling of JSONP array into model
     # TODO: Separate different types of keywords
-    keywords = JSON.parse(artifact.keywords) 
+    keywords = JSON.parse(artifact.keywords)
     keyword_list = keywords.map { |k| FHIR::CodeableConcept.new(text: k) }
     mesh_keywords = JSON.parse(artifact.mesh_keywords)
     mesh_keyword_list = mesh_keywords.map { |k| FHIR::CodeableConcept.new(text: k) }
@@ -27,6 +27,7 @@ class FHIRAdapter
       date: to_fhir_date(artifact.updated_at),
       publisher: 'CEDAR',
       # classification: Does CEDAR citation have its own keywords?
+      # copyright: need CEDAR copyright declaration here
       citedArtifact: {
         identifier: [
           {
@@ -37,7 +38,10 @@ class FHIRAdapter
         dateAccessed: to_fhir_date(artifact.updated_at),
         currentState: [
           {
-            text: artifact.artifact_status
+            coding: {
+              system: 'http://hl7.org/fhir/publication-status',
+              code: artifact.artifact_status
+            }
           }
         ],
         title: [
@@ -50,6 +54,7 @@ class FHIRAdapter
             text: artifact.description_markdown
           }
         ],
+        # copyright: Need repo's copyright declaration here
         publicationForm: {
           publishedIn: {
             publisher: {
@@ -87,7 +92,7 @@ class FHIRAdapter
       )
     end
 
-    if (mesh_keyword_list.any?)
+    if mesh_keyword_list.any?
       citation.citedArtifact.classification << FHIR::Citation::CitedArtifact::Classification.new(
         type: {
           coding: [
@@ -104,8 +109,8 @@ class FHIRAdapter
     citation
   end
 
-  def self.to_fhir_date(timestamp) 
-    timestamp.strftime('%F') unless timestamp.nil?
+  def self.to_fhir_date(timestamp)
+    timestamp&.strftime('%F')
   end
 
   def self.create_citation_bundle(artifacts, artifact_base_url)
