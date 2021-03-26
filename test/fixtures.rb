@@ -40,3 +40,9 @@ DB[:artifacts].insert(
   created_at: timestamp,
   updated_at: timestamp
 )
+DB[:artifacts].update(content_search: Sequel.lit(
+  "setweight(to_tsvector('english', coalesce(title, '')), 'A') ||
+  setweight(to_tsvector('english', coalesce(keyword_text, '')), 'B') ||
+  setweight(to_tsvector('english', coalesce(mesh_keyword_text, '')), 'B') ||
+  setweight(to_tsvector('english', coalesce(description, '')), 'D')"
+))
