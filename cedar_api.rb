@@ -47,6 +47,29 @@ namespace '/fhir' do
     return cs.to_json
   end
 
+  get '/SearchParameter' do
+    filename = nil;
+    params&.each do |key, value|
+      if key == 'url'
+        case value
+        when 'http://ahrq.gov/cedar/SearchParameter/cedar-citiation-classification'
+          filename = 'classification'
+        when 'http://ahrq.gov/cedar/SearchParameter/cedar-citiation-title'
+          filename = 'title'
+        end
+        break
+      end
+    end
+
+    if filename.nil?
+      halt(404)
+    else
+      json = File.read("resources/searchparameter-#{filename}.json")
+      cs = FHIR.from_contents(json)
+      return cs.to_json
+    end
+  end
+
   get '/Citation/:id' do
     id = params[:id]
     get_resource(id)
@@ -64,41 +87,41 @@ namespace '/fhir' do
     citation.to_json
   end
 
+  def parse_full_text_search(term)
+    # TODO: Need a better way to handle: A AND (B OR (NOT C))
+    term.gsub('AND', '&').to_s.gsub('OR', '|').to_s.gsub('NOT', '!').to_s
+  end
+
   def find_resources(params)
     filter = Artifact.join(:repositories, id: :repository_id)
 
     params&.each do |key, value|
-      search_terms = value.split(',').map { |term| term.strip.downcase.to_s }
+      search_terms = value.split(',').map { |v| v.strip.downcase.to_s }
 
       case key
       when '_content'
-        search_terms.map! { |term| term.gsub(' ', '<->').to_s }
+        cols = parse_full_text_search(value.strip.downcase.to_s)
         opt = {
           language: 'english',
           rank: true,
           tsvector: true
         }
 
-        filter = filter.full_text_search(:content_search, search_terms, opt)
-      when 'keyword'
-        search_terms.map! { |term| "#{term.gsub(' ', '<->')}:*" } # enable partial word for full text search
+        filter = filter.full_text_search(:content_search, cols, opt)
+      when 'classification'
+        cols = parse_full_text_search(value.strip.downcase.to_s)
         opt = {
           language: 'english',
           rank: true
         }
-        filter = filter.full_text_search([:keyword_text], search_terms, opt)
-      when 'classifier'
-        search_terms.map! { |term| "#{term.gsub(' ', '<->')}:*" } # enable partial word for full text search
-        opt = {
-          language: 'english',
-          rank: true
-        }
-        filter = filter.full_text_search([:mesh_keyword_text], search_terms, opt)
+
+        # Need to decide if we need use ts_vector to get better performance
+        filter = filter.full_text_search([:keyword_text, :mesh_keyword_text], cols, opt)
       when 'title'
-        search_terms.map! { |term| "#{term}%" }
+        search_terms.map! { |t| "#{t}%" }
         filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
       when 'title:contains'
-        search_terms.map! { |term| "%#{term}%" }
+        search_terms.map! { |t| "%#{t}%" }
         filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
       end
     end
