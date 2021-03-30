@@ -48,7 +48,7 @@ namespace '/fhir' do
   end
 
   get '/SearchParameter' do
-    filename = nil;
+    filename = nil
     params&.each do |key, value|
       if key == 'url'
         case value
