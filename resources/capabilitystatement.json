@@ -50,7 +50,13 @@
           "type": "SearchParameter",
           "interaction": [
             {
-              "code": "read"
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "url",
+              "type": "uri"
             }
           ]
         }
