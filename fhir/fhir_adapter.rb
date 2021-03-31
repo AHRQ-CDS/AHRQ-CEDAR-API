@@ -55,14 +55,16 @@ class FHIRAdapter
           }
         ],
         # copyright: Need repo's copyright declaration here
-        publicationForm: {
-          publishedIn: {
-            publisher: {
-              display: artifact.repository.name
-            }
-          },
-          articleDate: to_fhir_date(artifact.published_on)
-        },
+        publicationForm: [
+          {
+            publishedIn: {
+              publisher: {
+                display: artifact.repository.name
+              }
+            },
+            articleDate: to_fhir_date(artifact.published_on)
+          }
+        ],
         webLocation: [
           {
             url: artifact.url
