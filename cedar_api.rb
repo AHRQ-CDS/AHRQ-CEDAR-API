@@ -100,7 +100,7 @@ namespace '/fhir' do
 
       case key
       when '_content'
-        cols = parse_full_text_search(value.strip.downcase.to_s)
+        cols = parse_full_text_search(value)
         opt = {
           language: 'english',
           rank: true,
@@ -109,7 +109,7 @@ namespace '/fhir' do
 
         filter = filter.full_text_search(:content_search, cols, opt)
       when 'classification'
-        cols = parse_full_text_search(value.strip.downcase.to_s)
+        cols = parse_full_text_search(value)
         opt = {
           language: 'english',
           rank: true
