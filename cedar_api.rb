@@ -89,29 +89,29 @@ namespace '/fhir' do
 
   def parse_full_text_search(term)
     # TODO: Need a better way to handle: A AND (B OR (NOT C))
-    # term.gsub('AND', '&').to_s.gsub('OR', '|').to_s.gsub('NOT', '!').to_s    
-    tokens = term.split(' ');
+    # term.gsub('AND', '&').to_s.gsub('OR', '|').to_s.gsub('NOT', '!').to_s
+    tokens = term.split
 
-    phrase = false;
-    result = "";
-    for token in tokens
-      if (phrase)
-        result += "<->"
-      else
-        result += " "
-      end
+    phrase = false
+    result = ''
+    tokens.each do |token|
+      result += if phrase
+                  '<->'
+                else
+                  ' '
+                end
 
       if token[0] == '"'
         phrase = true
-        result += token[1..-1]
-      elsif token[token.length-1] == '"'
+        result += token[1..]
+      elsif token[token.length - 1] == '"'
         phrase = false
-        result += token[0..token.length-2]
+        result += token[0..token.length - 2]
       else
-        result += token  
+        result += token
       end
     end
-    
+
     result.strip
   end
 
@@ -123,7 +123,6 @@ namespace '/fhir' do
 
       case key
       when '_content'
-        byebug
         cols = parse_full_text_search(value)
         opt = {
           language: 'english',
