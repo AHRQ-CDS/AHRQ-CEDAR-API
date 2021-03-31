@@ -89,7 +89,30 @@ namespace '/fhir' do
 
   def parse_full_text_search(term)
     # TODO: Need a better way to handle: A AND (B OR (NOT C))
-    term.gsub('AND', '&').to_s.gsub('OR', '|').to_s.gsub('NOT', '!').to_s
+    # term.gsub('AND', '&').to_s.gsub('OR', '|').to_s.gsub('NOT', '!').to_s    
+    tokens = term.split(' ');
+
+    phrase = false;
+    result = "";
+    for token in tokens
+      if (phrase)
+        result += "<->"
+      else
+        result += " "
+      end
+
+      if token[0] == '"'
+        phrase = true
+        result += token[1..-1]
+      elsif token[token.length-1] == '"'
+        phrase = false
+        result += token[0..token.length-2]
+      else
+        result += token  
+      end
+    end
+    
+    result.strip
   end
 
   def find_resources(params)
@@ -100,6 +123,7 @@ namespace '/fhir' do
 
       case key
       when '_content'
+        byebug
         cols = parse_full_text_search(value)
         opt = {
           language: 'english',
