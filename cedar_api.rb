@@ -9,6 +9,7 @@ require 'sinatra/cross_origin'
 
 require_relative 'database/models'
 require_relative 'fhir/fhir_adapter'
+require_relative 'util/api_helper'
 
 configure do
   # Support cross-origin requests to allow JavaScript-based UIs hosted on different servers
@@ -87,34 +88,6 @@ namespace '/fhir' do
     citation.to_json
   end
 
-  def parse_full_text_search(term)
-    # TODO: Need a better way to handle: A AND (B OR (NOT C))
-    # term.gsub('AND', '&').to_s.gsub('OR', '|').to_s.gsub('NOT', '!').to_s
-    tokens = term.split
-
-    phrase = false
-    result = ''
-    tokens.each do |token|
-      result += if phrase
-                  '<->'
-                else
-                  ' '
-                end
-
-      if token[0] == '"'
-        phrase = true
-        result += token[1..]
-      elsif token[token.length - 1] == '"'
-        phrase = false
-        result += token[0..token.length - 2]
-      else
-        result += token
-      end
-    end
-
-    result.strip
-  end
-
   def find_resources(params)
     filter = Artifact.join(:repositories, id: :repository_id)
 
@@ -123,7 +96,7 @@ namespace '/fhir' do
 
       case key
       when '_content'
-        cols = parse_full_text_search(value)
+        cols = ApiHelper.parse_full_text_search(value)
         opt = {
           language: 'english',
           rank: true,
@@ -132,7 +105,7 @@ namespace '/fhir' do
 
         filter = filter.full_text_search(:content_search, cols, opt)
       when 'classification'
-        cols = parse_full_text_search(value)
+        cols = ApiHelper.parse_full_text_search(value)
         opt = {
           language: 'english',
           rank: true
