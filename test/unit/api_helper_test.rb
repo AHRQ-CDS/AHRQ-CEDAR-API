@@ -33,5 +33,11 @@ describe ApiHelper do
       result = ApiHelper.parse_full_text_search(source)
       assert_equal('lung<->cancer & (screening | ! procedure)', result)
     end
+
+    it 'handles complex full test search expression with multiple double quotes' do
+      source = '"lung cancer" AND ("skin cancer" OR "bladder cancer")'
+      result = ApiHelper.parse_full_text_search(source)
+      assert_equal('lung<->cancer & (skin<->cancer | bladder<->cancer)', result)
+    end
   end
 end

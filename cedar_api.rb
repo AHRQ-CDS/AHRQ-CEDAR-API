@@ -49,25 +49,13 @@ namespace '/fhir' do
   end
 
   get '/SearchParameter' do
-    filename = nil
-    params&.each do |key, value|
-      if key == 'url'
-        case value
-        when 'http://ahrq.gov/cedar/SearchParameter/cedar-citiation-classification'
-          filename = 'classification'
-        when 'http://ahrq.gov/cedar/SearchParameter/cedar-citiation-title'
-          filename = 'title'
-        end
-        break
-      end
-    end
-
-    if filename.nil?
-      halt(404)
+    case params['url']
+    when /cedar-citiation-classification/
+      return FHIR.from_contents(File.read('resources/searchparameter-classification.json')).to_json
+    when /cedar-citiation-title/
+      return FHIR.from_contents(File.read('resources/searchparameter-title.json')).to_json
     else
-      json = File.read("resources/searchparameter-#{filename}.json")
-      cs = FHIR.from_contents(json)
-      return cs.to_json
+      halt(404)
     end
   end
 
