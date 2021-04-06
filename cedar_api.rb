@@ -9,6 +9,7 @@ require 'sinatra/cross_origin'
 
 require_relative 'database/models'
 require_relative 'fhir/fhir_adapter'
+require_relative 'util/api_helper'
 
 configure do
   # Support cross-origin requests to allow JavaScript-based UIs hosted on different servers
@@ -47,6 +48,17 @@ namespace '/fhir' do
     return cs.to_json
   end
 
+  get '/SearchParameter' do
+    case params['url']
+    when /cedar-citiation-classification/
+      return FHIR.from_contents(File.read('resources/searchparameter-classification.json')).to_json
+    when /cedar-citiation-title/
+      return FHIR.from_contents(File.read('resources/searchparameter-title.json')).to_json
+    else
+      halt(404)
+    end
+  end
+
   get '/Citation/:id' do
     id = params[:id]
     get_resource(id)
@@ -68,19 +80,32 @@ namespace '/fhir' do
     filter = Artifact.join(:repositories, id: :repository_id)
 
     params&.each do |key, value|
-      search_terms = value.split(',').map { |term| term.strip.downcase.to_s }
+      search_terms = value.split(',').map { |v| v.strip.downcase.to_s }
 
       case key
       when '_content'
-        filter = filter.where(Sequel.ilike(:title, "%#{value}%") | Sequel.ilike(:description, "%#{value}%"))
-      when 'keyword'
-        search_terms.map! { |term| { p1: term } }
-        filter = append_placeholder_string('LOWER(keywords::text)::JSONB ?& array[:p1]', search_terms, filter)
+        cols = ApiHelper.parse_full_text_search(value)
+        opt = {
+          language: 'english',
+          rank: true,
+          tsvector: true
+        }
+
+        filter = filter.full_text_search(:content_search, cols, opt)
+      when 'classification'
+        cols = ApiHelper.parse_full_text_search(value)
+        opt = {
+          language: 'english',
+          rank: true
+        }
+
+        # Need to decide if we need use ts_vector to get better performance
+        filter = filter.full_text_search([:keyword_text, :mesh_keyword_text], cols, opt)
       when 'title'
-        search_terms.map! { |term| "#{term}%" }
+        search_terms.map! { |t| "#{t}%" }
         filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
       when 'title:contains'
-        search_terms.map! { |term| "%#{term}%" }
+        search_terms.map! { |t| "%#{t}%" }
         filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
       end
     end

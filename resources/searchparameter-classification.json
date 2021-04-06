@@ -1,0 +1,20 @@
+{
+  "resourceType": "SearchParameter",
+  "id": "cedar-citiation-classification",
+  "url": "http://ahrq.gov/cedar/SearchParameter/cedar-citiation-classification",
+  "version": "0.1.0",
+  "name": "CedarCitationClassification",
+  "status": "active",
+  "experimental": false,
+  "date": "2021-02-17",
+  "publisher": "ARHQ CEDAR",
+  "code": "classification",
+  "base": [
+    "Citation"
+  ],
+  "description" : "Classification of the citation",
+  "type": "string",
+  "expression": "Citation.citedArtifact.classification.classifier.text",
+  "xpath" : "f:Citation/f:citedArtifact/f:classification/f:classifier/f:text",
+  "xpathUsage" : "normal"
+}

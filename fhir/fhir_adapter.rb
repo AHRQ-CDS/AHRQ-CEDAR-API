@@ -8,10 +8,10 @@ class FHIRAdapter
     cedar_identifier = artifact[:cedar_identifier]
     # TODO: Put handling of JSONP array into model
     # TODO: Separate different types of keywords
-    keywords = JSON.parse(artifact.keywords) | JSON.parse(artifact.mesh_keywords)
-    keyword_list = FHIR::Citation::KeywordList.new(
-      keyword: keywords.map { |k| FHIR::Citation::KeywordList::Keyword.new(value: k) }
-    )
+    keywords = JSON.parse(artifact.keywords)
+    keyword_list = keywords.map { |k| FHIR::CodeableConcept.new(text: k) }
+    mesh_keywords = JSON.parse(artifact.mesh_keywords)
+    mesh_keyword_list = mesh_keywords.map { |k| FHIR::CodeableConcept.new(text: k) }
 
     citation = FHIR::Citation.new(
       id: cedar_identifier,
@@ -20,43 +20,56 @@ class FHIRAdapter
         {
           system: 'http://ahrq.gov/cedar',
           value: cedar_identifier
-        },
-        {
-          system: artifact.repository.home_page,
-          value: artifact.remote_identifier
         }
       ],
-      status: artifact.artifact_status,
       title: artifact.title,
-      articleTitle: {
-        text: artifact.title
-      },
-      description: artifact.description_markdown,
-      date: artifact.published_on,
-      publisher: artifact.repository.name,
-      webLocation: FHIR::Citation::WebLocation.new(url: artifact.url),
-      keywordList: keyword_list,
-      publicationForm: {
-        publishingModel: {
-          coding: [
-            {
-              system: 'http://terminology.hl7.org/CodeSystem/publishing-model-type',
-              code: 'Electronic'
-            }
-          ]
-        },
-        publishedIn: {
-          type: {
-            coding: [
-              {
-                system: 'http://terminology.hl7.org/CodeSystem/published-in-type',
-                code: 'D019991',
-                display: 'Database'
-              }
-            ]
+      status: 'active', # Will a CEDAR citation be retired in the future?
+      date: to_fhir_date(artifact.updated_at),
+      publisher: 'CEDAR',
+      # classification: Does CEDAR citation have its own keywords?
+      # copyright: need CEDAR copyright declaration here
+      citedArtifact: {
+        identifier: [
+          {
+            system: artifact.repository.home_page,
+            value: artifact.remote_identifier
           }
-        },
-        title: artifact.repository.name
+        ],
+        dateAccessed: to_fhir_date(artifact.updated_at),
+        currentState: [
+          {
+            coding: {
+              system: 'http://hl7.org/fhir/publication-status',
+              code: artifact.artifact_status
+            }
+          }
+        ],
+        title: [
+          {
+            text: artifact.title
+          }
+        ],
+        abstract: [
+          {
+            text: artifact.description_markdown
+          }
+        ],
+        # copyright: Need repo's copyright declaration here
+        publicationForm: [
+          {
+            publishedIn: {
+              publisher: {
+                display: artifact.repository.name
+              }
+            },
+            articleDate: to_fhir_date(artifact.published_on)
+          }
+        ],
+        webLocation: [
+          {
+            url: artifact.url
+          }
+        ]
       }
     )
 
@@ -67,7 +80,39 @@ class FHIRAdapter
       )
     end
 
+    if keyword_list.any?
+      citation.citedArtifact.classification << FHIR::Citation::CitedArtifact::Classification.new(
+        type: {
+          coding: [
+            {
+              system: 'http://terminology.hl7.org/CodeSystem/cited-artifact-classification-type',
+              code: 'keyword'
+            }
+          ]
+        },
+        classifier: keyword_list
+      )
+    end
+
+    if mesh_keyword_list.any?
+      citation.citedArtifact.classification << FHIR::Citation::CitedArtifact::Classification.new(
+        type: {
+          coding: [
+            {
+              system: 'http://terminology.hl7.org/CodeSystem/cited-artifact-classification-type',
+              code: 'mesh-heading'
+            }
+          ]
+        },
+        classifier: mesh_keyword_list
+      )
+    end
+
     citation
+  end
+
+  def self.to_fhir_date(timestamp)
+    timestamp&.strftime('%F')
   end
 
   def self.create_citation_bundle(artifacts, artifact_base_url)

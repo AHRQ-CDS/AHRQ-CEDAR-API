@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(version: 2020_12_18_182334) do
     t.text "description_markdown"
     t.bigint "repository_id", null: false
     t.string "url"
+    t.string "doi"
     t.string "remote_identifier"
     t.string "cedar_identifier"
     t.string "artifact_type"
@@ -29,8 +30,13 @@ ActiveRecord::Schema.define(version: 2020_12_18_182334) do
     t.date "published_on"
     t.jsonb "keywords", default: []
     t.jsonb "mesh_keywords", default: []
+    t.text "keyword_text"
+    t.text "mesh_keyword_text"
+    t.tsvector "content_search"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index "to_tsvector('english'::regconfig, ((COALESCE(keyword_text, ''::text) || ''::text) || COALESCE(mesh_keyword_text, ''::text)))", name: "index_artifacts_on_keyword_text", using: :gin
+    t.index ["content_search"], name: "index_artifacts_on_content_search", using: :gin
     t.index ["keywords"], name: "index_artifacts_on_keywords", using: :gin
     t.index ["mesh_keywords"], name: "index_artifacts_on_mesh_keywords", using: :gin
     t.index ["repository_id"], name: "index_artifacts_on_repository_id"

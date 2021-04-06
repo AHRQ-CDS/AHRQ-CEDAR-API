@@ -35,8 +35,8 @@
               "type": "string"
             },
             {
-              "name": "keyword",
-              "definition": "http://ahrq.gov/cedar/SearchParameter/cedar-citiation-keyword",
+              "name": "classification",
+              "definition": "http://ahrq.gov/cedar/SearchParameter/cedar-citiation-classification",
               "type": "string"
             },
             {
@@ -50,7 +50,13 @@
           "type": "SearchParameter",
           "interaction": [
             {
-              "code": "read"
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "url",
+              "type": "uri"
             }
           ]
         }

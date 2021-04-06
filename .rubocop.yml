@@ -30,5 +30,8 @@ Metrics/MethodLength:
 Metrics/PerceivedComplexity:
   Enabled: false
   
+Style/SymbolArray:
+  Enabled: false
+  
 Minitest/MultipleAssertions:
   Max: 10
