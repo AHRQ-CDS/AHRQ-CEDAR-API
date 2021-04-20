@@ -107,6 +107,13 @@ namespace '/fhir' do
       when 'title:contains'
         search_terms.map! { |t| "%#{t}%" }
         filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
+      when 'article-status'
+        search_terms = value.split(',').map { |term| term.strip.downcase.to_s }
+        if search_terms.length == 1
+          filter = filter.where(:artifact_status, search_terms.first)
+        else
+          filter = filter.where(:artifact_status, search_terms)
+        end
       end
     end
 
