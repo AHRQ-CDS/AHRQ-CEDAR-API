@@ -34,7 +34,7 @@ DB[:artifacts].insert(
   id: 3,
   cedar_identifier: 'abc-3',
   remote_identifier: '103',
-  artifact_status: 'active',
+  artifact_status: 'retired',
   title: 'Type 2 Diabetes',
   keywords: '["diabetes"]',
   mesh_keywords: '[]',

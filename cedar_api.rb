@@ -110,9 +110,9 @@ namespace '/fhir' do
       when 'artifact-current-state'
         search_terms = value.split(',').map { |term| term.strip.downcase.to_s }
         filter = if search_terms.length == 1
-                   filter.where(:artifact_status, search_terms.first)
+                   filter.where(artifact_status: search_terms.first)
                  else
-                   filter.where(:artifact_status, search_terms)
+                   filter.where(artifact_status: search_terms)
                  end
       end
     end
