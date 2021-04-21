@@ -40,7 +40,13 @@
               "type": "string"
             },
             {
-              "name": "status",
+              "extension" : [
+                {
+                  "url" : "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation",
+                  "valueCode" : "SHALL"
+                }
+              ],
+              "name": "artifact-current-state",              
               "definition": "http://ahrq.gov/cedar/SearchParameter/cedar-citiation-artifact-current-state",
               "type": "token"
             },

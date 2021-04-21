@@ -79,6 +79,23 @@ namespace '/fhir' do
   def find_resources(params)
     filter = Artifact.join(:repositories, id: :repository_id)
 
+    # artifact-current-state is required
+    unless params&.any? { |key, _value| key == 'artifact-current-state' }
+      oo = FHIR::OperationOutcome.new(
+        issue: [
+          {
+            severity: 'error',
+            code: 'required',
+            detail: {
+              text: 'Required search parameter artifact-current-state is missing'
+            }
+          }
+        ]
+      )
+
+      return oo.to_json
+    end
+
     params&.each do |key, value|
       search_terms = value.split(',').map { |v| v.strip.downcase.to_s }
 

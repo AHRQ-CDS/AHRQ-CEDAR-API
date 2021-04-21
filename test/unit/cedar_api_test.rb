@@ -20,6 +20,17 @@ describe 'cedar_api' do
     bundle
   end
 
+  def assert_operation_outcome
+    assert last_response.ok?
+    resource = FHIR.from_contents(last_response.body)
+
+    refute_nil resource
+    assert resource.is_a?(FHIR::OperationOutcome)
+    assert resource.issue.size.positive?
+
+    resource
+  end
+
   describe 'root' do
     it 'returns count of artifacts' do
       get '/'
@@ -68,7 +79,7 @@ describe 'cedar_api' do
     end
 
     it 'supports search by _content' do
-      get '/fhir/Citation?_content=cancer'
+      get '/fhir/Citation?_content=cancer&artifact-current-state=active'
       bundle = assert_bundle
 
       assert bundle.entry.all? do |entry|
@@ -78,7 +89,7 @@ describe 'cedar_api' do
     end
 
     it 'supports search by title' do
-      get '/fhir/Citation?title=diabetes'
+      get '/fhir/Citation?title=diabetes&artifact-current-state=active'
       bundle = assert_bundle
       assert bundle.entry.all? do |entry|
         entry.resource.title.downcase.start_with?('diabetes')
@@ -86,7 +97,7 @@ describe 'cedar_api' do
     end
 
     it 'supports search by title with multiple OR' do
-      get '/fhir/Citation?title=cancer,diabetes'
+      get '/fhir/Citation?title=cancer,diabetes&artifact-current-state=active'
       bundle = assert_bundle
       assert bundle.entry.all? do |entry|
         entry.resource.title.downcase.start_with?('diabetes') ||
@@ -95,7 +106,7 @@ describe 'cedar_api' do
     end
 
     it 'supports search by title with :contains modifier' do
-      get '/fhir/Citation?title:contains=diabetes'
+      get '/fhir/Citation?title:contains=diabetes&artifact-current-state=active'
       bundle = assert_bundle
       assert bundle.entry.all? do |entry|
         entry.resource.title.downcase.include?('diabetes')
@@ -103,7 +114,7 @@ describe 'cedar_api' do
     end
 
     it 'supports search by keyword' do
-      get '/fhir/Citation?keyword=diabetes'
+      get '/fhir/Citation?keyword=diabetes&artifact-current-state=active'
       bundle = assert_bundle
       assert bundle.entry.all? do |entry|
         entry.resource.keywordList.any? do |keyword_list|
@@ -113,7 +124,7 @@ describe 'cedar_api' do
     end
 
     it 'supports search by keyword with multiple OR' do
-      get '/fhir/Citation?keyword=diabetes,Adult'
+      get '/fhir/Citation?keyword=diabetes,Adult&artifact-current-state=active'
       bundle = assert_bundle
       assert bundle.entry.all? do |entry|
         entry.resource.keywordList.any? do |keyword_list|
@@ -121,6 +132,14 @@ describe 'cedar_api' do
             keyword.value.downcase == 'diabetes' || keyword.value.downcase == 'adult'
           end
         end
+      end
+    end
+
+    it 'requires artifact-current-state search parameter' do
+      get 'fhir/Citation?_content=cancer'
+      oo = assert_operation_outcome
+      assert oo.issue.any? do |issue|
+        issue.severity == 'error' && issue.code == 'required'
       end
     end
 
