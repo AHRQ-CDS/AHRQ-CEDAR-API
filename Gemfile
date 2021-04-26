@@ -2,6 +2,7 @@
 
 source 'https://rubygems.org'
 
+gem 'addressable'
 gem 'fhir_models'
 gem 'pry'
 gem 'pry-byebug'

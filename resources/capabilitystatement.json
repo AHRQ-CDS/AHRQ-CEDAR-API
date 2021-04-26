@@ -35,9 +35,17 @@
               "type": "string"
             },
             {
+              "name": "_count",
+              "type": "number"
+            },
+            {
               "name": "classification",
               "definition": "http://ahrq.gov/cedar/SearchParameter/cedar-citiation-classification",
               "type": "string"
+            },
+            {
+              "name": "page",
+              "type": "number"
             },
             {
               "extension" : [

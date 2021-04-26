@@ -78,6 +78,8 @@ namespace '/fhir' do
 
   def find_resources(params)
     filter = Artifact.join(:repositories, id: :repository_id)
+    page_size = -1
+    page_no = 1
 
     # artifact-current-state is required
     unless params&.any? { |key, _value| key == 'artifact-current-state' }
@@ -97,8 +99,6 @@ namespace '/fhir' do
     end
 
     params&.each do |key, value|
-      search_terms = value.split(',').map { |v| v.strip.downcase.to_s }
-
       case key
       when '_content'
         cols = ApiHelper.parse_full_text_search(value)
@@ -119,9 +119,11 @@ namespace '/fhir' do
         # Need to decide if we need use ts_vector to get better performance
         filter = filter.full_text_search([:keyword_text, :mesh_keyword_text], cols, opt)
       when 'title'
+        search_terms = value.split(',').map { |v| v.strip.downcase.to_s }
         search_terms.map! { |t| "#{t}%" }
         filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
       when 'title:contains'
+        search_terms = value.split(',').map { |v| v.strip.downcase.to_s }
         search_terms.map! { |t| "%#{t}%" }
         filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
       when 'artifact-current-state'
@@ -131,11 +133,63 @@ namespace '/fhir' do
                  else
                    filter.where(artifact_status: search_terms)
                  end
+      when '_count'
+        page_size = value.to_i
+      when 'page'
+        page_no = value.to_i
+        page_no = 1 if page_no < 1
       end
     end
 
-    artifacts = filter.all
-    bundle = FHIRAdapter.create_citation_bundle(artifacts, uri('fhir/Citation'))
+    # return count only
+    if page_size.zero?
+      bundle = FHIRAdapter.create_citation_bundle(nil, uri('fhir/Citation'), filter.count, true)
+      return bundle.to_json
+    end
+
+    # if page size is greater than 0, return paginated results.
+    # otherwise, return all results
+    if page_size.positive?
+      artifacts = filter.paginate(page_no, page_size)
+      total = artifacts.pagination_record_count
+    else
+      artifacts = filter.all
+      total = artifacts.size
+    end
+
+    bundle = FHIRAdapter.create_citation_bundle(artifacts, uri('fhir/Citation'), total, page_size.zero?)
+
+    # add link if request is not count only
+    bundle.link = []
+    bundle.link << FHIR::Bundle::Link.new(
+      {
+        relation: 'self',
+        url: ApiHelper.build_next_page_url(request, page_no, page_size)
+      }
+    )
+
+    if page_size.positive?
+      # first page does not have prev page
+      unless artifacts.first_page?
+        bundle.link << FHIR::Bundle::Link.new(
+          {
+            relation: 'prev',
+            url: ApiHelper.build_next_page_url(request, page_no - 1, page_size)
+          }
+        )
+      end
+
+      # last page does not have next page
+      unless artifacts.last_page?
+        bundle.link << FHIR::Bundle::Link.new(
+          {
+            relation: 'next',
+            url: ApiHelper.build_next_page_url(request, page_no + 1, page_size)
+          }
+        )
+      end
+    end
+
     bundle.to_json
   end
 

@@ -115,18 +115,22 @@ class FHIRAdapter
     timestamp&.strftime('%F')
   end
 
-  def self.create_citation_bundle(artifacts, artifact_base_url)
+  def self.create_citation_bundle(artifacts, artifact_base_url, total, count_only)
     bundle = FHIR::Bundle.new(
       type: 'searchset',
-      total: artifacts.size
+      total: total
     )
-    artifacts.each do |artifact|
-      citation = create_citation(artifact, artifact_base_url)
-      entry = FHIR::Bundle::Entry.new(
-        resource: citation
-      )
-      bundle.entry << entry
+
+    unless count_only
+      artifacts.each do |artifact|
+        citation = create_citation(artifact, artifact_base_url)
+        entry = FHIR::Bundle::Entry.new(
+          resource: citation
+        )
+        bundle.entry << entry
+      end
     end
+
     bundle
   end
 end
