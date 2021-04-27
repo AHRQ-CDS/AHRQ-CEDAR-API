@@ -169,6 +169,20 @@ namespace '/fhir' do
     )
 
     if page_size.positive?
+      bundle.link << FHIR::Bundle::Link.new(
+        {
+          relation: 'first',
+          url: ApiHelper.build_next_page_url(request, 1, page_size)
+        }
+      )
+
+      bundle.link << FHIR::Bundle::Link.new(
+        {
+          relation: 'last',
+          url: ApiHelper.build_next_page_url(request, artifacts.page_count, page_size)
+        }
+      )
+
       # first page does not have prev page
       unless artifacts.first_page?
         bundle.link << FHIR::Bundle::Link.new(

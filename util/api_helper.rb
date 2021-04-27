@@ -71,7 +71,7 @@ class ApiHelper
   end
 
   def self.build_next_page_url(request, page_no = 0, page_size = 0)
-    uri = Addressable::URI.parse("#{request.scheme}://#{request.host}:#{request.port}/#{request.path}")
+    uri = Addressable::URI.parse("#{request.scheme}://#{request.host}:#{request.port}#{request.path}")
     params = {}
 
     request.params.each do |key, value|
