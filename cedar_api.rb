@@ -88,7 +88,7 @@ namespace '/fhir' do
           {
             severity: 'error',
             code: 'required',
-            detail: {
+            details: {
               text: 'Required search parameter artifact-current-state is missing'
             }
           }
@@ -127,12 +127,8 @@ namespace '/fhir' do
         search_terms.map! { |t| "%#{t}%" }
         filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
       when 'artifact-current-state'
-        search_terms = value.split(',').map { |term| term.strip.downcase.to_s }
-        filter = if search_terms.length == 1
-                   filter.where(artifact_status: search_terms.first)
-                 else
-                   filter.where(artifact_status: search_terms)
-                 end
+        search_terms = value.split(',').map { |v| v.strip.downcase.to_s }
+        filter = filter.where(artifact_status: search_terms)
       when '_count'
         page_size = value.to_i
       when 'page'

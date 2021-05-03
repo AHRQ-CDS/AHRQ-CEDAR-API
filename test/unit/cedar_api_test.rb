@@ -7,28 +7,43 @@ describe 'cedar_api' do
   include Rack::Test::Methods
   include CedarApi::TestHelper
 
-  def assert_bundle
+  def assert_bundle(assert_total: true)
     assert last_response.ok?
     bundle = FHIR.from_contents(last_response.body)
 
     refute_nil bundle
     assert bundle.is_a?(FHIR::Bundle)
     assert_equal 'searchset', bundle.type
-    assert_equal bundle.total, bundle.entry.size
+    assert_equal bundle.total, bundle.entry.size if assert_total
     assert bundle.entry.size.positive?
 
     bundle
   end
 
-  def assert_operation_outcome
-    assert last_response.ok?
-    resource = FHIR.from_contents(last_response.body)
+  def assert_paging(bundle, count, page)
+    assert_equal(Artifact.count, bundle.total)
+    assert_equal(count, bundle.entry.length)
 
-    refute_nil resource
-    assert resource.is_a?(FHIR::OperationOutcome)
-    assert resource.issue.size.positive?
+    self_link = bundle.link&.find { |link| link.relation == 'self' }
+    prev_link = bundle.link&.find { |link| link.relation == 'prev' }
+    next_link = bundle.link&.find { |link| link.relation == 'next' }
 
-    resource
+    last_page = (bundle.total / count).ceil
+
+    refute_nil self_link&.url
+    assert_includes self_link.url, "page=#{page}"
+
+    case page
+    when 1
+      assert_nil prev_link
+      refute_nil next_link
+    when last_page
+      refute_nil prev_link
+      assert_nil next_link
+    else
+      refute_nil prev_link
+      refute_nil next_link
+    end
   end
 
   describe 'root' do
@@ -137,8 +152,14 @@ describe 'cedar_api' do
 
     it 'requires artifact-current-state search parameter' do
       get 'fhir/Citation?_content=cancer'
-      oo = assert_operation_outcome
-      assert oo.issue.any? do |issue|
+
+      assert last_response.ok?
+      resource = FHIR.from_contents(last_response.body)
+
+      refute_nil resource
+      assert resource.is_a?(FHIR::OperationOutcome)
+      assert resource.issue.size.positive?
+      assert resource.issue.any? do |issue|
         issue.severity == 'error' && issue.code == 'required'
       end
     end
@@ -161,6 +182,32 @@ describe 'cedar_api' do
           state.coding.any? { |coding| %w[active retired].include?(coding.code) }
         end
       end
+    end
+
+    it 'supports _count parameter for pagination' do
+      count = 1
+      get "/fhir/Citation?artifact-current-state=active,retired&_count=#{count}"
+      bundle = assert_bundle(assert_total: false)
+
+      assert_paging(bundle, count, 1)
+    end
+
+    it 'supports _count parameter for pagination and page parameter for selected page' do
+      count = 1
+      page = 2
+      get "/fhir/Citation?artifact-current-state=active,retired&_count=#{count}&page=#{page}"
+      bundle = assert_bundle(assert_total: false)
+
+      assert_paging(bundle, count, page)
+    end
+
+    it 'supports selected last page' do
+      count = 1
+      page = (Artifact.count / count).ceil
+      get "/fhir/Citation?artifact-current-state=active,retired&_count=#{count}&page=#{page}"
+      bundle = assert_bundle(assert_total: false)
+
+      assert_paging(bundle, count, page)
     end
   end
 end
