@@ -9,6 +9,9 @@ AllCops:
     - 'fhir/citation.rb' # FHIR model conventions trigger many cops
     - 'test/db/schema.rb' # Rails generated code from cedar_admin triggers many cops
 
+Style/GuardClause:
+  Enabled: false
+
 Bundler/OrderedGems:
   Enabled: false
 

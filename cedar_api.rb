@@ -10,6 +10,7 @@ require 'sinatra/cross_origin'
 require_relative 'database/models'
 require_relative 'fhir/fhir_adapter'
 require_relative 'util/api_helper'
+require_relative 'util/search_parser'
 
 configure do
   # Support cross-origin requests to allow JavaScript-based UIs hosted on different servers
@@ -101,7 +102,7 @@ namespace '/fhir' do
     params&.each do |key, value|
       case key
       when '_content'
-        cols = ApiHelper.parse_full_text_search(value)
+        cols = SearchParser.parse(value)
         opt = {
           language: 'english',
           rank: true,
@@ -110,7 +111,7 @@ namespace '/fhir' do
 
         filter = filter.full_text_search(:content_search, cols, opt)
       when 'classification'
-        cols = ApiHelper.parse_full_text_search(value)
+        cols = SearchParser.parse(value)
         opt = {
           language: 'english',
           rank: true
