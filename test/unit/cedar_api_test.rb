@@ -209,5 +209,15 @@ describe 'cedar_api' do
 
       assert_paging(bundle, count, page)
     end
+
+    it 'supports artifact-publisher parameter' do
+      publisher = 'uspStf'
+      get "/fhir/Citation?artifact-current-state=active&artifact-publisher=#{publisher}"
+      bundle = assert_bundle
+
+      assert bundle.entry.all? do |entry|
+        entry.resource.citedArtifact.publicationForm.any? { |f| f.publishedIn.publisher.display.casecmp?(publisher) }
+      end
+    end
   end
 end

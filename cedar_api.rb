@@ -143,6 +143,9 @@ namespace '/fhir' do
       when 'artifact-current-state'
         search_terms = value.split(',').map { |v| v.strip.downcase.to_s }
         filter = filter.where(artifact_status: search_terms)
+      when 'artifact-publisher'
+        search_terms = value.split(',').map { |v| v.strip.downcase.to_s }
+        filter = filter.where { |o| { o.lower(:name) => search_terms } }
       when '_count'
         page_size = value.to_i
       when 'page'
