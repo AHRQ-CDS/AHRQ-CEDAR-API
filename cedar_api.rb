@@ -27,6 +27,19 @@ get '/demo' do
     <form action="/fhir/Citation" method="get">
       <label for="_content">Search Text:</label>
       <input type="text" id="_content" name="_content">
+      <input type="hidden" id="artifact-current-state" name="artifact-current-state" value="active">
+      <button type="submit">Search</button>
+    </form>
+    <form action="/fhir/Citation" method="get">
+      <label for="keyword">Search Keywords:</label>
+      <input type="text" id="classification" name="classification">
+      <input type="hidden" id="artifact-current-state" name="artifact-current-state" value="active">
+      <button type="submit">Search</button>
+    </form>
+    <form action="/fhir/Citation" method="get">
+      <label for="title">Search Title:</label>
+      <input type="text" id="title" name="title:contains">
+      <input type="hidden" id="artifact-current-state" name="artifact-current-state" value="active">
       <button type="submit">Search</button>
     </form>
     <ul>
