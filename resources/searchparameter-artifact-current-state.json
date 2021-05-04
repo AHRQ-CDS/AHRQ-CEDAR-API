@@ -1,0 +1,20 @@
+{
+  "resourceType": "SearchParameter",
+  "id": "cedar-citiation-classification",
+  "url": "http://ahrq.gov/cedar/SearchParameter/cedar-citiation-artifact-current-state",
+  "version": "0.1.0",
+  "name": "CedarCitationArtifactCurrentState",
+  "status": "active",
+  "experimental": false,
+  "date": "2021-04-20",
+  "publisher": "ARHQ CEDAR",
+  "code": "artifact-current-state",
+  "base": [
+    "Citation"
+  ],
+  "description" : "Current state of the cited artifact",
+  "type": "token",
+  "expression": "Citation.citedArtifact.currentState",
+  "xpath" : "f:Citation/f:citedArtifact/f:currentState",
+  "xpathUsage" : "normal"
+}

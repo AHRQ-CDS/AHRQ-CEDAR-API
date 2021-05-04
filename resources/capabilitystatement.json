@@ -35,9 +35,28 @@
               "type": "string"
             },
             {
+              "name": "_count",
+              "type": "number"
+            },
+            {
               "name": "classification",
               "definition": "http://ahrq.gov/cedar/SearchParameter/cedar-citiation-classification",
               "type": "string"
+            },
+            {
+              "name": "page",
+              "type": "number"
+            },
+            {
+              "extension" : [
+                {
+                  "url" : "http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation",
+                  "valueCode" : "SHALL"
+                }
+              ],
+              "name": "artifact-current-state",              
+              "definition": "http://ahrq.gov/cedar/SearchParameter/cedar-citiation-artifact-current-state",
+              "type": "token"
             },
             {
               "name": "title",

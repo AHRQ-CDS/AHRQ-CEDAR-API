@@ -12,6 +12,7 @@ database_config = config[env]
 
 # Connect to the specified database
 DB = Sequel.connect(database_config)
+DB.extension(:pagination)
 
 # Add JSON output capability to all models
 Sequel::Model.plugin :json_serializer
