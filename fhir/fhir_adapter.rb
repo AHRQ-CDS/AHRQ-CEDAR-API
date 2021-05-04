@@ -51,7 +51,7 @@ class FHIRAdapter
         ],
         abstract: [
           {
-            text: artifact.description_markdown
+            text: artifact.description_markdown || artifact.description
           }
         ],
         # copyright: Need repo's copyright declaration here
