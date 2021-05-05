@@ -50,6 +50,11 @@ not_found do
   'Not found'
 end
 
+get '/publisher' do
+  r = Repository.map(&:name)
+  return r.to_json
+end
+
 namespace '/fhir' do
   before do
     content_type 'application/fhir+json; charset=utf-8'

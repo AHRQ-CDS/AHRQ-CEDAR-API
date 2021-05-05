@@ -59,6 +59,19 @@ describe 'cedar_api' do
     end
   end
 
+  describe '/publisher endpoint' do
+    it 'returns publishers' do
+      get '/publisher'
+      assert last_response.ok?
+      result = JSON.parse(last_response.body)
+      assert result.is_a?(Array)
+      assert_equal result.length, Repository.count
+
+      expected = Repository.map(&:name)
+      assert_empty(result - expected)
+    end
+  end
+
   describe '/fhir endpoint' do
     it 'returns CapabilityStatement from /metadata endpoint' do
       get '/fhir/metadata'
