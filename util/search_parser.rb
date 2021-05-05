@@ -25,9 +25,20 @@ class SearchParser
     end
   end
 
+  # Add any configured synonyms
+  def add_synonyms(term)
+    synonym = Synonym.where(word: term).first
+    return term if synonym.nil?
+
+    synonyms = [term, JSON.parse(synonym.synonyms)].flatten
+    "(#{synonyms.join('|')})"
+  end
+
   # Parse any search term, matching \w
-  def parse_term
-    parse_regexp(/^(\w+)/)
+  def parse_term(synonym_support: false)
+    term = parse_regexp(/^(\w+)/)
+    term = add_synonyms(term) if synonym_support
+    term
   end
 
   # The operators supported by the API and the conversion to PostgreSQL full text search
@@ -68,7 +79,7 @@ class SearchParser
   # Parse a series of any of the supported concepts, returned as a set of nested arrays representing parentheticals
   def parse_expression
     tokens = []
-    while (token = parse_parenthetical || parse_quoted || parse_operator || parse_term)
+    while (token = parse_parenthetical || parse_quoted || parse_operator || parse_term(synonym_support: true))
       tokens << token
     end
     # Add in the implicit & between any two tokens that don't have an operator between them

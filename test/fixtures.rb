@@ -49,3 +49,10 @@ DB[:artifacts].update(content_search: Sequel.lit(
   setweight(to_tsvector('english', coalesce(mesh_keyword_text, '')), 'B') ||
   setweight(to_tsvector('english', coalesce(description, '')), 'D')"
 ))
+DB[:synonyms].insert(
+  id: 1,
+  word: 'foo',
+  synonyms: '["bar", "baz"]',
+  created_at: timestamp,
+  updated_at: timestamp
+)

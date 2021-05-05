@@ -10,3 +10,6 @@ end
 class Repository < Sequel::Model
   one_to_many :artifacts
 end
+
+class Synonym < Sequel::Model
+end

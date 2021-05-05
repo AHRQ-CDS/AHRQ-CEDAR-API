@@ -10,6 +10,12 @@ describe SearchParser do
       assert_equal('aa&bb&cc', result)
     end
 
+    it 'handles synonyms in simple text searches' do
+      source = 'aa foo cc'
+      result = SearchParser.parse(source)
+      assert_equal('aa&(foo|bar|baz)&cc', result)
+    end
+
     it 'handles simple parenthetical, adding implicit &s' do
       source = '(aa bb cc)'
       result = SearchParser.parse(source)
@@ -22,16 +28,34 @@ describe SearchParser do
       assert_equal('aa&(bb&cc)', result)
     end
 
+    it 'handles synonyms within more complex implicit &s mixed with parentheticals' do
+      source = 'aa (foo cc)'
+      result = SearchParser.parse(source)
+      assert_equal('aa&((foo|bar|baz)&cc)', result)
+    end
+
     it 'handles more complex implicit &s mixed with negation' do
       source = 'aa NOT bb'
       result = SearchParser.parse(source)
       assert_equal('aa&!bb', result)
     end
 
+    it 'handles synonyms with more complex implicit &s mixed with negation' do
+      source = 'aa NOT foo'
+      result = SearchParser.parse(source)
+      assert_equal('aa&!(foo|bar|baz)', result)
+    end
+
     it 'handles complex full text search expression' do
       source = '"aa bb" AND (cc OR NOT dd)'
       result = SearchParser.parse(source)
       assert_equal('aa<->bb&(cc|!dd)', result)
+    end
+
+    it 'ignores synonyms within full text search expression' do
+      source = '"aa foo" AND (cc OR NOT foo)'
+      result = SearchParser.parse(source)
+      assert_equal('aa<->foo&(cc|!(foo|bar|baz))', result)
     end
 
     it 'handles complex full text search expression with multiple double quotes' do
