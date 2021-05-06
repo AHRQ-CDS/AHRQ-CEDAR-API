@@ -51,6 +51,8 @@ not_found do
 end
 
 get '/publisher' do
+  content_type 'application/json'
+  response.headers['Access-Control-Allow-Origin'] = '*'
   r = Repository.map(&:name)
   return r.to_json
 end
