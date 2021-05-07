@@ -16,6 +16,12 @@ describe SearchParser do
       assert_equal('aa&(foo|bar|baz)&cc', result)
     end
 
+    it 'handles multi-word synonyms in simple text searches' do
+      source = 'aa abc cc'
+      result = SearchParser.parse(source)
+      assert_equal('aa&(abc|foo<->bar<->baz)&cc', result)
+    end
+
     it 'handles simple parenthetical, adding implicit &s' do
       source = '(aa bb cc)'
       result = SearchParser.parse(source)

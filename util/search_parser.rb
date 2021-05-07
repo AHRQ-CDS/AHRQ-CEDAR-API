@@ -27,10 +27,14 @@ class SearchParser
 
   # Add any configured synonyms
   def add_synonyms(term)
-    synonym = Synonym.where(word: term).first
-    return term if synonym.nil?
+    synonyms_op = Sequel.pg_jsonb_op(:synonyms)
+    concept = Concept.where(synonyms_op.contains([term])).first
+    return term if concept.nil?
 
-    synonyms = [term, JSON.parse(synonym.synonyms)].flatten
+    synonyms = concept.synonyms.map do |synonym|
+      tokens = synonym.split(/[, ]+/)
+      tokens.length > 1 ? tokens.join('<->') : synonym
+    end
     "(#{synonyms.join('|')})"
   end
 
