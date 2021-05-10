@@ -25,17 +25,28 @@ class SearchParser
     end
   end
 
-  # Add any configured synonyms
-  def add_synonyms(term)
+  # Returns a Concept for which the supplied term is a synonym or nil if none found
+  def get_concept(term)
     synonyms_op = Sequel.pg_jsonb_op(:synonyms)
-    concept = Concept.where(synonyms_op.contains([term])).first
-    return term if concept.nil?
+    Concept.where(synonyms_op.contains([term])).first
+  end
 
+  # Convert a concept to a PostgreSQL search string using its synonyms
+  def to_postgres_search(concept)
     synonyms = concept.synonyms.map do |synonym|
       tokens = synonym.split(/[, ]+/)
       tokens.length > 1 ? tokens.join('<->') : synonym
     end
     "(#{synonyms.join('|')})"
+  end
+
+  # Returns the supplied term if no synonyms are found or a bracketed set of synonyms
+  # if any are found
+  def add_synonyms(term)
+    concept = get_concept(term)
+    return term if concept.nil?
+
+    to_postgres_search(concept)
   end
 
   # Parse any search term, matching \w
@@ -76,11 +87,17 @@ class SearchParser
         terms << term
       end
       parse_regexp(/^(")/)
-      terms.join('<->')
+      concept = get_concept(terms.join(' '))
+      if concept.nil?
+        terms.join('<->')
+      else
+        to_postgres_search(concept)
+      end
     end
   end
 
-  # Parse a series of any of the supported concepts, returned as a set of nested arrays representing parentheticals
+  # Parse a series of any of the supported concepts, returned as a set of nested
+  # arrays representing parentheticals
   def parse_expression
     tokens = []
     while (token = parse_parenthetical || parse_quoted || parse_operator || parse_term(synonym_support: true))

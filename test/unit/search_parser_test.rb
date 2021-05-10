@@ -58,10 +58,16 @@ describe SearchParser do
       assert_equal('aa<->bb&(cc|!dd)', result)
     end
 
-    it 'ignores synonyms within full text search expression' do
+    it 'ignores synonyms that do not match a multi-word full text search expression' do
       source = '"aa foo" AND (cc OR NOT foo)'
       result = SearchParser.parse(source)
       assert_equal('aa<->foo&(cc|!(foo|bar|baz))', result)
+    end
+
+    it 'handles multi-word synonyms within multi-word full text search expression' do
+      source = '"foo bar" AND (cc OR NOT foo)'
+      result = SearchParser.parse(source)
+      assert_equal('(foo<->bar|baz)&(cc|!(foo|bar|baz))', result)
     end
 
     it 'handles complex full text search expression with multiple double quotes' do

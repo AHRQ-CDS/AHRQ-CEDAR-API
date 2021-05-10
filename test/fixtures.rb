@@ -63,3 +63,11 @@ DB[:concepts].insert(
   created_at: timestamp,
   updated_at: timestamp
 )
+
+DB[:concepts].insert(
+  id: 3,
+  canonical: 'foo bar',
+  synonyms: '["foo bar", "baz"]',
+  created_at: timestamp,
+  updated_at: timestamp
+)
