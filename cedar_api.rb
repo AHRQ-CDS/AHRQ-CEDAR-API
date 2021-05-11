@@ -50,13 +50,6 @@ not_found do
   'Not found'
 end
 
-get '/publisher' do
-  content_type 'application/json'
-  response.headers['Access-Control-Allow-Origin'] = '*'
-  r = Repository.map(&:name)
-  return r.to_json
-end
-
 namespace '/fhir' do
   before do
     content_type 'application/fhir+json; charset=utf-8'

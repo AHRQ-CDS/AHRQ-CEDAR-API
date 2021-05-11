@@ -71,6 +71,14 @@
           ]
         },
         {
+          "type": "Organization",
+          "interaction": [
+            {
+              "code": "read"
+            }
+          ]
+        },
+        {
           "type": "SearchParameter",
           "interaction": [
             {
