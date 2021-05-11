@@ -65,10 +65,6 @@ describe 'cedar_api' do
       assert last_response.ok?
       result = JSON.parse(last_response.body)
       assert result.is_a?(Array)
-      assert_equal result.length, Repository.count
-
-      expected = Repository.map(&:name)
-      assert_empty(result - expected)
     end
   end
 
@@ -231,6 +227,31 @@ describe 'cedar_api' do
       assert bundle.entry.all? do |entry|
         entry.resource.citedArtifact.publicationForm.any? { |f| f.publishedIn.publisher.display.casecmp?(publisher) }
       end
+    end
+  end
+
+  describe '/fhir/Organization endpoint' do
+    it 'supports read by id' do
+      repo_id = 'uspstf'
+      get "/fhir/Organization/#{repo_id}"
+
+      assert last_response.ok?
+      resource = FHIR.from_contents(last_response.body)
+      refute_nil resource
+      assert resource.is_a?(FHIR::Organization)
+      assert_equal(repo_id, resource.id)
+    end
+
+    it 'supports read all repositories' do
+      get '/fhir/Organization'
+
+      assert last_response.ok?
+      resource = FHIR.from_contents(last_response.body)
+      refute_nil resource
+      assert resource.is_a?(FHIR::Bundle)
+
+      assert_equal(resource.total, Repository.count)
+      assert_equal(resource.total, resource.entry.length)
     end
   end
 end

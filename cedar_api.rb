@@ -80,16 +80,35 @@ namespace '/fhir' do
     end
   end
 
+  get '/Organization' do
+    bundle = FHIRAdapter.create_organization_bundle(Repository.all)
+
+    uri = Addressable::URI.parse("#{request.scheme}://#{request.host}:#{request.port}#{request.path}")
+
+    # add link if request is not count only
+    bundle.link << FHIR::Bundle::Link.new(
+      {
+        relation: 'self',
+        url: uri.normalize.to_str
+      }
+    )
+
+    bundle.to_json
+  end
+
+  get '/Organization/:id' do
+    id = params[:id]
+
+    repo = Repository.first(fhir_id: id)
+    halt(404) if repo.nil?
+
+    citation = FHIRAdapter.create_organization(repo)
+    citation.to_json
+  end
+
   get '/Citation/:id' do
     id = params[:id]
-    get_resource(id)
-  end
 
-  get '/Citation' do
-    find_resources(params)
-  end
-
-  def get_resource(id)
     artifact = Artifact.first(cedar_identifier: id)
     halt(404) if artifact.nil?
 
@@ -97,7 +116,11 @@ namespace '/fhir' do
     citation.to_json
   end
 
-  def find_resources(params)
+  get '/Citation' do
+    find_citation(params)
+  end
+
+  def find_citation(params)
     filter = Artifact.join(:repositories, id: :repository_id)
     page_size = -1
     page_no = 1
@@ -179,8 +202,6 @@ namespace '/fhir' do
 
     bundle = FHIRAdapter.create_citation_bundle(artifacts, uri('fhir/Citation'), total, page_size.zero?)
 
-    # add link if request is not count only
-    bundle.link = []
     bundle.link << FHIR::Bundle::Link.new(
       {
         relation: 'self',
@@ -188,6 +209,7 @@ namespace '/fhir' do
       }
     )
 
+    # add link if request is not count only
     if page_size.positive?
       bundle.link << FHIR::Bundle::Link.new(
         {
@@ -234,17 +256,6 @@ namespace '/fhir' do
       args = search_terms.map { |term| Sequel::SQL::BooleanExpression.new(operator, target, term) }
       filter = filter.where(Sequel::SQL::BooleanExpression.new(:OR, *args))
     end
-    filter
-  end
-
-  def append_placeholder_string(str, search_terms, filter)
-    if search_terms.length == 1
-      filter = filter.where(Sequel::SQL::PlaceholderLiteralString.new(str, search_terms.first))
-    elsif search_terms.length > 1
-      args = search_terms.map { |term| Sequel::SQL::PlaceholderLiteralString.new(str, term) }
-      filter = filter.where(Sequel::SQL::BooleanExpression.new(:OR, *args))
-    end
-
     filter
   end
 end
