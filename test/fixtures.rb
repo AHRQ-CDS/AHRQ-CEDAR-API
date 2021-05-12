@@ -51,23 +51,26 @@ DB[:artifacts].update(content_search: Sequel.lit(
 ))
 DB[:concepts].insert(
   id: 1,
-  canonical: 'foo',
-  synonyms: '["foo", "bar", "baz"]',
+  name: 'foo',
+  synonyms_text: '["foo", "bar", "baz"]',
+  synonyms_psql: '["foo", "bar", "baz"]',
   created_at: timestamp,
   updated_at: timestamp
 )
 DB[:concepts].insert(
   id: 2,
-  canonical: 'abc',
-  synonyms: '["abc", "foo, bar, baz"]',
+  name: 'abc',
+  synonyms_text: '["abc", "foo, bar, baz"]',
+  synonyms_psql: '["abc", "foo<->bar<->baz"]',
   created_at: timestamp,
   updated_at: timestamp
 )
 
 DB[:concepts].insert(
   id: 3,
-  canonical: 'foo bar',
-  synonyms: '["foo bar", "baz"]',
+  name: 'foo bar',
+  synonyms_text: '["foo bar", "baz"]',
+  synonyms_psql: '["foo<->bar", "baz"]',
   created_at: timestamp,
   updated_at: timestamp
 )
