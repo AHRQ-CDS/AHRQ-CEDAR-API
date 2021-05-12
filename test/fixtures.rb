@@ -37,7 +37,7 @@ DB[:artifacts].insert(
   keywords: '["Diabetes", "Adult"]',
   mesh_keywords: '[]',
   keyword_text: 'Diabetes, Adult',
-  repository_id: 1,
+  repository_id: 2,
   created_at: timestamp,
   updated_at: timestamp
 )

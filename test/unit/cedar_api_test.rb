@@ -211,7 +211,7 @@ describe 'cedar_api' do
     end
 
     it 'supports artifact-publisher parameter' do
-      publisher = 'uspStf'
+      publisher = 'CDS-connect'
       get "/fhir/Citation?artifact-current-state=active&artifact-publisher=#{publisher}"
       bundle = assert_bundle
 
