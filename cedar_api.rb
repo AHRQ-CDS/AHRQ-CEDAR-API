@@ -78,7 +78,6 @@ namespace '/fhir' do
 
     uri = Addressable::URI.parse("#{request.scheme}://#{request.host}:#{request.port}#{request.path}")
 
-    # add link if request is not count only
     bundle.link << FHIR::Bundle::Link.new(
       {
         relation: 'self',
@@ -92,10 +91,10 @@ namespace '/fhir' do
   get '/Organization/:id' do
     id = params[:id]
 
-    repo = Repository.first(fhir_id: id)
-    halt(404) if repo.nil?
+    repository = Repository.first(fhir_id: id)
+    halt(404) if repository.nil?
 
-    citation = FHIRAdapter.create_organization(repo)
+    citation = FHIRAdapter.create_organization(repository)
     citation.to_json
   end
 
@@ -110,7 +109,8 @@ namespace '/fhir' do
   end
 
   get '/Citation' do
-    find_citation(params)
+    bundle = ApiHelper.find_citation(params, uri('fhir/Citation'), request)
+    bundle.to_json
   end
 
   def find_citation(params)
@@ -240,15 +240,5 @@ namespace '/fhir' do
     end
 
     bundle.to_json
-  end
-
-  def append_boolean_expression(operator, target, search_terms, filter)
-    if search_terms.length == 1
-      filter = filter.where(Sequel::SQL::BooleanExpression.new(operator, target, search_terms.first))
-    elsif search_terms.length > 1
-      args = search_terms.map { |term| Sequel::SQL::BooleanExpression.new(operator, target, term) }
-      filter = filter.where(Sequel::SQL::BooleanExpression.new(:OR, *args))
-    end
-    filter
   end
 end
