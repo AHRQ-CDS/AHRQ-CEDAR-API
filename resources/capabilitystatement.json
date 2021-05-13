@@ -59,9 +59,22 @@
               "type": "token"
             },
             {
+              "name": "artifact-publisher",              
+              "definition": "http://ahrq.gov/cedar/SearchParameter/cedar-citiation-artifact-publisher",
+              "type": "string"
+            },
+            {
               "name": "title",
               "definition": "http://ahrq.gov/cedar/SearchParameter/cedar-citiation-title",
               "type": "string"
+            }
+          ]
+        },
+        {
+          "type": "Organization",
+          "interaction": [
+            {
+              "code": "read"
             }
           ]
         },

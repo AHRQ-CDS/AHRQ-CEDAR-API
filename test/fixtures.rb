@@ -1,7 +1,18 @@
 # frozen_string_literal: true
 
 timestamp = Date.today
-DB[:repositories].insert(id: 1, name: 'USPSTF', created_at: timestamp, updated_at: timestamp)
+DB[:repositories].insert(id: 1,
+                         name: 'USPSTF',
+                         fhir_id: 'uspstf',
+                         home_page: 'https://www.uspreventiveservicestaskforce.org/uspstf/',
+                         created_at: timestamp,
+                         updated_at: timestamp)
+DB[:repositories].insert(id: 2,
+                         name: 'CDS Connect',
+                         fhir_id: 'cds-connect',
+                         home_page: 'https://cds.ahrq.gov/cdsconnect',
+                         created_at: timestamp,
+                         updated_at: timestamp)
 DB[:artifacts].insert(
   id: 1,
   cedar_identifier: 'abc-1',
@@ -26,7 +37,7 @@ DB[:artifacts].insert(
   keywords: '["Diabetes", "Adult"]',
   mesh_keywords: '[]',
   keyword_text: 'Diabetes, Adult',
-  repository_id: 1,
+  repository_id: 2,
   created_at: timestamp,
   updated_at: timestamp
 )

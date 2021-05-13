@@ -59,6 +59,7 @@ class FHIRAdapter
           {
             publishedIn: {
               publisher: {
+                reference: "Organization/#{artifact.repository.fhir_id}",
                 display: artifact.repository.name
               }
             },
@@ -118,7 +119,8 @@ class FHIRAdapter
   def self.create_citation_bundle(artifacts, artifact_base_url, total, count_only)
     bundle = FHIR::Bundle.new(
       type: 'searchset',
-      total: total
+      total: total,
+      link: []
     )
 
     unless count_only
@@ -132,5 +134,31 @@ class FHIRAdapter
     end
 
     bundle
+  end
+
+  def self.create_organization(repository)
+    FHIR::Organization.new(
+      id: repository.fhir_id,
+      name: repository.name,
+      telecom: [
+        {
+          system: 'url',
+          value: repository.home_page
+        }
+      ]
+    )
+  end
+
+  def self.create_organization_bundle(repositories)
+    FHIR::Bundle.new(
+      type: 'searchset',
+      total: repositories.length,
+      link: [],
+      entry: repositories.map do |r|
+               FHIR::Bundle::Entry.new(
+                 resource: create_organization(r)
+               )
+             end
+    )
   end
 end
