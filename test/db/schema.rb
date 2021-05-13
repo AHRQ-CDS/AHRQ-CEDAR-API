@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_18_182334) do
+ActiveRecord::Schema.define(version: 2021_05_05_170405) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,6 +42,29 @@ ActiveRecord::Schema.define(version: 2020_12_18_182334) do
     t.index ["repository_id"], name: "index_artifacts_on_repository_id"
   end
 
+  create_table "concepts", force: :cascade do |t|
+    t.string "name"
+    t.jsonb "synonyms_text", default: []
+    t.jsonb "synonyms_psql", default: []
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["synonyms_psql"], name: "index_concepts_on_synonyms_psql", using: :gin
+  end
+
+  create_table "import_runs", force: :cascade do |t|
+    t.bigint "repository_id", null: false
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.string "status"
+    t.string "error_message"
+    t.integer "total_count", default: 0, null: false
+    t.integer "new_count", default: 0, null: false
+    t.integer "update_count", default: 0, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["repository_id"], name: "index_import_runs_on_repository_id"
+  end
+
   create_table "repositories", force: :cascade do |t|
     t.string "name"
     t.string "home_page"
@@ -50,4 +73,5 @@ ActiveRecord::Schema.define(version: 2020_12_18_182334) do
   end
 
   add_foreign_key "artifacts", "repositories"
+  add_foreign_key "import_runs", "repositories"
 end

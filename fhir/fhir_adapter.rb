@@ -8,9 +8,9 @@ class FHIRAdapter
     cedar_identifier = artifact[:cedar_identifier]
     # TODO: Put handling of JSONP array into model
     # TODO: Separate different types of keywords
-    keywords = JSON.parse(artifact.keywords)
+    keywords = artifact.keywords
     keyword_list = keywords.map { |k| FHIR::CodeableConcept.new(text: k) }
-    mesh_keywords = JSON.parse(artifact.mesh_keywords)
+    mesh_keywords = artifact.mesh_keywords
     mesh_keyword_list = mesh_keywords.map { |k| FHIR::CodeableConcept.new(text: k) }
 
     citation = FHIR::Citation.new(
