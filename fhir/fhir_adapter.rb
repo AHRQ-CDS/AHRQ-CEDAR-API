@@ -133,6 +133,14 @@ class FHIRAdapter
         ],
         webLocation: [
           {
+            type: {
+              coding: [
+                {
+                  system: 'http://terminology.hl7.org/CodeSystem/article-url-type',
+                  code: artifact.url&.end_with?('.pdf') ? 'pdf' : 'full-text'
+                }
+              ]
+            },
             url: artifact.url
           }
         ]
@@ -171,6 +179,20 @@ class FHIRAdapter
           ]
         },
         classifier: mesh_keyword_list
+      )
+    end
+
+    unless artifact.artifact_type.nil?
+      citation.citedArtifact.classification << FHIR::Citation::CitedArtifact::Classification.new(
+        type: {
+          coding: [
+            {
+              system: 'http://terminology.hl7.org/CodeSystem/cited-artifact-classification-type',
+              code: 'knowledge-artifact-type'
+            }
+          ]
+        },
+        classifier: [FHIR::CodeableConcept.new(text: artifact.artifact_type)]
       )
     end
 
