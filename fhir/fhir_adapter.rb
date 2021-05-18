@@ -26,6 +26,16 @@ class FHIRAdapter
       status: 'active', # Will a CEDAR citation be retired in the future?
       date: to_fhir_date(artifact.updated_at),
       publisher: 'CEDAR',
+      contact: [
+        {
+          name: 'CEDAR',
+          telecom: {
+            system: 'url',
+            value: 'http://ahrq.gov/cedar',
+            use: 'work'
+          }
+        }
+      ],
       # classification: Does CEDAR citation have its own keywords?
       # copyright: need CEDAR copyright declaration here
       citedArtifact: {
@@ -46,12 +56,48 @@ class FHIRAdapter
         ],
         title: [
           {
-            text: artifact.title
+            text: artifact.title,
+            type: {
+              coding: [
+                {
+                  system: 'http://terminology.hl7.org/CodeSystem/title-type',
+                  code: 'primary-human-use',
+                  display: 'Primary human use'
+                }
+              ]
+            },
+            language: {
+              coding: [
+                {
+                  system: 'urn:ietf:bcp:47',
+                  code: 'en-US',
+                  display: 'English (United States)'
+                }
+              ]
+            }
           }
         ],
         abstract: [
           {
-            text: artifact.description_markdown || artifact.description
+            text: artifact.description_markdown || artifact.description,
+            type: {
+              coding: [
+                {
+                  system: 'http://terminology.hl7.org/CodeSystem/cited-artifact-abstract-type',
+                  code: 'primary-human-use',
+                  display: 'Primary human use'
+                }
+              ]
+            },
+            language: {
+              coding: [
+                {
+                  system: 'urn:ietf:bcp:47',
+                  code: 'en-US',
+                  display: 'English (United States)'
+                }
+              ]
+            }
           }
         ],
         # copyright: Need repo's copyright declaration here
@@ -61,9 +107,28 @@ class FHIRAdapter
               publisher: {
                 reference: "Organization/#{artifact.repository.fhir_id}",
                 display: artifact.repository.name
+              },
+              title: artifact.repository.name,
+              type: {
+                coding: [
+                  {
+                    system: 'http://terminology.hl7.org/CodeSystem/published-in-type',
+                    code: 'D019991',
+                    display: 'Database'
+                  }
+                ]
               }
             },
-            articleDate: to_fhir_date(artifact.published_on)
+            articleDate: to_fhir_date(artifact.published_on),
+            language: {
+              coding: [
+                {
+                  system: 'urn:ietf:bcp:47',
+                  code: 'en-US',
+                  display: 'English (United States)'
+                }
+              ]
+            }
           }
         ],
         webLocation: [
