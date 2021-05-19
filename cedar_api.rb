@@ -9,7 +9,7 @@ require 'sinatra/cross_origin'
 
 require_relative 'database/models'
 require_relative 'fhir/fhir_adapter'
-require_relative 'util/api_helper'
+require_relative 'util/citation_helper'
 require_relative 'util/search_parser'
 
 configure do
@@ -109,7 +109,25 @@ namespace '/fhir' do
   end
 
   get '/Citation' do
-    bundle = ApiHelper.find_citation(params, uri('fhir/Citation'), request)
+    # artifact-current-state is required
+    unless params&.any? { |key, _value| key == 'artifact-current-state' }
+      oo = FHIR::OperationOutcome.new(
+        issue: [
+          {
+            severity: 'error',
+            code: 'required',
+            details: {
+              text: 'Required search parameter artifact-current-state is missing'
+            }
+          }
+        ]
+      )
+
+      return oo.to_json
+    end
+
+    request_url = "#{request.scheme}://#{request.host}:#{request.port}#{request.path}"
+    bundle = CitationHelper.new.find_citation(params, uri('fhir/Citation').to_s, request_url)
     bundle.to_json
   end
 end
