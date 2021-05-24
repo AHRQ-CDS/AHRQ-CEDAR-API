@@ -64,6 +64,10 @@ namespace '/fhir' do
 
   get '/SearchParameter' do
     case params['url']
+    when /cedar-citiation-artifact-current-state/
+      return FHIR.from_contents(File.read('resources/searchparameter-artifact-current-state.json')).to_json
+    when /cedar-citiation-artifact-publisher/
+      return FHIR.from_contents(File.read('resources/searchparameter-artifact-publisher.json')).to_json
     when /cedar-citiation-classification/
       return FHIR.from_contents(File.read('resources/searchparameter-classification.json')).to_json
     when /cedar-citiation-title/
