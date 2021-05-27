@@ -54,6 +54,7 @@ paths:
           in: query
           required: true
           type: string
+          default: 'active'
         - name: _content
           description: 'term in description, title, and keywords. support full text search'
           in: query

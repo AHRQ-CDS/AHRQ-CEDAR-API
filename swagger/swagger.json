@@ -85,7 +85,8 @@
             "description": "current status for cited artifact",
             "in": "query",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "default": "active"
           },
           {
             "name": "_content",
