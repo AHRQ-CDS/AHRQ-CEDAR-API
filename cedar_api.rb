@@ -32,6 +32,12 @@ get '/demo' do
     </form>
     <form action="/fhir/Citation" method="get">
       <label for="keyword">Search Keywords:</label>
+      <input type="text" id="classification:text" name="classification:text">
+      <input type="hidden" id="artifact-current-state" name="artifact-current-state" value="active">
+      <button type="submit">Search</button>
+    </form>
+    <form action="/fhir/Citation" method="get">
+      <label for="keyword">Search Concepts:</label>
       <input type="text" id="classification" name="classification">
       <input type="hidden" id="artifact-current-state" name="artifact-current-state" value="active">
       <button type="submit">Search</button>
@@ -42,7 +48,6 @@ get '/demo' do
       <input type="hidden" id="artifact-current-state" name="artifact-current-state" value="active">
       <button type="submit">Search</button>
     </form>
-    <ul>
   DEMO_FORM
 end
 

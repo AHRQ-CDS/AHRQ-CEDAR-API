@@ -51,6 +51,15 @@ describe 'cedar_api' do
       resource = assert_fhir_response(FHIR::Citation)
       assert_equal 'abc-1', resource.id
       assert_equal 'active', resource.status
+      assert_equal 2, resource.citedArtifact.classification.size
+      assert_equal 2, resource.citedArtifact.classification[1].classifier.size
+      assert_equal 'CUI1 desc', resource.citedArtifact.classification[1].classifier[0].text
+      assert_equal 'CUI2 desc', resource.citedArtifact.classification[1].classifier[1].text
+      assert_equal 1, resource.citedArtifact.classification[1].classifier[0].coding.size
+      assert_equal 'D0001', resource.citedArtifact.classification[1].classifier[0].coding[0].code
+      assert_equal 'https://www.nlm.nih.gov/mesh/',
+                   resource.citedArtifact.classification[1].classifier[0].coding[0].system
+      assert_equal 0, resource.citedArtifact.classification[1].classifier[1].coding.size
     end
 
     it 'returns not found when read with invalid id' do
@@ -61,8 +70,80 @@ describe 'cedar_api' do
     it 'supports search by _content' do
       Warning.ignore(/extra states are no longer copied/)
       get '/fhir/Citation?_content=cancer&artifact-current-state=active'
+      bundle = assert_fhir_response(FHIR::Bundle)
+      assert bundle.entry.all? do |entry|
+        entry.resource.title.downcase.include?('cancer') ||
+          entry.resource.description.downcase.include?('cancer')
+      end
+    end
 
-      assert_fhir_response(FHIR::Bundle)
+    it 'supports search by title' do
+      get '/fhir/Citation?title=diabetes&artifact-current-state=active'
+      bundle = assert_fhir_response(FHIR::Bundle)
+      assert bundle.entry.all? do |entry|
+        entry.resource.title.downcase.start_with?('diabetes')
+      end
+    end
+
+    it 'supports search by title with multiple OR' do
+      get '/fhir/Citation?title=cancer,diabetes&artifact-current-state=active'
+      bundle = assert_fhir_response(FHIR::Bundle)
+      assert bundle.entry.all? do |entry|
+        entry.resource.title.downcase.start_with?('diabetes') ||
+          entry.resource.title.downcase.start_with?('cancer')
+      end
+    end
+
+    it 'supports search by title with :contains modifier' do
+      get '/fhir/Citation?title:contains=diabetes&artifact-current-state=active'
+      bundle = assert_fhir_response(FHIR::Bundle)
+      assert bundle.entry.all? do |entry|
+        entry.resource.title.downcase.include?('diabetes')
+      end
+    end
+
+    it 'supports search by classification text' do
+      get '/fhir/Citation?classification:text=diabetes&artifact-current-state=active'
+      bundle = assert_fhir_response(FHIR::Bundle)
+      assert bundle.entry.all? do |entry|
+        entry.resource.keywordList.any? do |keyword_list|
+          keyword_list.keyword.any { |keyword| keyword.value.downcase == 'diabetes' }
+        end
+      end
+    end
+
+    it 'supports search by classification text with multiple OR' do
+      get '/fhir/Citation?classification:text=diabetes OR adult&artifact-current-state=active'
+      bundle = assert_fhir_response(FHIR::Bundle)
+      assert bundle.entry.all? do |entry|
+        entry.resource.keywordList.any? do |keyword_list|
+          keyword_list.keyword.any do |keyword|
+            keyword.value.downcase == 'diabetes' || keyword.value.downcase == 'adult'
+          end
+        end
+      end
+    end
+
+    it 'supports search by classification system and code' do
+      get '/fhir/Citation?' \
+          "classification=#{URI.encode_www_form_component('https://www.nlm.nih.gov/mesh/|D0001')}" \
+          '&artifact-current-state=active'
+      bundle = assert_fhir_response(FHIR::Bundle)
+      assert bundle.entry.all? do |entry|
+        entry.resource.keywordList.any? do |keyword_list|
+          keyword_list.keyword.any { |keyword| keyword.value.downcase == 'cancer' }
+        end
+      end
+    end
+
+    it 'supports search by classification code' do
+      get '/fhir/Citation?classification=D0001&artifact-current-state=active'
+      bundle = assert_fhir_response(FHIR::Bundle)
+      assert bundle.entry.all? do |entry|
+        entry.resource.keywordList.any? do |keyword_list|
+          keyword_list.keyword.any { |keyword| keyword.value.downcase == 'cancer' }
+        end
+      end
     end
 
     it 'requires artifact-current-state search parameter' do

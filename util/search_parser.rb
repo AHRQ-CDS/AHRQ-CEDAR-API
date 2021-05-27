@@ -26,9 +26,9 @@ class SearchParser
   end
 
   # Returns a Concept for which the supplied term is a synonym or nil if none found
-  def get_concept(term)
+  def get_concepts(term)
     synonyms_op = Sequel.pg_jsonb_op(:synonyms_psql)
-    Concept.where(synonyms_op.contains([term])).first
+    Concept.where(synonyms_op.contains([term]))
   end
 
   # Returns the supplied term if no synonyms are found or a bracketed set of synonyms
@@ -36,10 +36,12 @@ class SearchParser
   def synonyms(term)
     return nil if term.nil?
 
-    concept = get_concept(term)
-    return term if concept.nil?
+    concepts = get_concepts(term)
+    return term if concepts.nil? || concepts.empty?
 
-    "(#{concept.synonyms_psql.join('|')})"
+    synonyms = concepts.map(&:synonyms_psql).flatten.uniq
+
+    "(#{synonyms.join('|')})"
   end
 
   # Parse any search term, matching \w
@@ -70,7 +72,7 @@ class SearchParser
     parenthetical
   end
 
-  # Parse a quoted expression, returns with all contents of the string seperated with <->
+  # Parse a quoted expression, returns with all contents of the string separated with <->
   def parse_quoted
     if parse_regexp(/^(")/)
       terms = []
