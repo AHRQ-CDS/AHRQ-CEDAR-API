@@ -46,9 +46,12 @@ class CitationFilter
   end
 
   def citations
-    search_log = SearchLog.create(url: request_url, start_time: Time.now)
+    @search_log = SearchLog.create(url: request_url, start_time: Time.now)
 
     filter = build_filter
+
+    page_size = -1
+    page_no = 1
 
     paged_result = add_pagination(filter)
 
@@ -199,12 +202,15 @@ class CitationFilter
 
   def build_filter
     filter = Artifact.join(:repositories, id: :repository_id)
+    search_type = ''
 
     @params&.each do |key, value|
       search_terms = value.split(',').map { |v| v.strip.downcase.to_s }
 
       case key
       when '_content'
+        search_type += ',' if search_type.length > 0
+        search_type += 'content'
         cols = SearchParser.parse(value)
         opt = {
           language: 'english',
@@ -214,6 +220,8 @@ class CitationFilter
 
         filter = filter.full_text_search(:content_search, cols, opt)
       when 'classification'
+        search_type += ',' if search_type.length > 0
+        search_type += 'keyword'
         cols = SearchParser.parse(value)
         opt = {
           language: 'english',
@@ -223,9 +231,13 @@ class CitationFilter
         # Need to decide if we need use ts_vector to get better performance
         filter = filter.full_text_search([:keyword_text, :mesh_keyword_text], cols, opt)
       when 'title'
+        search_type += ',' if search_type.length > 0
+        search_type += 'title'
         search_terms.map! { |t| "#{t}%" }
         filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
       when 'title:contains'
+        search_type += ',' if search_type.length > 0
+        search_type += 'title'
         search_terms.map! { |t| "%#{t}%" }
         filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
       when 'artifact-current-state'
@@ -235,6 +247,7 @@ class CitationFilter
       end
     end
 
+    @search_log.update(search_type: search_type)
     filter
   end
 
