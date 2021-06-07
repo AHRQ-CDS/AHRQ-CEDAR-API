@@ -11,10 +11,11 @@ require_relative '../fhir/fhir_adapter'
 class CitationFilter
   UMLS_CODE_SYSTEM_IDS = FHIRAdapter::FHIR_CODE_SYSTEM_URLS.invert.freeze
 
-  def initialize(params:, base_url:, request_url:)
+  def initialize(params:, base_url:, request_url:, log_to_db: false)
     @params = params
     @artifact_base_url = base_url
     @request_url = request_url
+    @log_to_db = log_to_db
   end
 
   def build_link_url(page_no, page_size)

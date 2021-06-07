@@ -136,7 +136,7 @@ namespace '/fhir' do
     end
 
     request_url = "#{request.scheme}://#{request.host}:#{request.port}#{request.path}"
-    filter = CitationFilter.new(params: params, base_url: uri('fhir/Citation').to_s, request_url: request_url)
+    filter = CitationFilter.new(params: params, base_url: uri('fhir/Citation').to_s, request_url: request_url, og_to_db: true)
     bundle = filter.citations
     bundle.to_json
   end
