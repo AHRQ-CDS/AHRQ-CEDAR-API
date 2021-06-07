@@ -209,7 +209,7 @@ class CitationFilter
 
       case key
       when '_content'
-        search_type += ',' if search_type.length > 0
+        search_type += ',' unless search_type.empty?
         search_type += 'content'
         cols = SearchParser.parse(value)
         opt = {
@@ -220,7 +220,7 @@ class CitationFilter
 
         filter = filter.full_text_search(:content_search, cols, opt)
       when 'classification'
-        search_type += ',' if search_type.length > 0
+        search_type += ',' unless search_type.empty?
         search_type += 'keyword'
         cols = SearchParser.parse(value)
         opt = {
@@ -231,12 +231,12 @@ class CitationFilter
         # Need to decide if we need use ts_vector to get better performance
         filter = filter.full_text_search([:keyword_text, :mesh_keyword_text], cols, opt)
       when 'title'
-        search_type += ',' if search_type.length > 0
+        search_type += ',' unless search_type.empty?
         search_type += 'title'
         search_terms.map! { |t| "#{t}%" }
         filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
       when 'title:contains'
-        search_type += ',' if search_type.length > 0
+        search_type += ',' unless search_type.empty?
         search_type += 'title'
         search_terms.map! { |t| "%#{t}%" }
         filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)

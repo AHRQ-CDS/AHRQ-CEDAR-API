@@ -18,5 +18,5 @@ end
 
 class SearchLog < Sequel::Model
   # Add Timestamps to automatically populate created_at and updated_at columns
-  plugin :timestamps, update_on_create: true 
+  plugin :timestamps, update_on_create: true
 end
