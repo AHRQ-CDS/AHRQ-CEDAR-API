@@ -136,16 +136,18 @@ class CitationFilter
       # if page size is greater than 0, return paginated results.
       artifacts = filter.paginate(@page_no, @page_size)
       total = artifacts.pagination_record_count
+<<<<<<< HEAD:util/citation_filter.rb
     elsif @page_size.zero?
       # if page size is 0, return the count only
       artifacts = nil
       total = filter.count
       sql_log = artifacts.sql
+=======
+>>>>>>> fixed unit test fails:util/citation_helper.rb
     else
       # otherwise (page size is less than 0), return all results
       artifacts = filter.all
       total = artifacts.size
-      sql_log = filter.sql
     end
 
     {
@@ -213,6 +215,7 @@ class CitationFilter
         search_type += ',' unless search_type.empty?
         search_type += 'content'
         cols = SearchParser.parse(value)
+        search_log[:sql] = cols
         opt = {
           language: 'english',
           rank: true,
@@ -224,6 +227,7 @@ class CitationFilter
         search_type += ',' unless search_type.empty?
         search_type += 'keyword'
         cols = SearchParser.parse(value)
+        search_log[:sql] = cols
         opt = {
           language: 'english',
           rank: true
