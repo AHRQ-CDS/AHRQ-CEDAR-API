@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'warning'
 require_relative '../test_helper'
 require_relative '../../database/models'
 
@@ -232,6 +233,33 @@ describe CitationFilter do
       assert bundle.entry.all? do |entry|
         entry.resource.citedArtifact.publicationForm.any? { |f| f.publishedIn.publisher.display.casecmp?(expected) }
       end
+    end
+  end
+
+  describe 'save request' do
+    before do
+      Warning.ignore(/instance variable @\w+ not initialized/)
+      @artifact_base_url = 'http://localhost/fhir/Citation'
+      @request_url = 'http://example.com/fhir/Citation'
+      @helper = CitationHelper.new(log_to_db: true)
+    end
+
+    it 'logs rquest to database' do
+      expected = 'cancer'
+      params = {
+        '_content' => expected
+      }
+
+      @helper.find_citation(params, @artifact_base_url, @request_url)
+      log = SearchLog.order(Sequel.desc(:id)).first
+
+      refute log.nil?
+      refute log[:search_params].nil?
+      refute log[:search_type].nil?
+      refute log[:sql].nil?
+      refute log[:count].nil?
+      refute log[:start_time].nil?
+      refute log[:end_time].nil?
     end
   end
 end

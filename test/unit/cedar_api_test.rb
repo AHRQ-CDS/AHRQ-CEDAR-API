@@ -3,6 +3,7 @@
 require 'warning'
 require_relative '../test_helper'
 require_relative '../../database/models'
+require 'warning'
 
 describe 'cedar_api' do
   include Rack::Test::Methods
@@ -154,6 +155,12 @@ describe 'cedar_api' do
       assert resource.issue.any? do |issue|
         issue.severity == 'error' && issue.code == 'required'
       end
+    end
+
+    it 'returns Citations' do
+      Warning.ignore(/instance variable @\w+ not initialized/)
+      get '/fhir/Citation?_content=cancer&artifact-current-state=active'
+      assert_fhir_response(FHIR::Bundle)
     end
   end
 
