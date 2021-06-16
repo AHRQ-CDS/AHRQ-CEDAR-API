@@ -11,11 +11,17 @@ require_relative '../fhir/fhir_adapter'
 class CitationFilter
   UMLS_CODE_SYSTEM_IDS = FHIRAdapter::FHIR_CODE_SYSTEM_URLS.invert.freeze
 
-  def initialize(params:, base_url:, request_url:, log_to_db: false)
+  def initialize(params:, base_url:, request_url:, client_ip: nil, log_to_db: false)
     @params = params
     @artifact_base_url = base_url
     @request_url = request_url
+    @client_ip = client_ip
     @log_to_db = log_to_db
+
+    
+    @search_log = SearchLog.new
+    @search_log[:search_params] = params.to_json
+    @search_log[:client_ip] = client_ip unless client_ip.nil?
   end
 
   def build_link_url(page_no, page_size)
@@ -47,7 +53,7 @@ class CitationFilter
   end
 
   def citations
-    @search_log = SearchLog.create(url: request_url, start_time: Time.now)
+    @search_log[:start_time] = Time.now
 
     filter = build_filter
 
@@ -68,8 +74,8 @@ class CitationFilter
 
     add_bundle_links(bundle, artifacts)
 
-    # return count only
     if page_size.zero?
+<<<<<<< HEAD:util/citation_filter.rb
       search_log.update(end_time: Time.now)
     else
       search_log.update(sql: sql_log, count: artifacts.count, end_time: Time.now)
@@ -181,26 +187,82 @@ class CitationFilter
         url: build_link_url(artifacts.page_count, @page_size)
       }
     )
-
-      # first page does not have prev page
-      unless artifacts.first_page?
-        bundle.link << FHIR::Bundle::Link.new(
-          {
-            relation: 'prev',
-            url: build_next_page_url(page_no - 1, page_size)
-          }
-        )
+=======
+      # return count only
+      bundle = FHIRAdapter.create_citation_bundle(nil, artifact_base_url, filter.count)
+    else
+      # if page size is greater than 0, return paginated results.
+      # otherwise, return all results
+      if page_size.positive?
+        artifacts = filter.paginate(page_no, page_size)
+        total = artifacts.pagination_record_count
+      else
+        artifacts = filter.all
+        total = artifacts.size
       end
 
-      # last page does not have next page
-      unless artifacts.last_page?
+      bundle = FHIRAdapter.create_citation_bundle(artifacts, artifact_base_url, total)
+
+      bundle.link << FHIR::Bundle::Link.new(
+        {
+          relation: 'self',
+          url: build_next_page_url(page_no, page_size)
+        }
+      )
+
+      # full seach result does not have first/last/prev/next page link
+      if page_size.positive?
+>>>>>>> add client_ip to search_logs:util/citation_helper.rb
+
+        # add first/last page link
         bundle.link << FHIR::Bundle::Link.new(
           {
-            relation: 'next',
-            url: build_next_page_url(page_no + 1, page_size)
+            relation: 'first',
+            url: build_next_page_url(1, page_size)
           }
         )
+
+        bundle.link << FHIR::Bundle::Link.new(
+          {
+            relation: 'last',
+            url: build_next_page_url(artifacts.page_count, page_size)
+          }
+        )
+
+        # first page does not have prev page
+        unless artifacts.first_page?
+          bundle.link << FHIR::Bundle::Link.new(
+            {
+              relation: 'prev',
+              url: build_next_page_url(page_no - 1, page_size)
+            }
+          )
+        end
+
+        # last page does not have next page
+        unless artifacts.last_page?
+          bundle.link << FHIR::Bundle::Link.new(
+            {
+              relation: 'next',
+              url: build_next_page_url(page_no + 1, page_size)
+            }
+          )
+        end
+
       end
+<<<<<<< HEAD:util/citation_filter.rb
+=======
+
+      search_log[:count] = artifacts.count
+    end
+
+    if @log_to_db
+      search_log[:end_time] = Time.now
+      search_log.save_changes
+    end
+
+    bundle
+>>>>>>> add client_ip to search_logs:util/citation_helper.rb
   end
 
   def build_filter

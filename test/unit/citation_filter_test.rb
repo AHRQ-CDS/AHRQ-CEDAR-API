@@ -250,7 +250,7 @@ describe CitationFilter do
         '_content' => expected
       }
 
-      @helper.find_citation(params, @artifact_base_url, @request_url)
+      @helper.find_citation(params, @artifact_base_url, @request_url, client_ip: '::1')
       log = SearchLog.order(Sequel.desc(:id)).first
 
       refute log.nil?
@@ -258,6 +258,7 @@ describe CitationFilter do
       refute log[:search_type].nil?
       refute log[:sql].nil?
       refute log[:count].nil?
+      refute log[:client_ip].nil?
       refute log[:start_time].nil?
       refute log[:end_time].nil?
     end
