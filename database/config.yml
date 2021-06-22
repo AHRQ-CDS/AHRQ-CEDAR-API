@@ -1,7 +1,12 @@
 # Sequel gem database configuration
 
 production:
-  database_url: <%= ENV["DATABASE_URL"] %>
+  host: db
+  adapter: postgres
+  encoding: unicode
+  database: cedar_admin_production
+  username: cedar_admin
+  password: <%= ENV['CEDAR_ADMIN_DATABASE_PASSWORD'] %>
 
 development:
   host: localhost
