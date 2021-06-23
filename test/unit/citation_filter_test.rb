@@ -3,7 +3,7 @@
 require_relative '../test_helper'
 require_relative '../../database/models'
 
-describe CitationHelper do
+describe CitationFilter do
   include Rack::Test::Methods
   include CedarApi::TestHelper
 
@@ -45,7 +45,6 @@ describe CitationHelper do
     before do
       @artifact_base_url = 'http://localhost/fhir/Citation'
       @request_url = 'http://example.com/fhir/Citation'
-      @helper = CitationHelper.new
     end
 
     it 'supports search by _content' do
@@ -54,7 +53,7 @@ describe CitationHelper do
         '_content' => expected
       }
 
-      bundle = @helper.find_citation(params, @artifact_base_url, @request_url)
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -70,7 +69,7 @@ describe CitationHelper do
         'title' => expected
       }
 
-      bundle = @helper.find_citation(params, @artifact_base_url, @request_url)
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -86,7 +85,7 @@ describe CitationHelper do
         'title' => "#{title_a},#{title_b}"
       }
 
-      bundle = @helper.find_citation(params, @artifact_base_url, @request_url)
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -102,7 +101,7 @@ describe CitationHelper do
         'title:contains' => expected
       }
 
-      bundle = @helper.find_citation(params, @artifact_base_url, @request_url)
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -117,7 +116,7 @@ describe CitationHelper do
         'keyword' => expected
       }
 
-      bundle = @helper.find_citation(params, @artifact_base_url, @request_url)
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -134,7 +133,7 @@ describe CitationHelper do
         'keyword' => expected.join(',')
       }
 
-      bundle = @helper.find_citation(params, @artifact_base_url, @request_url)
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -153,7 +152,7 @@ describe CitationHelper do
         'artifact-current-state' => expected
       }
 
-      bundle = @helper.find_citation(params, @artifact_base_url, @request_url)
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -170,7 +169,7 @@ describe CitationHelper do
         'artifact-current-state' => expected.join(',')
       }
 
-      bundle = @helper.find_citation(params, @artifact_base_url, @request_url)
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -187,7 +186,7 @@ describe CitationHelper do
         '_count' => expected.to_s
       }
 
-      bundle = @helper.find_citation(params, @artifact_base_url, @request_url)
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
 
       assert_bundle(bundle, assert_total: false)
       assert_paging(bundle, expected, 1)
@@ -201,7 +200,7 @@ describe CitationHelper do
         'page' => page.to_s
       }
 
-      bundle = @helper.find_citation(params, @artifact_base_url, @request_url)
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
 
       assert_bundle(bundle, assert_total: false)
       assert_paging(bundle, count, page)
@@ -215,7 +214,7 @@ describe CitationHelper do
         'page' => page.to_s
       }
 
-      bundle = @helper.find_citation(params, @artifact_base_url, @request_url)
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
 
       assert_bundle(bundle, assert_total: false)
       assert_paging(bundle, count, page)
@@ -227,7 +226,7 @@ describe CitationHelper do
         'artifact-publisher' => expected
       }
 
-      bundle = @helper.find_citation(params, @artifact_base_url, @request_url)
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
 
       assert_bundle(bundle)
       assert bundle.entry.all? do |entry|

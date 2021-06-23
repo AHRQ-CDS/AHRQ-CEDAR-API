@@ -9,7 +9,7 @@ require 'sinatra/cross_origin'
 
 require_relative 'database/models'
 require_relative 'fhir/fhir_adapter'
-require_relative 'util/citation_helper'
+require_relative 'util/citation_filter'
 require_relative 'util/search_parser'
 
 configure do
@@ -131,7 +131,8 @@ namespace '/fhir' do
     end
 
     request_url = "#{request.scheme}://#{request.host}:#{request.port}#{request.path}"
-    bundle = CitationHelper.new.find_citation(params, uri('fhir/Citation').to_s, request_url)
+    filter = CitationFilter.new(params: params, base_url: uri('fhir/Citation').to_s, request_url: request_url)
+    bundle = filter.citations
     bundle.to_json
   end
 end
