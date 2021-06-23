@@ -44,8 +44,8 @@ class CitationFilter
     total = paged_result[:total]
 
     bundle = if @page_size.zero?
-              # if _count=0, return count only
-              FHIRAdapter.create_citation_bundle(total: filter.count)
+               # if _count=0, return count only
+               FHIRAdapter.create_citation_bundle(total: total)
              else
                FHIRAdapter.create_citation_bundle(total: total, artifacts: artifacts, base_url: @artifact_base_url)
              end
@@ -100,12 +100,16 @@ class CitationFilter
     @page_size = (@params['_count'] || -1).to_i
     @page_no = [(@params['page'] || 1).to_i, 1].max # the minimum value of page number is 1
 
-    # if page size is greater than 0, return paginated results.
-    # otherwise, return all results
     if @page_size.positive?
+      # if page size is greater than 0, return paginated results.
       artifacts = filter.paginate(@page_no, @page_size)
       total = artifacts.pagination_record_count
+    elsif @page_size.zero?
+      # if page size is 0, return the count only
+      artifacts = nil
+      total = filter.count
     else
+      # otherwise (page size is less than 0), return all results
       artifacts = filter.all
       total = artifacts.size
     end
