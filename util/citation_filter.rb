@@ -97,8 +97,8 @@ class CitationFilter
   end
 
   def add_pagination(filter)
-    @page_size = @params.key?('_count') ? @params['_count'].to_i : -1
-    @page_no = @params.key?('page') ? [@params['page'].to_i, 1].max : 1
+    @page_size = (@params['_count'] || -1).to_i
+    @page_no = [(@params['page'] || 1).to_i, 1].max # the minimum value of page number is 1
 
     # if page size is greater than 0, return paginated results.
     # otherwise, return all results
