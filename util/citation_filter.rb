@@ -43,9 +43,9 @@ class CitationFilter
     artifacts = paged_result[:artifacts]
     total = paged_result[:total]
 
-    # return count only
     bundle = if @page_size.zero?
-               FHIRAdapter.create_citation_bundle(total: filter.count)
+              # if _count=0, return count only
+              FHIRAdapter.create_citation_bundle(total: filter.count)
              else
                FHIRAdapter.create_citation_bundle(total: total, artifacts: artifacts, base_url: @artifact_base_url)
              end
