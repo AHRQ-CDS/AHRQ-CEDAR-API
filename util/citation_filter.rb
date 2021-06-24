@@ -16,15 +16,7 @@ class CitationFilter
 
   def build_link_url(page_no, page_size)
     uri = Addressable::URI.parse(@request_url)
-
-    # using new_params = @params.reject { |key, _value| %w[_count page].include?(key) }
-    # creates a warning "warning: extra states are no longer copied:"
-    new_params = {}
-    @params.each do |key, value|
-      next if %w[_count page].include?(key)
-
-      new_params[key.to_sym] = value
-    end
+    new_params = @params.select { |key, _value| !%w[_count page].include?(key) }
 
     if page_size.positive?
       new_params[:_count] = page_size
