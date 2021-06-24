@@ -44,9 +44,14 @@ class SearchParser
     "(#{synonyms.join('|')})"
   end
 
-  # Parse any search term, matching \w
+  # Parse any search term, matching alphanumerics plus a few additional characters: +, * and '
   def parse_term
-    parse_regexp(/^(\w+)/)
+    parse_regexp(/^(['+*\w]+)/)
+  end
+
+  # Parse any search term, matching alphanumerics plus a few additional characters: +, *, (, ) and '
+  def parse_term_with_brackets
+    parse_regexp(/^(['+*()\w]+)/)
   end
 
   # The operators supported by the API and the conversion to PostgreSQL full text search
@@ -76,7 +81,7 @@ class SearchParser
   def parse_quoted
     if parse_regexp(/^(")/)
       terms = []
-      while (term = parse_term)
+      while (term = parse_term_with_brackets)
         terms << term
       end
       parse_regexp(/^(")/)
@@ -89,7 +94,7 @@ class SearchParser
   def parse_expression
     tokens = []
     while (token = parse_parenthetical || synonyms(parse_quoted) || parse_operator || synonyms(parse_term))
-      tokens << token
+      tokens << token unless token.empty?
     end
     # Add in the implicit & between any two tokens that don't have an operator between them
     processed_tokens = []
