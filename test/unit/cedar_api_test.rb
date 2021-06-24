@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'warning'
 require_relative '../test_helper'
 require_relative '../../database/models'
 
@@ -58,6 +59,7 @@ describe 'cedar_api' do
     end
 
     it 'supports search by _content' do
+      Warning.ignore(/extra states are no longer copied/)
       get '/fhir/Citation?_content=cancer&artifact-current-state=active'
 
       assert_fhir_response(FHIR::Bundle)
