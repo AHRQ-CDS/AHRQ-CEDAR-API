@@ -14,6 +14,7 @@ gem 'json'
 gem 'erb'
 gem 'sinatra-contrib'
 gem 'sinatra-cross_origin'
+gem 'warning'
 
 group :test do
   gem 'minitest', require: false
