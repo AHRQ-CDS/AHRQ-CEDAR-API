@@ -241,7 +241,6 @@ describe CitationFilter do
       Warning.ignore(/instance variable @\w+ not initialized/)
       @artifact_base_url = 'http://localhost/fhir/Citation'
       @request_url = 'http://example.com/fhir/Citation'
-      @helper = CitationHelper.new(log_to_db: true)
     end
 
     it 'logs rquest to database' do
@@ -250,7 +249,8 @@ describe CitationFilter do
         '_content' => expected
       }
 
-      @helper.find_citation(params, @artifact_base_url, @request_url, client_ip: '::1')
+      CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url, client_ip: '::1', log_to_db: true).citations
+
       log = SearchLog.order(Sequel.desc(:id)).first
 
       refute log.nil?

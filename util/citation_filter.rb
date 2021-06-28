@@ -70,11 +70,11 @@ class CitationFilter
 
     add_bundle_links(bundle, artifacts)
 
-    @search_log[:count] = artifacts.count unless page_size.zero?
+    @search_log[:count] = artifacts.count unless @page_size.zero?
 
-    search_log[:end_time] = Time.now
+    @search_log[:end_time] = Time.now
 
-    @search_log.save_changes
+    @search_log.save_changes if @log_to_db
 
     bundle
   end
@@ -192,7 +192,7 @@ class CitationFilter
       bundle.link << FHIR::Bundle::Link.new(
         {
           relation: 'prev',
-          url: build_next_page_url(page_no - 1, page_size)
+          url: build_link_url(@page_no - 1, @page_size)
         }
       )
     end
@@ -202,7 +202,7 @@ class CitationFilter
       bundle.link << FHIR::Bundle::Link.new(
         {
           relation: 'next',
-          url: build_next_page_url(page_no + 1, page_size)
+          url: build_link_url(@page_no + 1, @page_size)
         }
       )
     end
