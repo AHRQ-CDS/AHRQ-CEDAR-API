@@ -28,9 +28,14 @@ module FHIR
       'useContext' => {'type'=>'UsageContext', 'path'=>'Citation.useContext', 'min'=>0, 'max'=>Float::INFINITY},
       'jurisdiction' => {'type'=>'CodeableConcept', 'path'=>'Citation.jurisdiction', 'min'=>0, 'max'=>Float::INFINITY, 'binding'=>{'strength'=>'extensible', 'uri'=>'http://hl7.org/fhir/ValueSet/jurisdiction'}},
       'purpose' => {'type'=>'markdown', 'path'=>'Citation.purpose', 'min'=>0, 'max'=>1},
+      'copyright' => {'type'=>'markdown', 'path'=>'Citation.copyright', 'min'=>0, 'max'=>1},
       'approvalDate' => {'type'=>'date', 'path'=>'Citation.approvalDate', 'min'=>0, 'max'=>1},
       'lastReviewDate' => {'type'=>'date', 'path'=>'Citation.lastReviewDate', 'min'=>0, 'max'=>1},
       'effectivePeriod' => {'type'=>'Period', 'path'=>'Citation.effectivePeriod', 'min'=>0, 'max'=>1},
+      'author' => {'type'=>'ContactDetail', 'path'=>'Citation.author', 'min'=>0, 'max'=>Float::INFINITY},
+      'editor' => {'type'=>'ContactDetail', 'path'=>'Citation.editor', 'min'=>0, 'max'=>Float::INFINITY},
+      'reviewer' => {'type'=>'ContactDetail', 'path'=>'Citation.reviewer', 'min'=>0, 'max'=>Float::INFINITY},
+      'endorser' => {'type'=>'ContactDetail', 'path'=>'Citation.endorser', 'min'=>0, 'max'=>Float::INFINITY},
       'summary' => {'type'=>'Citation::Summary', 'path'=>'Citation.summary', 'min'=>0, 'max'=>Float::INFINITY},
       'classification' => {'type'=>'Citation::Classification', 'path'=>'Citation.classification', 'min'=>0, 'max'=>Float::INFINITY},
       'note' => {'type'=>'Annotation', 'path'=>'Citation.note', 'min'=>0, 'max'=>Float::INFINITY},
@@ -150,7 +155,6 @@ module FHIR
         'statusDate' => {'type'=>'Citation::CitedArtifact::StatusDate', 'path'=>'CitedArtifact.statusDate', 'min'=>0, 'max'=>Float::INFINITY},
         'title' => {'type'=>'Citation::CitedArtifact::Title', 'path'=>'CitedArtifact.title', 'min'=>0, 'max'=>Float::INFINITY},
         'abstract' => {'type'=>'Citation::CitedArtifact::Abstract', 'path'=>'CitedArtifact.abstract', 'min'=>0, 'max'=>Float::INFINITY},
-        'copyright' => {'type'=>'markdown', 'path'=>'CitedArtifact.copyright', 'min'=>0, 'max'=>1},
         'part' => {'type'=>'Citation::CitedArtifact::Part', 'path'=>'CitedArtifact.part', 'min'=>0, 'max'=>1},
         'relatesTo' => {'type'=>'Citation::CitedArtifact::RelatesTo', 'path'=>'CitedArtifact.relatesTo', 'min'=>0, 'max'=>Float::INFINITY},
         'publicationForm' => {'type'=>'Citation::CitedArtifact::PublicationForm', 'path'=>'CitedArtifact.publicationForm', 'min'=>0, 'max'=>Float::INFINITY},
@@ -319,7 +323,8 @@ module FHIR
           'pageString' => {'type'=>'string', 'path'=>'PublicationForm.pageString', 'min'=>0, 'max'=>1},
           'firstPage' => {'type'=>'string', 'path'=>'PublicationForm.firstPage', 'min'=>0, 'max'=>1},
           'lastPage' => {'type'=>'string', 'path'=>'PublicationForm.lastPage', 'min'=>0, 'max'=>1},
-          'pageCount' => {'type'=>'string', 'path'=>'PublicationForm.pageCount', 'min'=>0, 'max'=>1}
+          'pageCount' => {'type'=>'string', 'path'=>'PublicationForm.pageCount', 'min'=>0, 'max'=>1},
+          'copyright' => {'type'=>'markdown', 'path'=>'PublicationForm.copyright', 'min'=>0, 'max'=>1}
         }
 
         class PublishedIn < FHIR::Model
@@ -335,8 +340,7 @@ module FHIR
             'identifier' => {'type'=>'Identifier', 'path'=>'PublishedIn.identifier', 'min'=>0, 'max'=>Float::INFINITY},
             'title' => {'type'=>'string', 'path'=>'PublishedIn.title', 'min'=>0, 'max'=>1},
             'publisher' => {'type_profiles'=>['http://hl7.org/fhir/StructureDefinition/Organization'], 'type'=>'Reference', 'path'=>'PublishedIn.publisher', 'min'=>0, 'max'=>1},
-            'publisherLocation' => {'type'=>'string', 'path'=>'PublishedIn.publisherLocation', 'min'=>0, 'max'=>1},
-            'startDate' => {'type'=>'date', 'path'=>'PublishedIn.startDate', 'min'=>0, 'max'=>1}
+            'publisherLocation' => {'type'=>'string', 'path'=>'PublishedIn.publisherLocation', 'min'=>0, 'max'=>1}
           }
 
           attr_accessor :id                # 0-1 string
@@ -347,7 +351,6 @@ module FHIR
           attr_accessor :title             # 0-1 string
           attr_accessor :publisher         # 0-1 Reference(Organization)
           attr_accessor :publisherLocation # 0-1 string
-          attr_accessor :startDate         # 0-1 date
         end
 
         class PeriodicRelease < FHIR::Model
@@ -415,6 +418,7 @@ module FHIR
         attr_accessor :firstPage         # 0-1 string
         attr_accessor :lastPage          # 0-1 string
         attr_accessor :pageCount         # 0-1 string
+        attr_accessor :copyright         # 0-1 markdown
       end
 
       class WebLocation < FHIR::Model
@@ -447,14 +451,42 @@ module FHIR
           'extension' => {'type'=>'Extension', 'path'=>'Classification.extension', 'min'=>0, 'max'=>Float::INFINITY},
           'modifierExtension' => {'type'=>'Extension', 'path'=>'Classification.modifierExtension', 'min'=>0, 'max'=>Float::INFINITY},
           'type' => {'type'=>'CodeableConcept', 'path'=>'Classification.type', 'min'=>0, 'max'=>1, 'binding'=>{'strength'=>'extensible', 'uri'=>'http://hl7.org/fhir/ValueSet/cited-artifact-classification-type'}},
-          'classifier' => {'type'=>'CodeableConcept', 'path'=>'Classification.classifier', 'min'=>0, 'max'=>Float::INFINITY, 'binding'=>{'strength'=>'example', 'uri'=>'http://hl7.org/fhir/ValueSet/citation-artifact-classifier'}}
+          'classifier' => {'type'=>'CodeableConcept', 'path'=>'Classification.classifier', 'min'=>0, 'max'=>Float::INFINITY, 'binding'=>{'strength'=>'example', 'uri'=>'http://hl7.org/fhir/ValueSet/citation-artifact-classifier'}},
+          'whoClassified' => {'type'=>'Citation::CitedArtifact::Classification::WhoClassified', 'path'=>'Classification.whoClassified', 'min'=>0, 'max'=>1}
         }
+
+        class WhoClassified < FHIR::Model
+          include FHIR::Hashable
+          include FHIR::Json
+          include FHIR::Xml
+
+          METADATA = {
+            'id' => {'type'=>'string', 'path'=>'WhoClassified.id', 'min'=>0, 'max'=>1},
+            'extension' => {'type'=>'Extension', 'path'=>'WhoClassified.extension', 'min'=>0, 'max'=>Float::INFINITY},
+            'modifierExtension' => {'type'=>'Extension', 'path'=>'WhoClassified.modifierExtension', 'min'=>0, 'max'=>Float::INFINITY},
+            'person' => {'type_profiles'=>['http://hl7.org/fhir/StructureDefinition/Person', 'http://hl7.org/fhir/StructureDefinition/Practitioner'], 'type'=>'Reference', 'path'=>'WhoClassified.person', 'min'=>0, 'max'=>1},
+            'organization' => {'type_profiles'=>['http://hl7.org/fhir/StructureDefinition/Organization'], 'type'=>'Reference', 'path'=>'WhoClassified.organization', 'min'=>0, 'max'=>1},
+            'publisher' => {'type_profiles'=>['http://hl7.org/fhir/StructureDefinition/Organization'], 'type'=>'Reference', 'path'=>'WhoClassified.publisher', 'min'=>0, 'max'=>1},
+            'classifierCopyright' => {'type'=>'string', 'path'=>'WhoClassified.classifierCopyright', 'min'=>0, 'max'=>1},
+            'freeToShare' => {'type'=>'boolean', 'path'=>'WhoClassified.freeToShare', 'min'=>0, 'max'=>1}
+          }
+
+          attr_accessor :id                  # 0-1 string
+          attr_accessor :extension           # 0-* [ Extension ]
+          attr_accessor :modifierExtension   # 0-* [ Extension ]
+          attr_accessor :person              # 0-1 Reference(Person|Practitioner)
+          attr_accessor :organization        # 0-1 Reference(Organization)
+          attr_accessor :publisher           # 0-1 Reference(Organization)
+          attr_accessor :classifierCopyright # 0-1 string
+          attr_accessor :freeToShare         # 0-1 boolean
+        end
 
         attr_accessor :id                # 0-1 string
         attr_accessor :extension         # 0-* [ Extension ]
         attr_accessor :modifierExtension # 0-* [ Extension ]
         attr_accessor :type              # 0-1 CodeableConcept
         attr_accessor :classifier        # 0-* [ CodeableConcept ]
+        attr_accessor :whoClassified     # 0-1 Citation::CitedArtifact::Classification::WhoClassified
       end
 
       class Contributorship < FHIR::Model
@@ -596,7 +628,6 @@ module FHIR
       attr_accessor :statusDate        # 0-* [ Citation::CitedArtifact::StatusDate ]
       attr_accessor :title             # 0-* [ Citation::CitedArtifact::Title ]
       attr_accessor :abstract          # 0-* [ Citation::CitedArtifact::Abstract ]
-      attr_accessor :copyright         # 0-1 markdown
       attr_accessor :part              # 0-1 Citation::CitedArtifact::Part
       attr_accessor :relatesTo         # 0-* [ Citation::CitedArtifact::RelatesTo ]
       attr_accessor :publicationForm   # 0-* [ Citation::CitedArtifact::PublicationForm ]
@@ -628,9 +659,14 @@ module FHIR
     attr_accessor :useContext        # 0-* [ UsageContext ]
     attr_accessor :jurisdiction      # 0-* [ CodeableConcept ]
     attr_accessor :purpose           # 0-1 markdown
+    attr_accessor :copyright         # 0-1 markdown
     attr_accessor :approvalDate      # 0-1 date
     attr_accessor :lastReviewDate    # 0-1 date
     attr_accessor :effectivePeriod   # 0-1 Period
+    attr_accessor :author            # 0-* [ ContactDetail ]
+    attr_accessor :editor            # 0-* [ ContactDetail ]
+    attr_accessor :reviewer          # 0-* [ ContactDetail ]
+    attr_accessor :endorser          # 0-* [ ContactDetail ]
     attr_accessor :summary           # 0-* [ Citation::Summary ]
     attr_accessor :classification    # 0-* [ Citation::Classification ]
     attr_accessor :note              # 0-* [ Annotation ]

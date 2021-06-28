@@ -4,14 +4,33 @@ require_relative './citation'
 
 # Service to read artifact from database and convert to FHIR resources
 class FHIRAdapter
+  FHIR_CODE_SYSTEM_URLS = {
+    'MSH' => 'https://www.nlm.nih.gov/mesh/',
+    'MEDLINEPLUS' => 'http://www.nlm.nih.gov/research/umls/medlineplus',
+    'SNOMEDCT_US' => 'http://snomed.info/sct',
+    'SCTSPA' => 'http://snomed.info/sct/449081005',
+    'MSHSPA' => 'http://www.nlm.nih.gov/research/umls/mshspa',
+    'ICD10CM' => 'http://hl7.org/fhir/sid/icd-10-cm',
+    'RXNORM' => 'http://www.nlm.nih.gov/research/umls/rxnorm'
+  }.freeze
+
   def self.create_citation(artifact, artifact_base_url)
     cedar_identifier = artifact[:cedar_identifier]
     # TODO: Put handling of JSONP array into model
     # TODO: Separate different types of keywords
     keywords = artifact.keywords
     keyword_list = keywords.map { |k| FHIR::CodeableConcept.new(text: k) }
-    mesh_keywords = artifact.mesh_keywords
-    mesh_keyword_list = mesh_keywords.map { |k| FHIR::CodeableConcept.new(text: k) }
+    umls_concepts = artifact.concepts
+    umls_concept_list = umls_concepts.map do |concept|
+      codes = concept.codes.map do |c|
+        {
+          system: FHIR_CODE_SYSTEM_URLS[c['system']],
+          code: c['code'],
+          display: c['description']
+        }
+      end
+      FHIR::CodeableConcept.new(text: concept.umls_description, coding: codes)
+    end
 
     citation = FHIR::Citation.new(
       id: cedar_identifier,
@@ -164,21 +183,32 @@ class FHIRAdapter
             }
           ]
         },
-        classifier: keyword_list
+        classifier: keyword_list,
+        whoClassified: {
+          publisher: {
+            reference: "Organization/#{artifact.repository.fhir_id}",
+            display: artifact.repository.name
+          }
+        }
       )
     end
 
-    if mesh_keyword_list.any?
+    if umls_concept_list.any?
       citation.citedArtifact.classification << FHIR::Citation::CitedArtifact::Classification.new(
         type: {
           coding: [
             {
               system: 'http://terminology.hl7.org/CodeSystem/cited-artifact-classification-type',
-              code: 'mesh-heading'
+              code: 'keyword'
             }
           ]
         },
-        classifier: mesh_keyword_list
+        classifier: umls_concept_list,
+        whoClassified: {
+          publisher: {
+            display: 'AHRQ CEDAR'
+          }
+        }
       )
     end
 

@@ -12,9 +12,12 @@
   "base": [
     "Citation"
   ],
-  "description" : "Classification of the citation",
-  "type": "string",
-  "expression": "Citation.citedArtifact.classification.classifier.text",
-  "xpath" : "f:Citation/f:citedArtifact/f:classification/f:classifier/f:text",
-  "xpathUsage" : "normal"
+  "description": "Classification of the citation",
+  "type": "token",
+  "expression": "Citation.citedArtifact.classification.classifier",
+  "xpath": "f:Citation/f:citedArtifact/f:classification/f:classifier",
+  "xpathUsage": "normal",
+  "modifier": [
+    "text"
+  ]
 }
