@@ -18,7 +18,6 @@ class CitationFilter
     @client_ip = client_ip
     @log_to_db = log_to_db
 
-    
     @search_log = SearchLog.new
     @search_log[:search_params] = params.to_json
     @search_log[:client_ip] = client_ip unless client_ip.nil?
@@ -57,9 +56,6 @@ class CitationFilter
 
     filter = build_filter
 
-    page_size = -1
-    page_no = 1
-
     paged_result = add_pagination(filter)
 
     artifacts = paged_result[:artifacts]
@@ -74,13 +70,11 @@ class CitationFilter
 
     add_bundle_links(bundle, artifacts)
 
-    unless page_size.zero?
-      @search_log[:count] = artifacts.count
-    end
+    @search_log[:count] = artifacts.count unless page_size.zero?
 
     search_log[:end_time] = Time.now
 
-    @search_log.save
+    @search_log.save_changes
 
     bundle
   end
@@ -91,13 +85,16 @@ class CitationFilter
     #    that rely on id joins
     # 2. The many-to-many relationship with concepts results in multiple rows per artifact
     filter = Artifact.dataset
+    search_type = ''
 
     @params&.each do |key, value|
       search_terms = value.split(',').map { |v| v.strip.downcase.to_s }
 
       case key
       when '_content'
+        search_type += ',content'
         cols = SearchParser.parse(value)
+        @search_log[:sql] = cols
         opt = {
           language: 'english',
           rank: true,
@@ -106,10 +103,13 @@ class CitationFilter
 
         filter = filter.full_text_search(:content_search, cols, opt)
       when 'classification'
+        search_type += ',keyword'
         artifact_ids = get_artifacts_with_concept(value)
         filter = filter.where(Sequel[:artifacts][:id] => artifact_ids)
       when 'classification:text'
+        search_type += ',keyword'       
         cols = SearchParser.parse(value)
+        @search_log[:sql] = cols
         opt = {
           language: 'english',
           rank: true
@@ -118,9 +118,11 @@ class CitationFilter
         # Need to decide if we need use ts_vector to get better performance
         filter = filter.full_text_search(:keyword_text, cols, opt)
       when 'title'
+        search_type += ',title'
         search_terms.map! { |t| "#{t}%" }
         filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
       when 'title:contains'
+        search_type += ',title'
         search_terms.map! { |t| "%#{t}%" }
         filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
       when 'artifact-current-state'
@@ -131,9 +133,10 @@ class CitationFilter
       end
     end
 
+    search_type = search_type[1..] if search_type.start_with?(',')
+    @search_log[:search_type] = search_type
     filter
   end
-
 
   def add_pagination(filter)
     @page_size = (@params['_count'] || -1).to_i
@@ -184,120 +187,25 @@ class CitationFilter
         url: build_link_url(artifacts.page_count, @page_size)
       }
     )
-      # return count only
-      bundle = FHIRAdapter.create_citation_bundle(nil, artifact_base_url, filter.count)
-    else
-      # if page size is greater than 0, return paginated results.
-      # otherwise, return all results
-      if page_size.positive?
-        artifacts = filter.paginate(page_no, page_size)
-        total = artifacts.pagination_record_count
-      else
-        artifacts = filter.all
-        total = artifacts.size
-      end
-
-      bundle = FHIRAdapter.create_citation_bundle(artifacts, artifact_base_url, total)
-
+    # first page does not have prev page
+    unless artifacts.first_page?
       bundle.link << FHIR::Bundle::Link.new(
         {
-          relation: 'self',
-          url: build_next_page_url(page_no, page_size)
+          relation: 'prev',
+          url: build_next_page_url(page_no - 1, page_size)
         }
       )
-
-      # full seach result does not have first/last/prev/next page link
-      if page_size.positive?
-
-        # add first/last page link
-        bundle.link << FHIR::Bundle::Link.new(
-          {
-            relation: 'first',
-            url: build_next_page_url(1, page_size)
-          }
-        )
-
-        bundle.link << FHIR::Bundle::Link.new(
-          {
-            relation: 'last',
-            url: build_next_page_url(artifacts.page_count, page_size)
-          }
-        )
-
-        # first page does not have prev page
-        unless artifacts.first_page?
-          bundle.link << FHIR::Bundle::Link.new(
-            {
-              relation: 'prev',
-              url: build_next_page_url(page_no - 1, page_size)
-            }
-          )
-        end
-
-        # last page does not have next page
-        unless artifacts.last_page?
-          bundle.link << FHIR::Bundle::Link.new(
-            {
-              relation: 'next',
-              url: build_next_page_url(page_no + 1, page_size)
-            }
-          )
-        end
-
-      end
-  end
-
-  def build_filter
-    filter = Artifact.join(:repositories, id: :repository_id)
-    search_type = ''
-
-    @params&.each do |key, value|
-      search_terms = value.split(',').map { |v| v.strip.downcase.to_s }
-
-      case key
-      when '_content'
-        search_type += ',' unless search_type.empty?
-        search_type += 'content'
-        cols = SearchParser.parse(value)
-        @search_log[:sql] = cols
-        opt = {
-          language: 'english',
-          rank: true,
-          tsvector: true
-        }
-
-        filter = filter.full_text_search(:content_search, cols, opt)
-      when 'classification'
-        search_type += ',' unless search_type.empty?
-        search_type += 'keyword'
-        cols = SearchParser.parse(value)
-        @search_log[:sql] = cols
-        opt = {
-          language: 'english',
-          rank: true
-        }
-
-        # Need to decide if we need use ts_vector to get better performance
-        filter = filter.full_text_search([:keyword_text, :mesh_keyword_text], cols, opt)
-      when 'title'
-        search_type += ',' unless search_type.empty?
-        search_type += 'title'
-        search_terms.map! { |t| "#{t}%" }
-        filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
-      when 'title:contains'
-        search_type += ',' unless search_type.empty?
-        search_type += 'title'
-        search_terms.map! { |t| "%#{t}%" }
-        filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
-      when 'artifact-current-state'
-        filter = filter.where(artifact_status: search_terms)
-      when 'artifact-publisher'
-        filter = filter.where { |o| { o.lower(:fhir_id) => search_terms } }
-      end
     end
 
-    @search_log[:search_type] = search_type
-    filter
+    # last page does not have next page
+    unless artifacts.last_page?
+      bundle.link << FHIR::Bundle::Link.new(
+        {
+          relation: 'next',
+          url: build_next_page_url(page_no + 1, page_size)
+        }
+      )
+    end
   end
 
   def append_boolean_expression(operator, target, search_terms, filter)

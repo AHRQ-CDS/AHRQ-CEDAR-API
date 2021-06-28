@@ -3,7 +3,6 @@
 require 'warning'
 require_relative '../test_helper'
 require_relative '../../database/models'
-require 'warning'
 
 describe 'cedar_api' do
   include Rack::Test::Methods
