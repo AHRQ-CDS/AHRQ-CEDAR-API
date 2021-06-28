@@ -9,7 +9,7 @@ require 'sinatra/cross_origin'
 
 require_relative 'database/models'
 require_relative 'fhir/fhir_adapter'
-require_relative 'util/api_helper'
+require_relative 'util/citation_filter'
 require_relative 'util/search_parser'
 
 configure do
@@ -64,6 +64,10 @@ namespace '/fhir' do
 
   get '/SearchParameter' do
     case params['url']
+    when /cedar-citiation-artifact-current-state/
+      return FHIR.from_contents(File.read('resources/searchparameter-artifact-current-state.json')).to_json
+    when /cedar-citiation-artifact-publisher/
+      return FHIR.from_contents(File.read('resources/searchparameter-artifact-publisher.json')).to_json
     when /cedar-citiation-classification/
       return FHIR.from_contents(File.read('resources/searchparameter-classification.json')).to_json
     when /cedar-citiation-title/
@@ -109,7 +113,26 @@ namespace '/fhir' do
   end
 
   get '/Citation' do
-    bundle = ApiHelper.find_citation(params, uri('fhir/Citation'), request)
+    # artifact-current-state is required
+    unless params&.any? { |key, _value| key == 'artifact-current-state' }
+      oo = FHIR::OperationOutcome.new(
+        issue: [
+          {
+            severity: 'error',
+            code: 'required',
+            details: {
+              text: 'Required search parameter artifact-current-state is missing'
+            }
+          }
+        ]
+      )
+
+      return oo.to_json
+    end
+
+    request_url = "#{request.scheme}://#{request.host}:#{request.port}#{request.path}"
+    filter = CitationFilter.new(params: params, base_url: uri('fhir/Citation').to_s, request_url: request_url)
+    bundle = filter.citations
     bundle.to_json
   end
 end

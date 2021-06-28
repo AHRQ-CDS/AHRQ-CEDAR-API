@@ -1,0 +1,2786 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: CEDAR API
+host: 'localhost:4567'
+basePath: /fhir
+tags:
+  - name: CapabilityStatement
+  - name: Citation
+  - name: Organization
+  - name: SearchParameter
+schemes:
+  - http
+paths:
+  /metadata:
+    get:
+      tags:
+        - CapabilityStatement
+      summary: Get Server CapabilityStatement
+      produces:
+        - application/fhir+json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/CapabilityStatement'
+  '/Citation/{citationId}':
+    get:
+      tags:
+        - Citation
+      summary: Get Citation
+      produces:
+        - application/fhir+json
+      parameters:
+        - name: citationId
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Citation'
+  /Citation:
+    get:
+      tags:
+        - Citation
+      summary: Search Citations
+      produces:
+        - application/fhir+json
+      parameters:
+        - name: artifact-current-state
+          description: current status for cited artifact
+          in: query
+          required: true
+          type: string
+          default: 'active'
+        - name: _content
+          description: 'term in description, title, and keywords. support full text search'
+          in: query
+          type: string
+        - name: classification
+          description: term in keywords. support full text search
+          in: query
+          type: string
+        - name: artifact-publisher
+          description: publisher for citated artifact
+          in: query
+          type: string
+        - name: title
+          description: title starts with the term
+          in: query
+          type: string
+        - name: 'title:contains'
+          description: title contains the term
+          in: query
+          type: string
+        - name: _count
+          description: 'number of results per page. if _count is 0, server returns the number of results only. if _count is not provided or less than 0, all results are returned'
+          in: query
+          type: integer
+        - name: page
+          description: 'page number of the result. default is 1 (the first page). if page is less than 1, default value is used'
+          in: query
+          type: integer
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Bundle'
+  /Organization:
+    get:
+      tags:
+        - Organization
+      summary: Get all publishers
+      produces:
+        - application/fhir+json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Bundle'
+  /SearchParameter:
+    get:
+      tags:
+        - SearchParameter
+      summary: Search SearchParameter by url
+      produces:
+        - application/fhir+json
+      parameters:
+        - name: url
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Bundle'
+definitions:
+  Address:
+    description: An address expressed using postal conventions (as opposed to GPS or other location definition formats)
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      city:
+        description: 'Name of city, town etc.'
+        type: string
+      country:
+        description: Country (e.g. may be ISO 3166 2 or 3 letter code)
+        type: string
+      district:
+        description: District name (aka county)
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      line:
+        description: 'Street name, number, direction & P.O. Box etc.'
+        type: array
+        items:
+          type: string
+      period:
+        $ref: '#/definitions/Period'
+      postalCode:
+        description: Postal code for area
+        type: string
+      state:
+        description: Sub-unit of country (abbreviations ok)
+        type: string
+      text:
+        description: Text representation of the address
+        type: string
+      type:
+        description: postal | physical | both
+        type: string
+      use:
+        description: home | work | temp | old | billing - purpose of this address
+        type: string
+  Annotation:
+    description: Text node with attribution
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      authorReference:
+        $ref: '#/definitions/Reference'
+      authorString:
+        description: Individual responsible for the annotation
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      text:
+        description: The annotation  - text content (as markdown)
+        type: string
+      time:
+        description: When the annotation was made
+        type: string
+  Attachment:
+    description: Content in a format defined elsewhere
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      contentType:
+        description: 'Mime type of the content, with charset etc.'
+        type: string
+      creation:
+        description: Date attachment was first created
+        type: string
+      data:
+        format: byte
+        description: 'Data inline, base64ed'
+        type: string
+      duration:
+        format: double
+        description: Length in seconds (audio / video)
+        type: number
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      frames:
+        format: int32
+        description: Number of frames if > 1 (photo)
+        type: integer
+      hash:
+        format: byte
+        description: 'Hash of the data (sha-1, base64ed)'
+        type: string
+      height:
+        format: int32
+        description: Height of the image in pixels (photo/video)
+        type: integer
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      language:
+        description: Human language of the content (BCP-47)
+        type: string
+      pages:
+        format: int32
+        description: Number of printed pages
+        type: integer
+      size:
+        format: int64
+        description: Number of bytes of content (if url provided)
+        type: integer
+      title:
+        description: Label to display in place of the data
+        type: string
+      url:
+        description: Uri where the data can be found
+        type: string
+      width:
+        format: int32
+        description: Width of the image in pixels (photo/video)
+        type: integer
+  BackboneElement:
+    description: Base for elements defined inside a resource
+    type: object
+    allOf:
+      - $ref: '#/definitions/Element'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+  CodeableConcept:
+    description: Concept - reference to a terminology or just  text
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      coding:
+        description: Code defined by a terminology system
+        type: array
+        items:
+          $ref: '#/definitions/Coding'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      text:
+        description: Plain text representation of the concept
+        type: string
+  Coding:
+    description: A reference to a code defined by a terminology system
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      code:
+        description: Symbol in syntax defined by the system
+        type: string
+      display:
+        description: Representation defined by the system
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      system:
+        description: Identity of the terminology system
+        type: string
+      userSelected:
+        description: If this coding was chosen directly by the user
+        type: boolean
+      version:
+        description: Version of the system - if relevant
+        type: string
+  ContactDetail:
+    description: Contact information
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      name:
+        description: Name of an individual to contact
+        type: string
+      telecom:
+        description: Contact details for individual or organization
+        type: array
+        items:
+          $ref: '#/definitions/ContactPoint'
+  ContactPoint:
+    description: 'Details of a Technology mediated contact point (phone, fax, email, etc.)'
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      period:
+        $ref: '#/definitions/Period'
+      rank:
+        format: int32
+        description: Specify preferred order of use (1 = highest)
+        type: integer
+      system:
+        description: phone | fax | email | pager | url | sms | other
+        type: string
+      use:
+        description: home | work | temp | old | mobile - purpose of this contact point
+        type: string
+      value:
+        description: The actual contact point details
+        type: string
+  DataType:
+    description: Reuseable Types
+    type: object
+    allOf:
+      - $ref: '#/definitions/Element'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+  Element:
+    description: Base for all elements
+    type: object
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+  Extension:
+    description: Optional Extensions Element
+    type: object
+  HumanName:
+    description: Name of a human - parts and usage
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      family:
+        description: Family name (often called 'Surname')
+        type: string
+      given:
+        description: Given names (not always 'first'). Includes middle names
+        type: array
+        items:
+          type: string
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      period:
+        $ref: '#/definitions/Period'
+      prefix:
+        description: Parts that come before the name
+        type: array
+        items:
+          type: string
+      suffix:
+        description: Parts that come after the name
+        type: array
+        items:
+          type: string
+      text:
+        description: Text representation of the full name
+        type: string
+      use:
+        description: usual | official | temp | nickname | anonymous | old | maiden
+        type: string
+  Identifier:
+    description: An identifier intended for computation
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      assigner:
+        $ref: '#/definitions/Reference'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      period:
+        $ref: '#/definitions/Period'
+      system:
+        description: The namespace for the identifier value
+        type: string
+      type:
+        $ref: '#/definitions/CodeableConcept'
+      use:
+        description: usual | official | temp | secondary | old (If known)
+        type: string
+      value:
+        description: The value that is unique
+        type: string
+  Meta:
+    description: Metadata about a resource
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      lastUpdated:
+        description: When the resource version last changed
+        type: string
+      profile:
+        description: Profiles this resource claims to conform to
+        type: array
+        items:
+          type: string
+      security:
+        description: Security Labels applied to this resource
+        type: array
+        items:
+          $ref: '#/definitions/Coding'
+      source:
+        description: Identifies where the resource comes from
+        type: string
+      tag:
+        description: Tags applied to this resource
+        type: array
+        items:
+          $ref: '#/definitions/Coding'
+      versionId:
+        description: Version specific identifier
+        type: string
+  Narrative:
+    description: Human-readable summary of the resource (essential clinical and business information)
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      div:
+        description: Limited xhtml content
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      status:
+        description: generated | extensions | additional | empty
+        type: string
+  Period:
+    description: Time range defined by start and end date/time
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      end:
+        description: 'End time with inclusive boundary, if not ongoing'
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      start:
+        description: Starting time with inclusive boundary
+        type: string
+  Quantity:
+    description: A measured or measurable amount
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      code:
+        description: Coded form of the unit
+        type: string
+      comparator:
+        description: < | <= | >= | > | ad - how to understand the value
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      system:
+        description: System that defines coded unit form
+        type: string
+      unit:
+        description: Unit representation
+        type: string
+      value:
+        format: double
+        description: Numerical value (with implicit precision)
+        type: number
+  Range:
+    description: Set of values bounded by low and high
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      high:
+        $ref: '#/definitions/Quantity'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      low:
+        $ref: '#/definitions/Quantity'
+  Reference:
+    description: A reference from one resource to another
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      display:
+        description: Text alternative for the resource
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      identifier:
+        description: 'Logical reference, when literal reference is not known'
+        type: object
+      reference:
+        description: 'Literal reference, Relative, internal or absolute URL'
+        type: string
+      type:
+        description: Type the reference refers to (e.g. "Patient")
+        type: string
+  RelatedArtifact:
+    description: Related artifacts for a knowledge resource
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      citation:
+        description: Bibliographic citation for the artifact
+        type: string
+      display:
+        description: Brief description of the related artifact
+        type: string
+      document:
+        $ref: '#/definitions/Attachment'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      label:
+        description: Short label
+        type: string
+      resource:
+        description: What resource is being referenced
+        type: string
+      type:
+        description: documentation | justification | citation | predecessor | successor | derived-from | depends-on | composed-of
+        type: string
+      url:
+        description: Where the artifact can be accessed
+        type: string
+  Signature:
+    description: 'A Signature - XML DigSig, JWS, Graphical image of signature, etc.'
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      data:
+        format: byte
+        description: 'The actual signature content (XML DigSig. JWS, picture, etc.)'
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      onBehalfOf:
+        $ref: '#/definitions/Reference'
+      sigFormat:
+        description: The technical format of the signature
+        type: string
+      targetFormat:
+        description: The technical format of the signed resources
+        type: string
+      type:
+        description: Indication of the reason the entity signed the object(s)
+        type: array
+        items:
+          $ref: '#/definitions/Coding'
+      when:
+        description: When the signature was created
+        type: string
+      who:
+        $ref: '#/definitions/Reference'
+  UsageContext:
+    description: Describes the context of use for a conformance or knowledge resource
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      code:
+        $ref: '#/definitions/Coding'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      valueCodeableConcept:
+        $ref: '#/definitions/CodeableConcept'
+      valueQuantity:
+        $ref: '#/definitions/Quantity'
+      valueRange:
+        $ref: '#/definitions/Range'
+      valueReference:
+        $ref: '#/definitions/Reference'
+  BundleRequestComponent:
+    description: Additional execution information (transaction/batch/history)
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      ifMatch:
+        description: For managing update contention
+        type: string
+      ifModifiedSince:
+        description: For managing cache currency
+        type: string
+      ifNoneExist:
+        description: For conditional creates
+        type: string
+      ifNoneMatch:
+        description: For managing cache currency
+        type: string
+      method:
+        description: GET | HEAD | POST | PUT | DELETE | PATCH
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      url:
+        description: URL for HTTP equivalent of this entry
+        type: string
+  BundleResponseComponent:
+    description: Results of execution (transaction/batch/history)
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      etag:
+        description: The Etag for the resource (if relevant)
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      lastModified:
+        description: Server's date time modified
+        type: string
+      location:
+        description: The location (if the operation returns a location)
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      outcome:
+        $ref: '#/definitions/Resource'
+      status:
+        description: Status response code (text optional)
+        type: string
+  BundleSearchComponent:
+    description: Search related information
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      mode:
+        description: match | include | outcome - why this is in the result set
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      score:
+        format: double
+        description: Search ranking (between 0 and 1)
+        type: number
+  BundleEntryComponent:
+    description: Entry in the bundle - will have a resource or information
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      fullUrl:
+        description: URI for resource (Absolute URL server address or URI for UUID/OID)
+        type: string
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      link:
+        description: Links related to this entry
+        type: array
+        items:
+          $ref: '#/definitions/BundleLinkComponent'
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      request:
+        $ref: '#/definitions/BundleRequestComponent'
+      resource:
+        $ref: '#/definitions/Resource'
+      response:
+        $ref: '#/definitions/BundleResponseComponent'
+      search:
+        $ref: '#/definitions/BundleSearchComponent'
+  BundleLinkComponent:
+    description: Links related to this Bundle
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      relation:
+        description: 'See http://www.iana.org/assignments/link-relations/link-relations.xhtml#link-relations-1'
+        type: string
+      url:
+        description: Reference details for the link
+        type: string
+  Bundle:
+    description: Contains a collection of resources
+    pattern: Bundle
+    type: object
+    allOf:
+      - $ref: '#/definitions/Resource'
+    properties:
+      entry:
+        description: Entry in the bundle - will have a resource or information
+        type: array
+        items:
+          $ref: '#/definitions/BundleEntryComponent'
+      id:
+        description: Logical id of this artifact
+        type: string
+      identifier:
+        $ref: '#/definitions/Identifier'
+      implicitRules:
+        description: A set of rules under which this content was created
+        type: string
+      language:
+        description: Language of the resource content
+        type: string
+      link:
+        description: Links related to this Bundle
+        type: array
+        items:
+          $ref: '#/definitions/BundleLinkComponent'
+      meta:
+        $ref: '#/definitions/Meta'
+      signature:
+        $ref: '#/definitions/Signature'
+      timestamp:
+        description: When the bundle was assembled
+        type: string
+      total:
+        format: int32
+        description: 'If search, the total number of matches'
+        type: integer
+      type:
+        description: document | message | transaction | transaction-response | batch | batch-response | history | searchset | collection | subscription-notification
+        type: string
+  CanonicalResource:
+    description: Common Ancestor declaration for definitional resources
+    pattern: CanonicalResource
+    type: object
+    allOf:
+      - $ref: '#/definitions/DomainResource'
+    properties:
+      contact:
+        description: Contact details for the publisher
+        type: array
+        items:
+          $ref: '#/definitions/ContactDetail'
+      contained:
+        description: 'Contained, inline Resources'
+        type: array
+        items:
+          $ref: '#/definitions/Resource'
+      copyright:
+        description: Use and/or publishing restrictions
+        type: string
+      date:
+        description: Date last changed
+        type: string
+      description:
+        description: 'Natural language description of the {{title}}'
+        type: string
+      experimental:
+        description: 'For testing purposes, not real usage'
+        type: boolean
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Logical id of this artifact
+        type: string
+      identifier:
+        description: 'Additional identifier for the {{title}}'
+        type: array
+        items:
+          $ref: '#/definitions/Identifier'
+      implicitRules:
+        description: A set of rules under which this content was created
+        type: string
+      jurisdiction:
+        description: 'Intended jurisdiction for {{title}} (if applicable)'
+        type: array
+        items:
+          $ref: '#/definitions/CodeableConcept'
+      language:
+        description: Language of the resource content
+        type: string
+      meta:
+        $ref: '#/definitions/Meta'
+      modifierExtension:
+        description: Extensions that cannot be ignored
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      name:
+        description: 'Name for this {{title}} (computer friendly)'
+        type: string
+      publisher:
+        description: Name of the publisher (organization or individual)
+        type: string
+      purpose:
+        description: 'Why this {{title}} is defined'
+        type: string
+      status:
+        description: draft | active | retired | unknown
+        type: string
+      text:
+        $ref: '#/definitions/Narrative'
+      title:
+        description: 'Name for this {{title}} (human friendly)'
+        type: string
+      url:
+        description: 'Canonical identifier for this {{title}}, represented as a URI (globally unique)'
+        type: string
+      useContext:
+        description: The context that the content is intended to support
+        type: array
+        items:
+          $ref: '#/definitions/UsageContext'
+      version:
+        description: 'Business version of the {{title}}'
+        type: string
+  CapabilityStatementDocumentComponent:
+    description: Document definition
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      documentation:
+        description: Description of document support
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      mode:
+        description: producer | consumer
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      profile:
+        description: Constraint on the resources used in the document
+        type: string
+  CapabilityStatementImplementationComponent:
+    description: If this describes a specific instance
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      custodian:
+        $ref: '#/definitions/Reference'
+      description:
+        description: Describes this specific instance
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      url:
+        description: Base URL for the installation
+        type: string
+  CapabilityStatementEndpointComponent:
+    description: Where messages should be sent
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      address:
+        description: Network address or identifier of the end-point
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      protocol:
+        $ref: '#/definitions/Coding'
+  CapabilityStatementSupportedMessageComponent:
+    description: Messages supported by this system
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      definition:
+        description: Message supported by this system
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      mode:
+        description: sender | receiver
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+  CapabilityStatementMessagingComponent:
+    description: If messaging is supported
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      documentation:
+        description: Messaging interface behavior details
+        type: string
+      endpoint:
+        description: Where messages should be sent
+        type: array
+        items:
+          $ref: '#/definitions/CapabilityStatementEndpointComponent'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      reliableCache:
+        format: int32
+        description: Reliable Message Cache Length (min)
+        type: integer
+      supportedMessage:
+        description: Messages supported by this system
+        type: array
+        items:
+          $ref: '#/definitions/CapabilityStatementSupportedMessageComponent'
+  CapabilityStatementSystemInteractionComponent:
+    description: What operations are supported?
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      code:
+        description: transaction | batch | search-system | history-system
+        type: string
+      documentation:
+        description: Anything special about operation behavior
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+  CapabilityStatementResourceInteractionComponent:
+    description: What operations are supported?
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      code:
+        description: read | vread | update | patch | delete | history-instance | history-type | create | search-type
+        type: string
+      documentation:
+        description: Anything special about operation behavior
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+  CapabilityStatementOperationComponent:
+    description: Definition of a resource operation
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      definition:
+        description: The defined operation/query
+        type: string
+      documentation:
+        description: Specific details about operation behavior
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      name:
+        description: Name by which the operation/query is invoked
+        type: string
+  CapabilityStatementSearchParamComponent:
+    description: Search parameters supported by implementation
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      definition:
+        description: Source of definition for parameter
+        type: string
+      documentation:
+        description: Server-specific usage
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      name:
+        description: Name of search parameter
+        type: string
+      type:
+        description: number | date | string | token | reference | composite | quantity | uri | special
+        type: string
+  CapabilityStatementResourceComponent:
+    description: Resource served on the REST interface
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      conditionalCreate:
+        description: If allows/uses conditional create
+        type: boolean
+      conditionalDelete:
+        description: not-supported | single | multiple - how conditional delete is supported
+        type: string
+      conditionalRead:
+        description: not-supported | modified-since | not-match | full-support
+        type: string
+      conditionalUpdate:
+        description: If allows/uses conditional update
+        type: boolean
+      documentation:
+        description: Additional information about the use of the resource type
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      interaction:
+        description: What operations are supported?
+        type: array
+        items:
+          $ref: '#/definitions/CapabilityStatementResourceInteractionComponent'
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      operation:
+        description: Definition of a resource operation
+        type: array
+        items:
+          $ref: '#/definitions/CapabilityStatementOperationComponent'
+      profile:
+        description: Base System profile for all uses of resource
+        type: string
+      readHistory:
+        description: Whether vRead can return past versions
+        type: boolean
+      referencePolicy:
+        description: literal | logical | resolves | enforced | local
+        type: array
+        items:
+          type: string
+      searchInclude:
+        description: _include values supported by the server
+        type: array
+        items:
+          type: string
+      searchParam:
+        description: Search parameters supported by implementation
+        type: array
+        items:
+          $ref: '#/definitions/CapabilityStatementSearchParamComponent'
+      searchRevInclude:
+        description: _revinclude values supported by the server
+        type: array
+        items:
+          type: string
+      supportedProfile:
+        description: Profiles for use cases supported
+        type: array
+        items:
+          type: string
+      type:
+        description: A resource type that is supported
+        type: string
+      updateCreate:
+        description: If update can commit to a new identity
+        type: boolean
+      versioning:
+        description: no-version | versioned | versioned-update
+        type: string
+  CapabilityStatementSecurityComponent:
+    description: Information about security of implementation
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      cors:
+        description: 'Adds CORS Headers (http://enable-cors.org/)'
+        type: boolean
+      description:
+        description: General description of how security works
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      service:
+        description: OAuth | SMART-on-FHIR | NTLM | Basic | Kerberos | Certificates
+        type: array
+        items:
+          $ref: '#/definitions/CodeableConcept'
+  CapabilityStatementRestComponent:
+    description: If the endpoint is a RESTful one
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      compartment:
+        description: Compartments served/used by system
+        type: array
+        items:
+          type: string
+      documentation:
+        description: General description of implementation
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      interaction:
+        description: What operations are supported?
+        type: array
+        items:
+          $ref: '#/definitions/CapabilityStatementSystemInteractionComponent'
+      mode:
+        description: client | server
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      operation:
+        description: Definition of a system level operation
+        type: array
+        items:
+          $ref: '#/definitions/CapabilityStatementOperationComponent'
+      resource:
+        description: Resource served on the REST interface
+        type: array
+        items:
+          $ref: '#/definitions/CapabilityStatementResourceComponent'
+      searchParam:
+        description: Search parameters for searching all resources
+        type: array
+        items:
+          $ref: '#/definitions/CapabilityStatementSearchParamComponent'
+      security:
+        $ref: '#/definitions/CapabilityStatementSecurityComponent'
+  CapabilityStatementSoftwareComponent:
+    description: Software that is covered by this capability statement
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      name:
+        description: A name the software is known by
+        type: string
+      releaseDate:
+        description: Date this version was released
+        type: string
+      version:
+        description: Version covered by this statement
+        type: string
+  CapabilityStatement:
+    description: A statement of system capabilities
+    pattern: CapabilityStatement
+    type: object
+    allOf:
+      - $ref: '#/definitions/CanonicalResource'
+    properties:
+      contact:
+        description: Contact details for the publisher
+        type: array
+        items:
+          $ref: '#/definitions/ContactDetail'
+      contained:
+        description: 'Contained, inline Resources'
+        type: array
+        items:
+          $ref: '#/definitions/Resource'
+      copyright:
+        description: Use and/or publishing restrictions
+        type: string
+      date:
+        description: Date last changed
+        type: string
+      description:
+        description: Natural language description of the capability statement
+        type: string
+      document:
+        description: Document definition
+        type: array
+        items:
+          $ref: '#/definitions/CapabilityStatementDocumentComponent'
+      experimental:
+        description: 'For testing purposes, not real usage'
+        type: boolean
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      fhirVersion:
+        description: FHIR Version the system supports
+        type: string
+      format:
+        description: formats supported (xml | json | ttl | mime type)
+        type: array
+        items:
+          type: string
+      id:
+        description: Logical id of this artifact
+        type: string
+      implementation:
+        $ref: '#/definitions/CapabilityStatementImplementationComponent'
+      implementationGuide:
+        description: Implementation guides supported
+        type: array
+        items:
+          type: string
+      implicitRules:
+        description: A set of rules under which this content was created
+        type: string
+      imports:
+        description: Canonical URL of another capability statement this adds to
+        type: array
+        items:
+          type: string
+      instantiates:
+        description: Canonical URL of another capability statement this implements
+        type: array
+        items:
+          type: string
+      jurisdiction:
+        description: Intended jurisdiction for capability statement (if applicable)
+        type: array
+        items:
+          $ref: '#/definitions/CodeableConcept'
+      kind:
+        description: instance | capability | requirements
+        type: string
+      language:
+        description: Language of the resource content
+        type: string
+      messaging:
+        description: If messaging is supported
+        type: array
+        items:
+          $ref: '#/definitions/CapabilityStatementMessagingComponent'
+      meta:
+        $ref: '#/definitions/Meta'
+      modifierExtension:
+        description: Extensions that cannot be ignored
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      name:
+        description: Name for this capability statement (computer friendly)
+        type: string
+      patchFormat:
+        description: Patch formats supported
+        type: array
+        items:
+          type: string
+      publisher:
+        description: Name of the publisher (organization or individual)
+        type: string
+      purpose:
+        description: Why this capability statement is defined
+        type: string
+      rest:
+        description: If the endpoint is a RESTful one
+        type: array
+        items:
+          $ref: '#/definitions/CapabilityStatementRestComponent'
+      software:
+        $ref: '#/definitions/CapabilityStatementSoftwareComponent'
+      status:
+        description: draft | active | retired | unknown
+        type: string
+      text:
+        $ref: '#/definitions/Narrative'
+      title:
+        description: Name for this capability statement (human friendly)
+        type: string
+      url:
+        description: 'Canonical identifier for this capability statement, represented as a URI (globally unique)'
+        type: string
+      useContext:
+        description: The context that the content is intended to support
+        type: array
+        items:
+          $ref: '#/definitions/UsageContext'
+      version:
+        description: Business version of the capability statement
+        type: string
+  CitationAbstractComponent:
+    description: Summary of the article or artifact
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      copyright:
+        description: Copyright notice for the abstract
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      language:
+        $ref: '#/definitions/CodeableConcept'
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      text:
+        description: Abstract content
+        type: string
+      type:
+        $ref: '#/definitions/CodeableConcept'
+  CitationWhoClassifiedComponent:
+    description: Provenance and copyright of classification
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      classifierCopyright:
+        description: Rights management statement for the classification
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      freeToShare:
+        description: Acceptable to re-use the classification
+        type: boolean
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      organization:
+        $ref: '#/definitions/Reference'
+      person:
+        $ref: '#/definitions/Reference'
+      publisher:
+        $ref: '#/definitions/Reference'
+  CitationClassificationComponent:
+    description: The assignment to an organizing scheme
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      classifier:
+        description: The specific classification value
+        type: array
+        items:
+          $ref: '#/definitions/CodeableConcept'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      type:
+        $ref: '#/definitions/CodeableConcept'
+      whoClassified:
+        $ref: '#/definitions/CitationWhoClassifiedComponent'
+  CitationAffiliationInfoComponent:
+    description: Organizational affiliation
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      affiliation:
+        description: Display for the organization
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      identifier:
+        description: Identifier for the organization
+        type: array
+        items:
+          $ref: '#/definitions/Identifier'
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      role:
+        description: 'Role within the organization, such as professional title'
+        type: string
+  CitationContributionInstanceComponent:
+    description: Contributions with accounting for time or number
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      time:
+        description: The time that the contribution was made
+        type: string
+      type:
+        $ref: '#/definitions/CodeableConcept'
+  CitationEntryComponent:
+    description: An individual entity named in the list
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      address:
+        description: Physical mailing address
+        type: array
+        items:
+          $ref: '#/definitions/Address'
+      affiliationInfo:
+        description: Organizational affiliation
+        type: array
+        items:
+          $ref: '#/definitions/CitationAffiliationInfoComponent'
+      collectiveName:
+        description: Used for collective or corporate name as an author
+        type: string
+      contributionInstance:
+        description: Contributions with accounting for time or number
+        type: array
+        items:
+          $ref: '#/definitions/CitationContributionInstanceComponent'
+      contributionType:
+        description: The specific contribution
+        type: array
+        items:
+          $ref: '#/definitions/CodeableConcept'
+      correspondingContact:
+        description: Indication of which contributor is the corresponding contributor for the role
+        type: boolean
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      identifier:
+        description: 'Author identifier, eg ORCID'
+        type: array
+        items:
+          $ref: '#/definitions/Identifier'
+      initials:
+        description: Initials for forename
+        type: string
+      listOrder:
+        format: int32
+        description: Used to code order of authors
+        type: integer
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      name:
+        $ref: '#/definitions/HumanName'
+      role:
+        $ref: '#/definitions/CodeableConcept'
+      telecom:
+        description: Email or telephone contact methods for the author or contributor
+        type: array
+        items:
+          $ref: '#/definitions/ContactPoint'
+  CitationSummaryComponent:
+    description: Used to record a display of the author/contributor list without separate coding for each list member
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      source:
+        $ref: '#/definitions/CodeableConcept'
+      style:
+        $ref: '#/definitions/CodeableConcept'
+      type:
+        $ref: '#/definitions/CodeableConcept'
+      value:
+        description: 'The display string for the author list, contributor list, or contributorship statement'
+        type: string
+  CitationContributorshipComponent:
+    description: Attribution of authors and other contributors
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      complete:
+        description: Indicates if the list includes all authors and/or contributors
+        type: boolean
+      entry:
+        description: An individual entity named in the list
+        type: array
+        items:
+          $ref: '#/definitions/CitationEntryComponent'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      summary:
+        description: Used to record a display of the author/contributor list without separate coding for each list member
+        type: array
+        items:
+          $ref: '#/definitions/CitationSummaryComponent'
+  CitationPartComponent:
+    description: The component of the article or artifact
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      baseCitation:
+        $ref: '#/definitions/Reference'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      type:
+        $ref: '#/definitions/CodeableConcept'
+      value:
+        description: The specification of the component
+        type: string
+  CitationDateOfPublicationComponent:
+    description: Defining the date on which the issue of the journal was published
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      date:
+        description: Date on which the issue of the journal was published
+        type: string
+      day:
+        description: Day on which the issue of the journal was published
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      month:
+        description: Month on which the issue of the journal was published
+        type: string
+      season:
+        description: Season on which the issue of the journal was published
+        type: string
+      text:
+        description: Text representation of the date of which the issue of the journal was published
+        type: string
+      year:
+        description: Year on which the issue of the journal was published
+        type: string
+  CitationPeriodicReleaseComponent:
+    description: The specific issue in which the cited article resides
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      citedMedium:
+        $ref: '#/definitions/CodeableConcept'
+      dateOfPublication:
+        $ref: '#/definitions/CitationDateOfPublicationComponent'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      issue:
+        description: 'Issue, part or supplement of journal in which the article is published'
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      volume:
+        description: Volume number of journal in which the article is published
+        type: string
+  CitationPublishedInComponent:
+    description: The collection the cited article or artifact is published in
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      identifier:
+        description: 'Journal identifiers include ISSN, ISO Abbreviation and NLMuniqueID; Book identifiers include ISBN'
+        type: array
+        items:
+          $ref: '#/definitions/Identifier'
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      publisher:
+        $ref: '#/definitions/Reference'
+      publisherLocation:
+        description: Geographic location of the publisher
+        type: string
+      title:
+        description: Name of the database or title of the book or journal
+        type: string
+      type:
+        $ref: '#/definitions/CodeableConcept'
+  CitationPublicationFormComponent:
+    description: 'If multiple, used to represent alternative forms of the article that are not separate citations'
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      accessionNumber:
+        description: Entry number or identifier for inclusion in a database
+        type: string
+      articleDate:
+        description: 'The date the article was added to the database, or the date the article was released'
+        type: string
+      copyright:
+        description: Copyright notice for the full article or artifact
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      firstPage:
+        description: Used for isolated representation of first page
+        type: string
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      language:
+        description: Language in which this form of the article is published
+        type: array
+        items:
+          $ref: '#/definitions/CodeableConcept'
+      lastPage:
+        description: Used for isolated representation of last page
+        type: string
+      lastRevisionDate:
+        description: The date the article was last revised or updated in the database
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      pageCount:
+        description: Number of pages or screens
+        type: string
+      pageString:
+        description: Used for full display of pagination
+        type: string
+      periodicRelease:
+        $ref: '#/definitions/CitationPeriodicReleaseComponent'
+      publishedIn:
+        $ref: '#/definitions/CitationPublishedInComponent'
+  CitationRelatesToComponent:
+    description: The artifact related to the cited artifact
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      relationshipType:
+        $ref: '#/definitions/CodeableConcept'
+      targetUri:
+        description: The article or artifact that the cited artifact is related to
+        type: string
+      targetIdentifier:
+        $ref: '#/definitions/Identifier'
+      targetReference:
+        $ref: '#/definitions/Reference'
+      targetAttachment:
+        $ref: '#/definitions/Attachment'
+      targetClassifier:
+        description: The clasification of the related artifact
+        type: array
+        items:
+          $ref: '#/definitions/CodeableConcept'
+  CitationStatusDateComponent:
+    description: An effective date or period for a status of the cited artifact
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      activity:
+        $ref: '#/definitions/CodeableConcept'
+      actual:
+        description: Either occurred or expected
+        type: boolean
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      period:
+        $ref: '#/definitions/Period'
+  CitationTitleComponent:
+    description: The title details of the article or artifact
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      language:
+        $ref: '#/definitions/CodeableConcept'
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      text:
+        description: The title of the article or artifact
+        type: string
+      type:
+        $ref: '#/definitions/CodeableConcept'
+  CitationVersionComponent:
+    description: The defined version of the cited artifact
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      baseCitation:
+        $ref: '#/definitions/Reference'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      value:
+        description: The version number or other version identifier
+        type: string
+  CitationWebLocationComponent:
+    description: Used for any URL for the article or artifact cited
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      type:
+        $ref: '#/definitions/CodeableConcept'
+      url:
+        description: The specific URL
+        type: string
+  CitationCitedArtifactComponent:
+    description: The article or artifact being described
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      abstract:
+        description: Summary of the article or artifact
+        type: array
+        items:
+          $ref: '#/definitions/CitationAbstractComponent'
+      classification:
+        description: The assignment to an organizing scheme
+        type: array
+        items:
+          $ref: '#/definitions/CitationClassificationComponent'
+      contributorship:
+        $ref: '#/definitions/CitationContributorshipComponent'
+      currentState:
+        description: The status of the cited artifact
+        type: array
+        items:
+          $ref: '#/definitions/CodeableConcept'
+      dateAccessed:
+        description: When the cited artifact was accessed
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      identifier:
+        description: 'May include DOI, PMID, PMCID, etc.'
+        type: array
+        items:
+          $ref: '#/definitions/Identifier'
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      note:
+        description: Any additional information or content for the article or artifact
+        type: array
+        items:
+          $ref: '#/definitions/Annotation'
+      part:
+        $ref: '#/definitions/CitationPartComponent'
+      publicationForm:
+        description: 'If multiple, used to represent alternative forms of the article that are not separate citations'
+        type: array
+        items:
+          $ref: '#/definitions/CitationPublicationFormComponent'
+      relatedIdentifier:
+        description: May include trial registry identifiers
+        type: array
+        items:
+          $ref: '#/definitions/Identifier'
+      relatesTo:
+        description: The artifact related to the cited artifact
+        type: array
+        items:
+          $ref: '#/definitions/CitationRelatesToComponent'
+      statusDate:
+        description: An effective date or period for a status of the cited artifact
+        type: array
+        items:
+          $ref: '#/definitions/CitationStatusDateComponent'
+      title:
+        description: The title details of the article or artifact
+        type: array
+        items:
+          $ref: '#/definitions/CitationTitleComponent'
+      version:
+        $ref: '#/definitions/CitationVersionComponent'
+      webLocation:
+        description: Used for any URL for the article or artifact cited
+        type: array
+        items:
+          $ref: '#/definitions/CitationWebLocationComponent'
+  Citation:
+    description: 'A description of identification, location, or contributorship of a publication (article or artifact)'
+    pattern: Citation
+    type: object
+    allOf:
+      - $ref: '#/definitions/MetadataResource'
+    properties:
+      approvalDate:
+        description: When the citation was approved by publisher
+        type: string
+      author:
+        description: Who authored the Citation
+        type: array
+        items:
+          $ref: '#/definitions/ContactDetail'
+      citedArtifact:
+        $ref: '#/definitions/CitationCitedArtifactComponent'
+      classification:
+        description: The assignment to an organizing scheme
+        type: array
+        items:
+          $ref: '#/definitions/CitationClassificationComponent'
+      contact:
+        description: Contact details for the publisher of the Citation Resource
+        type: array
+        items:
+          $ref: '#/definitions/ContactDetail'
+      contained:
+        description: 'Contained, inline Resources'
+        type: array
+        items:
+          $ref: '#/definitions/Resource'
+      copyright:
+        description: 'Use and/or publishing restrictions for the Citation, not for the cited artifact'
+        type: string
+      currentState:
+        description: The status of the citation
+        type: array
+        items:
+          $ref: '#/definitions/CodeableConcept'
+      date:
+        description: Date last changed
+        type: string
+      description:
+        description: Natural language description of the citation
+        type: string
+      editor:
+        description: Who edited the Citation
+        type: array
+        items:
+          $ref: '#/definitions/ContactDetail'
+      effectivePeriod:
+        $ref: '#/definitions/Period'
+      endorser:
+        description: Who endorsed the Citation
+        type: array
+        items:
+          $ref: '#/definitions/ContactDetail'
+      experimental:
+        description: 'For testing purposes, not real usage'
+        type: boolean
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Logical id of this artifact
+        type: string
+      identifier:
+        description: Identifier for the Citation resource itself
+        type: array
+        items:
+          $ref: '#/definitions/Identifier'
+      implicitRules:
+        description: A set of rules under which this content was created
+        type: string
+      jurisdiction:
+        description: Intended jurisdiction for citation (if applicable)
+        type: array
+        items:
+          $ref: '#/definitions/CodeableConcept'
+      language:
+        description: Language of the resource content
+        type: string
+      lastReviewDate:
+        description: When the citation was last reviewed
+        type: string
+      meta:
+        $ref: '#/definitions/Meta'
+      modifierExtension:
+        description: Extensions that cannot be ignored
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      name:
+        description: Name for this citation (computer friendly)
+        type: string
+      note:
+        description: Used for general notes and annotations not coded elsewhere
+        type: array
+        items:
+          $ref: '#/definitions/Annotation'
+      publisher:
+        description: 'The publisher of the Citation, not the publisher of the article or artifact being cited'
+        type: string
+      purpose:
+        description: Why this citation is defined
+        type: string
+      relatesTo:
+        description: Artifact related to the Citation Resource
+        type: array
+        items:
+          $ref: '#/definitions/CitationRelatesToComponent'
+      reviewer:
+        description: Who reviewed the Citation
+        type: array
+        items:
+          $ref: '#/definitions/ContactDetail'
+      status:
+        description: draft | active | retired | unknown
+        type: string
+      statusDate:
+        description: An effective date or period for a status of the citation
+        type: array
+        items:
+          $ref: '#/definitions/CitationStatusDateComponent'
+      summary:
+        description: A human-readable display of the citation
+        type: array
+        items:
+          $ref: '#/definitions/CitationSummaryComponent'
+      text:
+        $ref: '#/definitions/Narrative'
+      title:
+        description: Name for this citation (human friendly)
+        type: string
+      url:
+        description: 'Canonical identifier for this citation, represented as a globally unique URI'
+        type: string
+      useContext:
+        description: The context that the Citation Resource content is intended to support
+        type: array
+        items:
+          $ref: '#/definitions/UsageContext'
+      version:
+        description: Business version of the citation
+        type: string
+  DomainResource:
+    description: 'A resource with narrative, extensions, and contained resources'
+    pattern: DomainResource
+    type: object
+    allOf:
+      - $ref: '#/definitions/Resource'
+    properties:
+      contained:
+        description: 'Contained, inline Resources'
+        type: array
+        items:
+          $ref: '#/definitions/Resource'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Logical id of this artifact
+        type: string
+      implicitRules:
+        description: A set of rules under which this content was created
+        type: string
+      language:
+        description: Language of the resource content
+        type: string
+      meta:
+        $ref: '#/definitions/Meta'
+      modifierExtension:
+        description: Extensions that cannot be ignored
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      text:
+        $ref: '#/definitions/Narrative'
+  MetadataResource:
+    description: Common Ancestor declaration for definitional resources
+    pattern: MetadataResource
+    type: object
+    allOf:
+      - $ref: '#/definitions/CanonicalResource'
+    properties:
+      approvalDate:
+        description: 'When the {{title}} was approved by publisher'
+        type: string
+      author:
+        description: 'Who authored the {{title}}'
+        type: array
+        items:
+          $ref: '#/definitions/ContactDetail'
+      contained:
+        description: 'Contained, inline Resources'
+        type: array
+        items:
+          $ref: '#/definitions/Resource'
+      editor:
+        description: 'Who edited the {{title}}'
+        type: array
+        items:
+          $ref: '#/definitions/ContactDetail'
+      effectivePeriod:
+        $ref: '#/definitions/Period'
+      endorser:
+        description: 'Who endorsed the {{title}}'
+        type: array
+        items:
+          $ref: '#/definitions/ContactDetail'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Logical id of this artifact
+        type: string
+      implicitRules:
+        description: A set of rules under which this content was created
+        type: string
+      language:
+        description: Language of the resource content
+        type: string
+      lastReviewDate:
+        description: 'When the {{title}} was last reviewed'
+        type: string
+      meta:
+        $ref: '#/definitions/Meta'
+      modifierExtension:
+        description: Extensions that cannot be ignored
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      relatedArtifact:
+        description: 'Additional documentation, citations, etc.'
+        type: array
+        items:
+          $ref: '#/definitions/RelatedArtifact'
+      reviewer:
+        description: 'Who reviewed the {{title}}'
+        type: array
+        items:
+          $ref: '#/definitions/ContactDetail'
+      text:
+        $ref: '#/definitions/Narrative'
+      topic:
+        description: 'E.g. Education, Treatment, Assessment, etc.'
+        type: array
+        items:
+          $ref: '#/definitions/CodeableConcept'
+  OrganizationContactComponent:
+    description: Contact for the organization for a certain purpose
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      address:
+        $ref: '#/definitions/Address'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      name:
+        $ref: '#/definitions/HumanName'
+      purpose:
+        $ref: '#/definitions/CodeableConcept'
+      telecom:
+        description: 'Contact details (telephone, email, etc.)  for a contact'
+        type: array
+        items:
+          $ref: '#/definitions/ContactPoint'
+  Organization:
+    description: A grouping of people or organizations with a common purpose
+    pattern: Organization
+    type: object
+    allOf:
+      - $ref: '#/definitions/DomainResource'
+    properties:
+      active:
+        description: Whether the organization's record is still in active use
+        type: boolean
+      address:
+        description: An address for the organization
+        type: array
+        items:
+          $ref: '#/definitions/Address'
+      alias:
+        description: 'A list of alternate names that the organization is known as, or was known as in the past'
+        type: array
+        items:
+          type: string
+      contact:
+        description: Contact for the organization for a certain purpose
+        type: array
+        items:
+          $ref: '#/definitions/OrganizationContactComponent'
+      contained:
+        description: 'Contained, inline Resources'
+        type: array
+        items:
+          $ref: '#/definitions/Resource'
+      endpoint:
+        description: Technical endpoints providing access to services operated for the organization
+        type: array
+        items:
+          $ref: '#/definitions/Reference'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Logical id of this artifact
+        type: string
+      identifier:
+        description: Identifies this organization  across multiple systems
+        type: array
+        items:
+          $ref: '#/definitions/Identifier'
+      implicitRules:
+        description: A set of rules under which this content was created
+        type: string
+      language:
+        description: Language of the resource content
+        type: string
+      meta:
+        $ref: '#/definitions/Meta'
+      modifierExtension:
+        description: Extensions that cannot be ignored
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      name:
+        description: Name used for the organization
+        type: string
+      partOf:
+        $ref: '#/definitions/Reference'
+      telecom:
+        description: A contact detail for the organization
+        type: array
+        items:
+          $ref: '#/definitions/ContactPoint'
+      text:
+        $ref: '#/definitions/Narrative'
+      type:
+        description: Kind of organization
+        type: array
+        items:
+          $ref: '#/definitions/CodeableConcept'
+  Resource:
+    description: Base Resource
+    required:
+      - resourceType
+    type: object
+    properties:
+      resourceType:
+        description: Resource type name
+        type: string
+      id:
+        description: Logical id of this artifact
+        type: string
+      implicitRules:
+        description: A set of rules under which this content was created
+        type: string
+      language:
+        description: Language of the resource content
+        type: string
+      meta:
+        $ref: '#/definitions/Meta'
+    discriminator: resourceType
+  SearchParameterComponentComponent:
+    description: For Composite resources to define the parts
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      definition:
+        description: Defines how the part works
+        type: string
+      expression:
+        description: Subexpression relative to main expression
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+  SearchParameter:
+    description: Search parameter for a resource
+    pattern: SearchParameter
+    type: object
+    allOf:
+      - $ref: '#/definitions/CanonicalResource'
+    properties:
+      base:
+        description: The resource type(s) this search parameter applies to
+        type: array
+        items:
+          type: string
+      chain:
+        description: Chained names supported
+        type: array
+        items:
+          type: string
+      code:
+        description: Code used in URL
+        type: string
+      comparator:
+        description: eq | ne | gt | lt | ge | le | sa | eb | ap
+        type: array
+        items:
+          type: string
+      component:
+        description: For Composite resources to define the parts
+        type: array
+        items:
+          $ref: '#/definitions/SearchParameterComponentComponent'
+      contact:
+        description: Contact details for the publisher
+        type: array
+        items:
+          $ref: '#/definitions/ContactDetail'
+      contained:
+        description: 'Contained, inline Resources'
+        type: array
+        items:
+          $ref: '#/definitions/Resource'
+      date:
+        description: Date last changed
+        type: string
+      derivedFrom:
+        description: Original definition for the search parameter
+        type: string
+      description:
+        description: Natural language description of the search parameter
+        type: string
+      experimental:
+        description: 'For testing purposes, not real usage'
+        type: boolean
+      expression:
+        description: FHIRPath expression that extracts the values
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Logical id of this artifact
+        type: string
+      implicitRules:
+        description: A set of rules under which this content was created
+        type: string
+      jurisdiction:
+        description: Intended jurisdiction for search parameter (if applicable)
+        type: array
+        items:
+          $ref: '#/definitions/CodeableConcept'
+      language:
+        description: Language of the resource content
+        type: string
+      meta:
+        $ref: '#/definitions/Meta'
+      modifier:
+        description: missing | exact | contains | not | text | in | not-in | below | above | type | identifier | ofType
+        type: array
+        items:
+          type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      multipleAnd:
+        description: Allow multiple parameters (and)
+        type: boolean
+      multipleOr:
+        description: Allow multiple values per parameter (or)
+        type: boolean
+      name:
+        description: Name for this search parameter (computer friendly)
+        type: string
+      publisher:
+        description: Name of the publisher (organization or individual)
+        type: string
+      purpose:
+        description: Why this search parameter is defined
+        type: string
+      status:
+        description: draft | active | retired | unknown
+        type: string
+      target:
+        description: Types of resource (if a resource reference)
+        type: array
+        items:
+          type: string
+      text:
+        $ref: '#/definitions/Narrative'
+      type:
+        description: number | date | string | token | reference | composite | quantity | uri | special
+        type: string
+      url:
+        description: 'Canonical identifier for this search parameter, represented as a URI (globally unique)'
+        type: string
+      useContext:
+        description: The context that the content is intended to support
+        type: array
+        items:
+          $ref: '#/definitions/UsageContext'
+      version:
+        description: Business version of the search parameter
+        type: string
+      xpath:
+        description: XPath that extracts the values
+        type: string
+      xpathUsage:
+        description: normal | phonetic | nearby | distance | other
+        type: string
+externalDocs:
+  description: Find out more about Swagger
+  url: 'http://swagger.io'
