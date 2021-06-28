@@ -8,6 +8,12 @@ describe SearchParser do
       source = 'aa bb cc'
       result = SearchParser.parse(source)
       assert_equal('aa&bb&cc', result)
+      source = "aa bb's cc"
+      result = SearchParser.parse(source)
+      assert_equal("aa&bb's&cc", result)
+      source = 'aa bb+ cc'
+      result = SearchParser.parse(source)
+      assert_equal('aa&bb+&cc', result)
     end
 
     it 'handles synonyms in simple text searches' do
@@ -100,6 +106,12 @@ describe SearchParser do
       assert_equal('aa<->bb', result)
     end
 
+    it 'handles braces in phrases' do
+      text = '"aa (bb)"'
+      result = SearchParser.parse(text)
+      assert_equal('aa<->(bb)', result)
+    end
+
     it 'handles missing spaces combined with parentheticals' do
       text = 'aa AND(bb OR cc)'
       result = SearchParser.parse(text)
@@ -124,10 +136,28 @@ describe SearchParser do
       assert_equal('aa<->bb&bb<->aa', result)
     end
 
-    it 'skips empty phrase' do
+    it 'skips empty phrases' do
       text = '""'
       result = SearchParser.parse(text)
       assert_equal(0, result.length)
+      text = '"" aa'
+      result = SearchParser.parse(text)
+      assert_equal('aa', result)
+      text = '""aa'
+      result = SearchParser.parse(text)
+      assert_equal('aa', result)
+      text = 'aa ""'
+      result = SearchParser.parse(text)
+      assert_equal('aa', result)
+      text = 'aa""'
+      result = SearchParser.parse(text)
+      assert_equal('aa', result)
+      text = '""aa"'
+      result = SearchParser.parse(text)
+      assert_equal('aa', result)
+      text = '"aa""'
+      result = SearchParser.parse(text)
+      assert_equal('aa', result)
     end
   end
 end
