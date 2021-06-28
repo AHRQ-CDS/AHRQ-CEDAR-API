@@ -74,12 +74,13 @@ class CitationFilter
 
     add_bundle_links(bundle, artifacts)
 
-    if page_size.zero?
-<<<<<<< HEAD:util/citation_filter.rb
-      search_log.update(end_time: Time.now)
-    else
-      search_log.update(sql: sql_log, count: artifacts.count, end_time: Time.now)
+    unless page_size.zero?
+      @search_log[:count] = artifacts.count
     end
+
+    search_log[:end_time] = Time.now
+
+    @search_log.save
 
     bundle
   end
@@ -142,14 +143,10 @@ class CitationFilter
       # if page size is greater than 0, return paginated results.
       artifacts = filter.paginate(@page_no, @page_size)
       total = artifacts.pagination_record_count
-<<<<<<< HEAD:util/citation_filter.rb
     elsif @page_size.zero?
       # if page size is 0, return the count only
       artifacts = nil
       total = filter.count
-      sql_log = artifacts.sql
-=======
->>>>>>> fixed unit test fails:util/citation_helper.rb
     else
       # otherwise (page size is less than 0), return all results
       artifacts = filter.all
@@ -187,7 +184,6 @@ class CitationFilter
         url: build_link_url(artifacts.page_count, @page_size)
       }
     )
-=======
       # return count only
       bundle = FHIRAdapter.create_citation_bundle(nil, artifact_base_url, filter.count)
     else
@@ -212,7 +208,6 @@ class CitationFilter
 
       # full seach result does not have first/last/prev/next page link
       if page_size.positive?
->>>>>>> add client_ip to search_logs:util/citation_helper.rb
 
         # add first/last page link
         bundle.link << FHIR::Bundle::Link.new(
@@ -250,19 +245,6 @@ class CitationFilter
         end
 
       end
-<<<<<<< HEAD:util/citation_filter.rb
-=======
-
-      search_log[:count] = artifacts.count
-    end
-
-    if @log_to_db
-      search_log[:end_time] = Time.now
-      search_log.save_changes
-    end
-
-    bundle
->>>>>>> add client_ip to search_logs:util/citation_helper.rb
   end
 
   def build_filter
@@ -277,7 +259,7 @@ class CitationFilter
         search_type += ',' unless search_type.empty?
         search_type += 'content'
         cols = SearchParser.parse(value)
-        search_log[:sql] = cols
+        @search_log[:sql] = cols
         opt = {
           language: 'english',
           rank: true,
@@ -289,7 +271,7 @@ class CitationFilter
         search_type += ',' unless search_type.empty?
         search_type += 'keyword'
         cols = SearchParser.parse(value)
-        search_log[:sql] = cols
+        @search_log[:sql] = cols
         opt = {
           language: 'english',
           rank: true
@@ -314,7 +296,7 @@ class CitationFilter
       end
     end
 
-    @search_log.update(search_type: search_type)
+    @search_log[:search_type] = search_type
     filter
   end
 
