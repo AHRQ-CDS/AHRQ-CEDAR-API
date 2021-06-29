@@ -77,75 +77,6 @@ describe 'cedar_api' do
       end
     end
 
-    it 'supports search by title' do
-      get '/fhir/Citation?title=diabetes&artifact-current-state=active'
-      bundle = assert_fhir_response(FHIR::Bundle)
-      assert bundle.entry.all? do |entry|
-        entry.resource.title.downcase.start_with?('diabetes')
-      end
-    end
-
-    it 'supports search by title with multiple OR' do
-      get '/fhir/Citation?title=cancer,diabetes&artifact-current-state=active'
-      bundle = assert_fhir_response(FHIR::Bundle)
-      assert bundle.entry.all? do |entry|
-        entry.resource.title.downcase.start_with?('diabetes') ||
-          entry.resource.title.downcase.start_with?('cancer')
-      end
-    end
-
-    it 'supports search by title with :contains modifier' do
-      get '/fhir/Citation?title:contains=diabetes&artifact-current-state=active'
-      bundle = assert_fhir_response(FHIR::Bundle)
-      assert bundle.entry.all? do |entry|
-        entry.resource.title.downcase.include?('diabetes')
-      end
-    end
-
-    it 'supports search by classification text' do
-      get '/fhir/Citation?classification:text=diabetes&artifact-current-state=active'
-      bundle = assert_fhir_response(FHIR::Bundle)
-      assert bundle.entry.all? do |entry|
-        entry.resource.keywordList.any? do |keyword_list|
-          keyword_list.keyword.any { |keyword| keyword.value.downcase == 'diabetes' }
-        end
-      end
-    end
-
-    it 'supports search by classification text with multiple OR' do
-      get '/fhir/Citation?classification:text=diabetes OR adult&artifact-current-state=active'
-      bundle = assert_fhir_response(FHIR::Bundle)
-      assert bundle.entry.all? do |entry|
-        entry.resource.keywordList.any? do |keyword_list|
-          keyword_list.keyword.any do |keyword|
-            keyword.value.downcase == 'diabetes' || keyword.value.downcase == 'adult'
-          end
-        end
-      end
-    end
-
-    it 'supports search by classification system and code' do
-      get '/fhir/Citation?' \
-          "classification=#{URI.encode_www_form_component('https://www.nlm.nih.gov/mesh/|D0001')}" \
-          '&artifact-current-state=active'
-      bundle = assert_fhir_response(FHIR::Bundle)
-      assert bundle.entry.all? do |entry|
-        entry.resource.keywordList.any? do |keyword_list|
-          keyword_list.keyword.any { |keyword| keyword.value.downcase == 'cancer' }
-        end
-      end
-    end
-
-    it 'supports search by classification code' do
-      get '/fhir/Citation?classification=D0001&artifact-current-state=active'
-      bundle = assert_fhir_response(FHIR::Bundle)
-      assert bundle.entry.all? do |entry|
-        entry.resource.keywordList.any? do |keyword_list|
-          keyword_list.keyword.any { |keyword| keyword.value.downcase == 'cancer' }
-        end
-      end
-    end
-
     it 'requires artifact-current-state search parameter' do
       get 'fhir/Citation?_content=cancer'
 
@@ -154,12 +85,6 @@ describe 'cedar_api' do
       assert resource.issue.any? do |issue|
         issue.severity == 'error' && issue.code == 'required'
       end
-    end
-
-    it 'returns Citations' do
-      Warning.ignore(/instance variable @\w+ not initialized/)
-      get '/fhir/Citation?_content=cancer&artifact-current-state=active'
-      assert_fhir_response(FHIR::Bundle)
     end
   end
 

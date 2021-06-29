@@ -107,7 +107,7 @@ class CitationFilter
         artifact_ids = get_artifacts_with_concept(value)
         filter = filter.where(Sequel[:artifacts][:id] => artifact_ids)
       when 'classification:text'
-        search_type += ',keyword'       
+        search_type += ',keyword'
         cols = SearchParser.parse(value)
         @search_log[:sql] = cols
         opt = {

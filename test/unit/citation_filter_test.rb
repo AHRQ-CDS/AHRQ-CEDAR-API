@@ -111,10 +111,10 @@ describe CitationFilter do
       end
     end
 
-    it 'supports search by keyword' do
+    it 'supports search by classification text' do
       expected = 'diabetes'
       params = {
-        'keyword' => expected
+        'classification:text' => expected
       }
 
       bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
@@ -122,16 +122,16 @@ describe CitationFilter do
       assert_bundle(bundle)
 
       assert bundle.entry.all? do |entry|
-        entry.resource.keywordList.any? do |keyword_list|
-          keyword_list.keyword.any { |k| k.value.downcase == expected }
+        entry.resource.citedArtifact.classification.any? do |classification|
+          classification.classifier.any? { |classifier| classifier.text.downcase == expected }
         end
       end
     end
 
-    it 'supports search by keyword with multiple OR' do
+    it 'supports search by classification text with multiple OR' do
       expected = %w[diabetes Adult]
       params = {
-        'keyword' => expected.join(',')
+        'classification:text' => expected.join(',')
       }
 
       bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
@@ -139,9 +139,46 @@ describe CitationFilter do
       assert_bundle(bundle)
 
       assert bundle.entry.all? do |entry|
-        entry.resource.keywordList.any? do |keyword_list|
-          keyword_list.keyword.any do |k|
-            expected.include?(k.value.downcase)
+        entry.resource.citedArtifact.classification.any? do |classification|
+          classification.classifier.any? { |classifier| expected.include?(classifier.text.downcase) }
+        end
+      end
+    end
+
+    it 'supports search by classification system and code' do
+      expected_system = 'https://www.nlm.nih.gov/mesh/'
+      expected_code = 'D0001'
+      params = {
+        'classification' => "#{expected_system}|#{expected_code}"
+      }
+
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+
+      assert_bundle(bundle)
+
+      assert bundle.entry.all? do |entry|
+        entry.resource.citedArtifact.classification.any? do |classification|
+          classification.classifier.any? do |classifier|
+            classifier.coding.any? { |coding| coding.system == expected_system && coding.code == expected_code }
+          end
+        end
+      end
+    end
+
+    it 'supports search by classification code' do
+      expected_code = 'D0001'
+      params = {
+        'classification' => expected_code
+      }
+
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+
+      assert_bundle(bundle)
+
+      assert bundle.entry.all? do |entry|
+        entry.resource.citedArtifact.classification.any? do |classification|
+          classification.classifier.any? do |classifier|
+            classifier.coding.any? { |coding| coding.code == expected_code }
           end
         end
       end
@@ -249,7 +286,12 @@ describe CitationFilter do
         '_content' => expected
       }
 
-      CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url, client_ip: '::1', log_to_db: true).citations
+      CitationFilter.new(params: params,
+                         base_url: @artifact_base_url,
+                         request_url: @request_url,
+                         client_ip: '::1',
+                         log_to_db: true)
+                    .citations
 
       log = SearchLog.order(Sequel.desc(:id)).first
 
