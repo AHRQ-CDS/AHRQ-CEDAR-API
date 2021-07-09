@@ -4,8 +4,7 @@
     "version": "1.0.0",
     "title": "CEDAR API"
   },
-  "host": "localhost:4567",
-  "basePath": "/fhir",
+  "basePath": "/api/fhir",
   "tags": [
     {
       "name": "CapabilityStatement"
@@ -21,7 +20,7 @@
     }
   ],
   "schemes": [
-    "http"
+    "https"
   ],
   "paths": {
     "/metadata": {

@@ -2,15 +2,14 @@ swagger: '2.0'
 info:
   version: 1.0.0
   title: CEDAR API
-host: 'localhost:4567'
-basePath: /fhir
+basePath: /api/fhir
 tags:
   - name: CapabilityStatement
   - name: Citation
   - name: Organization
   - name: SearchParameter
 schemes:
-  - http
+  - https
 paths:
   /metadata:
     get:
