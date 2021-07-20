@@ -19,8 +19,8 @@ class CitationFilter
     @log_to_db = log_to_db
 
     @search_log = SearchLog.new
-    @search_log[:search_params] = params.to_json
-    @search_log[:client_ip] = client_ip unless client_ip.nil?
+    @search_log.search_params = params
+    @search_log.client_ip = client_ip unless client_ip.nil?
   end
 
   def build_link_url(page_no, page_size)
@@ -52,7 +52,7 @@ class CitationFilter
   end
 
   def citations
-    @search_log[:start_time] = Time.now
+    @search_log.start_time = Time.now
 
     filter = build_filter
 
@@ -70,11 +70,18 @@ class CitationFilter
 
     add_bundle_links(bundle, artifacts)
 
-    @search_log[:count] = artifacts.count unless @page_size.zero?
+    @search_log.count = artifacts.count unless @page_size.zero?
+    @search_log.total = total
+    @search_log.end_time = Time.now
 
-    @search_log[:end_time] = Time.now
-
-    @search_log.save_changes if @log_to_db
+    if @log_to_db
+      @search_log.save_changes
+      @search_log.search_parameter_logs.each do |p|
+        p.search_log = @search_log
+        p.start_time = @search_log.start_time
+        p.save_changes
+      end
+    end
 
     bundle
   end
@@ -85,16 +92,15 @@ class CitationFilter
     #    that rely on id joins
     # 2. The many-to-many relationship with concepts results in multiple rows per artifact
     filter = Artifact.dataset
-    search_type = ''
 
     @params&.each do |key, value|
       search_terms = value.split(',').map { |v| v.strip.downcase.to_s }
 
       case key
       when '_content'
-        search_type += ',content'
+        @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
+
         cols = SearchParser.parse(value)
-        @search_log[:sql] = cols
         opt = {
           language: 'english',
           rank: true,
@@ -103,13 +109,12 @@ class CitationFilter
 
         filter = filter.full_text_search(:content_search, cols, opt)
       when 'classification'
-        search_type += ',keyword'
+        @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
         artifact_ids = get_artifacts_with_concept(value)
         filter = filter.where(Sequel[:artifacts][:id] => artifact_ids)
       when 'classification:text'
-        search_type += ',keyword'
+        @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
         cols = SearchParser.parse(value)
-        @search_log[:sql] = cols
         opt = {
           language: 'english',
           rank: true
@@ -118,11 +123,11 @@ class CitationFilter
         # Need to decide if we need use ts_vector to get better performance
         filter = filter.full_text_search(:keyword_text, cols, opt)
       when 'title'
-        search_type += ',title'
+        @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
         search_terms.map! { |t| "#{t}%" }
         filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
       when 'title:contains'
-        search_type += ',title'
+        @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
         search_terms.map! { |t| "%#{t}%" }
         filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
       when 'artifact-current-state'
@@ -133,8 +138,6 @@ class CitationFilter
       end
     end
 
-    search_type = search_type[1..] if search_type.start_with?(',')
-    @search_log[:search_type] = search_type
     filter
   end
 

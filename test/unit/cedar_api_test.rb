@@ -69,6 +69,7 @@ describe 'cedar_api' do
 
     it 'supports search by _content' do
       Warning.ignore(/extra states are no longer copied/)
+      Warning.ignore(/instance variable @\w+ not initialized/)
       get '/fhir/Citation?_content=cancer&artifact-current-state=active'
       bundle = assert_fhir_response(FHIR::Bundle)
       assert bundle.entry.all? do |entry|

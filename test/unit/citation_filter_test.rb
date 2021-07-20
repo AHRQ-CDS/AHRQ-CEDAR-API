@@ -296,13 +296,13 @@ describe CitationFilter do
       log = SearchLog.order(Sequel.desc(:id)).first
 
       refute log.nil?
-      refute log[:search_params].nil?
-      refute log[:search_type].nil?
-      refute log[:sql].nil?
-      refute log[:count].nil?
-      refute log[:client_ip].nil?
-      refute log[:start_time].nil?
-      refute log[:end_time].nil?
+      refute log.search_params.nil?
+      refute log.count.nil?
+      refute log.total.nil?
+      refute log.client_ip.nil?
+      refute log.start_time.nil?
+      refute log.end_time.nil?
+      refute log.search_parameter_logs.nil?
     end
   end
 end
