@@ -8,6 +8,10 @@ describe CitationFilter do
   include Rack::Test::Methods
   include CedarApi::TestHelper
 
+  before do
+    Warning.ignore(/instance variable @\w+ not initialized/)
+  end
+
   def assert_bundle(bundle, assert_total: true)
     refute_nil bundle
     assert bundle.is_a?(FHIR::Bundle)
@@ -275,7 +279,6 @@ describe CitationFilter do
 
   describe 'save request' do
     before do
-      Warning.ignore(/instance variable @\w+ not initialized/)
       @artifact_base_url = 'http://localhost/fhir/Citation'
       @request_url = 'http://example.com/fhir/Citation'
     end

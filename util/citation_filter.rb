@@ -12,7 +12,6 @@ class CitationFilter
   UMLS_CODE_SYSTEM_IDS = FHIRAdapter::FHIR_CODE_SYSTEM_URLS.invert.freeze
 
   def initialize(params:, base_url:, request_url:, client_ip: nil, log_to_db: false)
-    @params = params
     @artifact_base_url = base_url
     @request_url = request_url
     @client_ip = client_ip
@@ -20,12 +19,12 @@ class CitationFilter
 
     @search_log = SearchLog.new
     @search_log.search_params = params
-    @search_log.client_ip = client_ip unless client_ip.nil?
+    @search_log.client_ip = client_ip
   end
 
   def build_link_url(page_no, page_size)
     uri = Addressable::URI.parse(@request_url)
-    new_params = @params.reject { |key, _value| %w[_count page].include?(key) }
+    new_params = @search_log.search_params.reject { |key, _value| %w[_count page].include?(key) }
 
     if page_size.positive?
       new_params[:_count] = page_size
@@ -70,11 +69,11 @@ class CitationFilter
 
     add_bundle_links(bundle, artifacts)
 
-    @search_log.count = artifacts.count unless @page_size.zero?
-    @search_log.total = total
-    @search_log.end_time = Time.now
-
     if @log_to_db
+      @search_log.count = artifacts.count unless @page_size.zero?
+      @search_log.total = total
+      @search_log.end_time = Time.now
+
       @search_log.save_changes
       @search_log.search_parameter_logs.each do |p|
         p.search_log = @search_log
@@ -93,7 +92,7 @@ class CitationFilter
     # 2. The many-to-many relationship with concepts results in multiple rows per artifact
     filter = Artifact.dataset
 
-    @params&.each do |key, value|
+    @search_log.search_params&.each do |key, value|
       search_terms = value.split(',').map { |v| v.strip.downcase.to_s }
 
       case key
@@ -142,8 +141,8 @@ class CitationFilter
   end
 
   def add_pagination(filter)
-    @page_size = (@params['_count'] || -1).to_i
-    @page_no = [(@params['page'] || 1).to_i, 1].max # the minimum value of page number is 1
+    @page_size = (@search_log.search_params['_count'] || -1).to_i
+    @page_no = [(@search_log.search_params['page'] || 1).to_i, 1].max # the minimum value of page number is 1
 
     if @page_size.positive?
       # if page size is greater than 0, return paginated results.
