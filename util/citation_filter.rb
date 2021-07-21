@@ -77,7 +77,6 @@ class CitationFilter
       @search_log.save_changes
       @search_log.search_parameter_logs.each do |p|
         p.search_log = @search_log
-        p.start_time = @search_log.start_time
         p.save_changes
       end
     end
