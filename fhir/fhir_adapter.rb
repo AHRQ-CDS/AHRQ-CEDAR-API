@@ -37,7 +37,7 @@ class FHIRAdapter
       url: "#{artifact_base_url}/#{cedar_identifier}",
       identifier: [
         {
-          system: 'http://ahrq.gov/cedar',
+          system: 'https://cedar.ahrq.gov',
           value: cedar_identifier
         }
       ],
@@ -50,7 +50,7 @@ class FHIRAdapter
           name: 'CEDAR',
           telecom: {
             system: 'url',
-            value: 'http://ahrq.gov/cedar',
+            value: 'https://cedar.ahrq.gov',
             use: 'work'
           }
         }
