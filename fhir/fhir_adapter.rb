@@ -14,6 +14,8 @@ class FHIRAdapter
     'RXNORM' => 'http://www.nlm.nih.gov/research/umls/rxnorm'
   }.freeze
 
+  HOSTNAME = ENV['HOSTNAME'] || 'http://cedar.arhq.gov'
+
   def self.create_citation(artifact, artifact_base_url)
     cedar_identifier = artifact[:cedar_identifier]
     # TODO: Put handling of JSONP array into model
@@ -37,7 +39,7 @@ class FHIRAdapter
       url: "#{artifact_base_url}/#{cedar_identifier}",
       identifier: [
         {
-          system: 'https://cedar.ahrq.gov',
+          system: HOSTNAME,
           value: cedar_identifier
         }
       ],
@@ -50,7 +52,7 @@ class FHIRAdapter
           name: 'CEDAR',
           telecom: {
             system: 'url',
-            value: 'https://cedar.ahrq.gov',
+            value: HOSTNAME,
             use: 'work'
           }
         }
