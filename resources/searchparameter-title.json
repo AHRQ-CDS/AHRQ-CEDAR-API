@@ -1,7 +1,7 @@
 {
   "resourceType": "SearchParameter",
   "id": "cedar-citiation-title",
-  "url": "http://ahrq.gov/cedar/SearchParameter/cedar-citiation-title",
+  "url": "http://cedar-ahrq.gov/SearchParameter/cedar-citiation-title",
   "version": "0.1.0",
   "name": "CedarCitationTitle",
   "derivedFrom": "http://hl7.org/fhir/SearchParameter/Citation-title",
@@ -9,6 +9,16 @@
   "experimental": false,
   "date": "2021-02-17",
   "publisher": "ARHQ CEDAR",
+  "contact": [
+    {
+      "telecom": [
+        {
+          "system": "url",
+          "value": "http://cedar.arhq.org"
+        }
+      ]
+    }
+  ],
   "code": "title",
   "base": [
     "Citation"

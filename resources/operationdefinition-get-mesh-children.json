@@ -1,0 +1,48 @@
+{
+  "resourceType": "OperationDefinition",
+  "id": "CodeSystem-get-mesh-children",
+  "url": "http://cedar.arhq.org/OperationDefinition/CodeSystem-get-mesh-children",
+  "version": "0.1.0",
+  "name": "get-mesh-children",
+  "title": "Get MeSH child concepts from MeSH Tree Number",
+  "status": "draft",
+  "kind": "operation",
+  "date": "2021-08-25",
+  "publisher": "ARHQ CEDAR",
+  "contact": [
+    {
+      "telecom": [
+        {
+          "system": "url",
+          "value": "http://cedar.arhq.org"
+        }
+      ]
+    }
+  ],
+  "description": "Given a MeSH Tree Number, get MeSH child concepts",
+  "code": "get-mesh-children",
+  "resource": [
+    "CodeSystem"
+  ],
+  "system": false,
+  "type": true,
+  "instance": false,
+  "parameter": [
+    {
+      "name": "coding",
+      "use": "in",
+      "min": 1,
+      "max": "1",
+      "documentation": "MESH Tree Number for parent concept",
+      "type": "Coding"
+    },
+    {
+      "name": "concept",
+      "use": "out",
+      "min": 0,
+      "max": "*",
+      "documentation": "Coding for child concepts. Each concept has an extension for the tree number of that concept. If the parent concept does not have any child, server SHALL return an empty array",
+      "type": "Coding"
+    }
+  ]
+}
