@@ -107,12 +107,19 @@ describe 'cedar_api' do
     end
   end
 
-  describe '/fhir/CodeSystem endpoint' do
-    it 'supports $get-mesh-children operation' do
+  describe '/fhir/CodeSystem/$get-mesh-children endpoint' do
+    it 'gets child tree nodes with parent tree number' do
       get '/fhir/CodeSystem/$get-mesh-children?code=A00'
 
       resource = assert_fhir_response(FHIR::Parameters)
-      assert_equal(resource.parameter.count, MeshTreeNode.where(parent_id: 401).count)
+      assert_equal(MeshTreeNode.where(parent_id: 401).count, resource.parameter.count)
+    end
+
+    it 'gets first level tree nodes without parenet tree number' do
+      get '/fhir/CodeSystem/$get-mesh-children'
+
+      resource = assert_fhir_response(FHIR::Parameters)
+      assert_equal(1, resource.parameter.count)
     end
   end
 

@@ -157,7 +157,6 @@
             "name": "code",
             "description": "MeSH Tree Number for parent concept",
             "in": "query",
-            "required": true,
             "type": "string"
           }
         ],

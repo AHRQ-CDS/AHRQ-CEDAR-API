@@ -280,15 +280,15 @@ class FHIRAdapter
     )
   end
 
-  def self.create_mesh_children_output(mesh_tree_node)
-    if mesh_tree_node.nil? || mesh_tree_node.children.empty?
+  def self.create_mesh_children_output(mesh_tree_nodes)
+    if mesh_tree_nodes.nil? || mesh_tree_nodes.empty?
       return FHIR::Parameters.new(
         parameter: []
       )
     end
 
     FHIR::Parameters.new(
-      parameter: mesh_tree_node.children.map do |r|
+      parameter: mesh_tree_nodes.map do |r|
         FHIR::Parameters::Parameter.new(
           name: 'concept',
           valueCoding: FHIR::Coding.new(

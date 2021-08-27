@@ -31,9 +31,9 @@
     {
       "name": "code",
       "use": "in",
-      "min": 1,
+      "min": 0,
       "max": "1",
-      "documentation": "MESH Tree Number for parent concept",
+      "documentation": "MESH Tree Number for parent concept. If the parameter is not provided, operation SHALL return the first level nodes in MeSH Tree.",
       "type": "code"
     },
     {
