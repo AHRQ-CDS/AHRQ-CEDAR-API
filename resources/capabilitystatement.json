@@ -40,7 +40,7 @@
             },
             {
               "name": "classification",
-              "definition": "http://ahrq.gov/cedar/SearchParameter/cedar-citiation-classification",
+              "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citiation-classification",
               "type": "string"
             },
             {
@@ -55,18 +55,35 @@
                 }
               ],
               "name": "artifact-current-state",              
-              "definition": "http://ahrq.gov/cedar/SearchParameter/cedar-citiation-artifact-current-state",
+              "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citiation-artifact-current-state",
               "type": "token"
             },
             {
               "name": "artifact-publisher",              
-              "definition": "http://ahrq.gov/cedar/SearchParameter/cedar-citiation-artifact-publisher",
+              "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citiation-artifact-publisher",
               "type": "string"
             },
             {
               "name": "title",
-              "definition": "http://ahrq.gov/cedar/SearchParameter/cedar-citiation-title",
+              "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citiation-title",
               "type": "string"
+            }
+          ]
+        },
+        {
+          "type": "OperationDefinition",
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {              
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "url",
+              "type": "uri"
             }
           ]
         },
@@ -82,6 +99,26 @@
           "type": "SearchParameter",
           "interaction": [
             {
+              "code": "read"
+            },
+            {              
+              "code": "search-type"
+            }
+          ],
+          "searchParam": [
+            {
+              "name": "url",
+              "type": "uri"
+            }
+          ]
+        },
+        {
+          "type": "StructureDefinition",
+          "interaction": [
+            {
+              "code": "read"
+            },
+            {              
               "code": "search-type"
             }
           ],

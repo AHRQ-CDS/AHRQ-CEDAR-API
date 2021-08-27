@@ -67,19 +67,16 @@ namespace '/fhir' do
     return cs.to_json
   end
 
-  get '/SearchParameter' do
-    case params['url']
-    when /cedar-citiation-artifact-current-state/
-      return FHIR.from_contents(File.read('resources/searchparameter-artifact-current-state.json')).to_json
-    when /cedar-citiation-artifact-publisher/
-      return FHIR.from_contents(File.read('resources/searchparameter-artifact-publisher.json')).to_json
-    when /cedar-citiation-classification/
-      return FHIR.from_contents(File.read('resources/searchparameter-classification.json')).to_json
-    when /cedar-citiation-title/
-      return FHIR.from_contents(File.read('resources/searchparameter-title.json')).to_json
-    else
-      halt(404)
-    end
+  get '/SearchParameter/?:id?' do
+    read_resource_from_file(params, 'SearchParameter')
+  end
+
+  get '/OperationDefinition/?:id?' do
+    read_resource_from_file(params, 'OperationDefinition')
+  end
+
+  get '/StructureDefinition/?:id?' do
+    read_resource_from_file(params, 'StructureDefinition')
   end
 
   get '/Organization' do
@@ -150,5 +147,22 @@ namespace '/fhir' do
     tree_node = MeshTreeNode.where(tree_number: params[:code]).first
     output = FHIRAdapter.create_mesh_children_output(tree_node)
     output.to_json
+  end
+
+  def read_resource_from_file(params, path)
+    folder = "resources/#{path}-"
+    if !params[:id].nil?
+      filename = "#{folder}#{params[:id]}.json"
+    elsif !params[:url].nil?
+      filename = "#{params['url'].gsub(%r{.*#{path}/}, folder)}.json"
+    else
+      halt(400)
+    end
+
+    if File.exist? filename
+      FHIR.from_contents(File.read(filename)).to_json
+    else
+      halt(404)
+    end
   end
 end

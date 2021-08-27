@@ -6,8 +6,9 @@ basePath: /api/fhir
 tags:
   - name: CapabilityStatement
   - name: Citation
+  - name: CodeSystem
   - name: Organization
-  - name: SearchParameter
+  - name: Profiles
 schemes:
   - https
 paths:
@@ -23,23 +24,6 @@ paths:
           description: successful operation
           schema:
             $ref: '#/definitions/CapabilityStatement'
-  '/Citation/{citationId}':
-    get:
-      tags:
-        - Citation
-      summary: Get Citation
-      produces:
-        - application/fhir+json
-      parameters:
-        - name: citationId
-          in: path
-          required: true
-          type: string
-      responses:
-        '200':
-          description: successful operation
-          schema:
-            $ref: '#/definitions/Citation'
   /Citation:
     get:
       tags:
@@ -53,9 +37,9 @@ paths:
           in: query
           required: true
           type: string
-          default: 'active'
+          default: active
         - name: _content
-          description: 'term in description, title, and keywords. support full text search'
+          description: term in description, title, and keywords. support full text search
           in: query
           type: string
         - name: classification
@@ -70,16 +54,21 @@ paths:
           description: title starts with the term
           in: query
           type: string
-        - name: 'title:contains'
+        - name: title:contains
           description: title contains the term
           in: query
           type: string
         - name: _count
-          description: 'number of results per page. if _count is 0, server returns the number of results only. if _count is not provided or less than 0, all results are returned'
+          description: >-
+            number of results per page. if _count is 0, server returns the
+            number of results only. if _count is not provided or less than 0,
+            all results are returned
           in: query
           type: integer
         - name: page
-          description: 'page number of the result. default is 1 (the first page). if page is less than 1, default value is used'
+          description: >-
+            page number of the result. default is 1 (the first page). if page is
+            less than 1, default value is used
           in: query
           type: integer
       responses:
@@ -87,6 +76,41 @@ paths:
           description: successful operation
           schema:
             $ref: '#/definitions/Bundle'
+  /Citation/{id}:
+    get:
+      tags:
+        - Citation
+      summary: Get Citation by id
+      produces:
+        - application/fhir+json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Citation'
+  /CodeSystem/$get-mesh-children:
+    get:
+      tags:
+        - CodeSystem
+      summary: Get MeSH child concepts from MeSH Tree Number
+      produces:
+        - application/fhir+json
+      parameters:
+        - name: code
+          description: MeSH Tree Number for parent concept
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Parameters'
   /Organization:
     get:
       tags:
@@ -99,10 +123,61 @@ paths:
           description: successful operation
           schema:
             $ref: '#/definitions/Bundle'
+  /Organization/{id}:
+    get:
+      tags:
+        - Organization
+      summary: Get Organization by id
+      produces:
+        - application/fhir+json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Organization'
+  /OperationDefinition:
+    get:
+      tags:
+        - Profiles
+      summary: Search OperationDefinition by url
+      produces:
+        - application/fhir+json
+      parameters:
+        - name: url
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Bundle'
+  /OperationDefinition/{id}:
+    get:
+      tags:
+        - Profiles
+      summary: Get OperationDefinition by id
+      produces:
+        - application/fhir+json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/OperationDefinition'
   /SearchParameter:
     get:
       tags:
-        - SearchParameter
+        - Profiles
       summary: Search SearchParameter by url
       produces:
         - application/fhir+json
@@ -116,15 +191,68 @@ paths:
           description: successful operation
           schema:
             $ref: '#/definitions/Bundle'
+  /SearchParameter/{id}:
+    get:
+      tags:
+        - Profiles
+      summary: Get SearchParameter by id
+      produces:
+        - application/fhir+json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/SearchParameter'
+  /StructureDefinition:
+    get:
+      tags:
+        - Profiles
+      summary: Search StructureDefinition by url
+      produces:
+        - application/fhir+json
+      parameters:
+        - name: url
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Bundle'
+  /StructureDefinition/{id}:
+    get:
+      tags:
+        - Profiles
+      summary: Get StructureDefinition by id
+      produces:
+        - application/fhir+json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/StructureDefinition'
 definitions:
   Address:
-    description: An address expressed using postal conventions (as opposed to GPS or other location definition formats)
+    description: >-
+      An address expressed using postal conventions (as opposed to GPS or other
+      location definition formats)
     type: object
     allOf:
       - $ref: '#/definitions/DataType'
     properties:
       city:
-        description: 'Name of city, town etc.'
+        description: Name of city, town etc.
         type: string
       country:
         description: Country (e.g. may be ISO 3166 2 or 3 letter code)
@@ -141,7 +269,7 @@ definitions:
         description: Unique id for inter-element referencing
         type: string
       line:
-        description: 'Street name, number, direction & P.O. Box etc.'
+        description: Street name, number, direction & P.O. Box etc.
         type: array
         items:
           type: string
@@ -162,6 +290,36 @@ definitions:
       use:
         description: home | work | temp | old | billing - purpose of this address
         type: string
+  Age:
+    description: A duration of time during which an organism (or a process) has existed
+    type: object
+    allOf:
+      - $ref: '#/definitions/Quantity'
+    properties:
+      code:
+        description: Coded form of the unit
+        type: string
+      comparator:
+        description: < | <= | >= | > | ad - how to understand the value
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      system:
+        description: System that defines coded unit form
+        type: string
+      unit:
+        description: Unit representation
+        type: string
+      value:
+        format: double
+        description: Numerical value (with implicit precision)
+        type: number
   Annotation:
     description: Text node with attribution
     type: object
@@ -194,14 +352,14 @@ definitions:
       - $ref: '#/definitions/DataType'
     properties:
       contentType:
-        description: 'Mime type of the content, with charset etc.'
+        description: Mime type of the content, with charset etc.
         type: string
       creation:
         description: Date attachment was first created
         type: string
       data:
         format: byte
-        description: 'Data inline, base64ed'
+        description: Data inline, base64ed
         type: string
       duration:
         format: double
@@ -218,7 +376,7 @@ definitions:
         type: integer
       hash:
         format: byte
-        description: 'Hash of the data (sha-1, base64ed)'
+        description: Hash of the data (sha-1, base64ed)
         type: string
       height:
         format: int32
@@ -253,6 +411,25 @@ definitions:
     type: object
     allOf:
       - $ref: '#/definitions/Element'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+  BackboneType:
+    description: Base for datatypes that can carry modifier extensions
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
     properties:
       extension:
         description: Additional content defined by implementations
@@ -341,7 +518,7 @@ definitions:
         items:
           $ref: '#/definitions/ContactPoint'
   ContactPoint:
-    description: 'Details of a Technology mediated contact point (phone, fax, email, etc.)'
+    description: Details of a Technology mediated contact point (phone, fax, email, etc.)
     type: object
     allOf:
       - $ref: '#/definitions/DataType'
@@ -369,6 +546,188 @@ definitions:
       value:
         description: The actual contact point details
         type: string
+  Contributor:
+    description: Contributor information
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      contact:
+        description: Contact details of the contributor
+        type: array
+        items:
+          $ref: '#/definitions/ContactDetail'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      name:
+        description: Who contributed the content
+        type: string
+      type:
+        description: author | editor | reviewer | endorser
+        type: string
+  Count:
+    description: A measured or measurable amount
+    type: object
+    allOf:
+      - $ref: '#/definitions/Quantity'
+    properties:
+      code:
+        description: Coded form of the unit
+        type: string
+      comparator:
+        description: < | <= | >= | > | ad - how to understand the value
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      system:
+        description: System that defines coded unit form
+        type: string
+      unit:
+        description: Unit representation
+        type: string
+      value:
+        format: double
+        description: Numerical value (with implicit precision)
+        type: number
+  DataRequirementCodeFilterComponent:
+    description: What codes are expected
+    type: object
+    allOf:
+      - $ref: '#/definitions/Element'
+    properties:
+      code:
+        description: What code is expected
+        type: array
+        items:
+          $ref: '#/definitions/Coding'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      path:
+        description: A code-valued attribute to filter on
+        type: string
+      searchParam:
+        description: A coded (token) parameter to search on
+        type: string
+      valueSet:
+        description: Valueset for the filter
+        type: string
+  DataRequirementDateFilterComponent:
+    description: What dates/date ranges are expected
+    type: object
+    allOf:
+      - $ref: '#/definitions/Element'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      path:
+        description: A date-valued attribute to filter on
+        type: string
+      searchParam:
+        description: A date valued parameter to search on
+        type: string
+      valueDateTime:
+        description: The value of the filter, as a Period, DateTime, or Duration value
+        type: string
+      valuePeriod:
+        $ref: '#/definitions/Period'
+      valueDuration:
+        $ref: '#/definitions/Duration'
+  DataRequirementSortComponent:
+    description: Order of the results
+    type: object
+    allOf:
+      - $ref: '#/definitions/Element'
+    properties:
+      direction:
+        description: ascending | descending
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      path:
+        description: The name of the attribute to perform the sort
+        type: string
+  DataRequirement:
+    description: Describes a required data item
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      codeFilter:
+        description: What codes are expected
+        type: array
+        items:
+          $ref: '#/definitions/DataRequirementCodeFilterComponent'
+      dateFilter:
+        description: What dates/date ranges are expected
+        type: array
+        items:
+          $ref: '#/definitions/DataRequirementDateFilterComponent'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      limit:
+        format: int32
+        description: Number of results
+        type: integer
+      mustSupport:
+        description: >-
+          Indicates specific structure elements that are referenced by the
+          knowledge module
+        type: array
+        items:
+          type: string
+      profile:
+        description: The profile of the required data
+        type: array
+        items:
+          type: string
+      sort:
+        description: Order of the results
+        type: array
+        items:
+          $ref: '#/definitions/DataRequirementSortComponent'
+      subjectCodeableConcept:
+        $ref: '#/definitions/CodeableConcept'
+      subjectReference:
+        $ref: '#/definitions/Reference'
+      type:
+        description: The type of the required data
+        type: string
   DataType:
     description: Reuseable Types
     type: object
@@ -383,6 +742,152 @@ definitions:
       id:
         description: Unique id for inter-element referencing
         type: string
+  Distance:
+    description: A length - a value with a unit that is a physical distance
+    type: object
+    allOf:
+      - $ref: '#/definitions/Quantity'
+    properties:
+      code:
+        description: Coded form of the unit
+        type: string
+      comparator:
+        description: < | <= | >= | > | ad - how to understand the value
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      system:
+        description: System that defines coded unit form
+        type: string
+      unit:
+        description: Unit representation
+        type: string
+      value:
+        format: double
+        description: Numerical value (with implicit precision)
+        type: number
+  DosageDoseAndRateComponent:
+    description: Amount of medication administered
+    type: object
+    allOf:
+      - $ref: '#/definitions/Element'
+    properties:
+      doseRange:
+        $ref: '#/definitions/Range'
+      doseQuantity:
+        $ref: '#/definitions/Quantity'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      rateRatio:
+        $ref: '#/definitions/Ratio'
+      rateRange:
+        $ref: '#/definitions/Range'
+      rateQuantity:
+        $ref: '#/definitions/Quantity'
+      type:
+        $ref: '#/definitions/CodeableConcept'
+  Dosage:
+    description: How the medication is/was taken or should be taken
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneType'
+    properties:
+      additionalInstruction:
+        description: >-
+          Supplemental instruction or warnings to the patient - e.g. "with
+          meals", "may cause drowsiness"
+        type: array
+        items:
+          $ref: '#/definitions/CodeableConcept'
+      asNeededBoolean:
+        description: Take "as needed" (for x)
+        type: boolean
+      asNeededCodeableConcept:
+        $ref: '#/definitions/CodeableConcept'
+      doseAndRate:
+        description: Amount of medication administered
+        type: array
+        items:
+          $ref: '#/definitions/DosageDoseAndRateComponent'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      maxDosePerAdministration:
+        $ref: '#/definitions/Quantity'
+      maxDosePerLifetime:
+        $ref: '#/definitions/Quantity'
+      maxDosePerPeriod:
+        $ref: '#/definitions/Ratio'
+      method:
+        $ref: '#/definitions/CodeableConcept'
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      patientInstruction:
+        description: Patient or consumer oriented instructions
+        type: string
+      route:
+        $ref: '#/definitions/CodeableConcept'
+      sequence:
+        format: int32
+        description: The order of the dosage instructions
+        type: integer
+      site:
+        $ref: '#/definitions/CodeableConcept'
+      text:
+        description: Free text dosage instructions e.g. SIG
+        type: string
+      timing:
+        $ref: '#/definitions/Timing'
+  Duration:
+    description: A length of time
+    type: object
+    allOf:
+      - $ref: '#/definitions/Quantity'
+    properties:
+      code:
+        description: Coded form of the unit
+        type: string
+      comparator:
+        description: < | <= | >= | > | ad - how to understand the value
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      system:
+        description: System that defines coded unit form
+        type: string
+      unit:
+        description: Unit representation
+        type: string
+      value:
+        format: double
+        description: Numerical value (with implicit precision)
+        type: number
   Element:
     description: Base for all elements
     type: object
@@ -394,6 +899,948 @@ definitions:
           $ref: '#/definitions/Extension'
       id:
         description: Unique id for inter-element referencing
+        type: string
+  ElementDefinitionBaseComponent:
+    description: Base definition information for tools
+    type: object
+    allOf:
+      - $ref: '#/definitions/Element'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      max:
+        description: Max cardinality of the base element
+        type: string
+      min:
+        format: int32
+        description: Min cardinality of the base element
+        type: integer
+      path:
+        description: Path that identifies the base element
+        type: string
+  ElementDefinitionElementDefinitionBindingComponent:
+    description: ValueSet details if this is coded
+    type: object
+    allOf:
+      - $ref: '#/definitions/Element'
+    properties:
+      description:
+        description: Human explanation of the value set
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      strength:
+        description: required | extensible | preferred | example
+        type: string
+      valueSet:
+        description: Source of value set
+        type: string
+  ElementDefinitionConstraintComponent:
+    description: Condition that must evaluate to true
+    type: object
+    allOf:
+      - $ref: '#/definitions/Element'
+    properties:
+      expression:
+        description: FHIRPath expression of constraint
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      human:
+        description: Human description of constraint
+        type: string
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      key:
+        description: Target of 'condition' reference above
+        type: string
+      requirements:
+        description: Why this constraint is necessary or appropriate
+        type: string
+      severity:
+        description: error | warning
+        type: string
+      source:
+        description: Reference to original source of constraint
+        type: string
+      xpath:
+        description: XPath expression of constraint
+        type: string
+  ElementDefinitionExampleComponent:
+    description: Example value (as defined for type)
+    type: object
+    allOf:
+      - $ref: '#/definitions/Element'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      label:
+        description: Describes the purpose of this example
+        type: string
+      valueBase64Binary:
+        format: byte
+        description: Value of Example (one of allowed types)
+        type: string
+      valueBoolean:
+        description: Value of Example (one of allowed types)
+        type: boolean
+      valueCanonical:
+        description: Value of Example (one of allowed types)
+        type: string
+      valueCode:
+        description: Value of Example (one of allowed types)
+        type: string
+      valueDate:
+        description: Value of Example (one of allowed types)
+        type: string
+      valueDateTime:
+        description: Value of Example (one of allowed types)
+        type: string
+      valueDecimal:
+        format: double
+        description: Value of Example (one of allowed types)
+        type: number
+      valueId:
+        description: Value of Example (one of allowed types)
+        type: string
+      valueInstant:
+        description: Value of Example (one of allowed types)
+        type: string
+      valueInteger:
+        format: int32
+        description: Value of Example (one of allowed types)
+        type: integer
+      valueInteger64:
+        format: int64
+        description: Value of Example (one of allowed types)
+        type: integer
+      valueMarkdown:
+        description: Value of Example (one of allowed types)
+        type: string
+      valueOid:
+        description: Value of Example (one of allowed types)
+        type: string
+      valuePositiveInt:
+        format: int32
+        description: Value of Example (one of allowed types)
+        type: integer
+      valueString:
+        description: Value of Example (one of allowed types)
+        type: string
+      valueTime:
+        description: Value of Example (one of allowed types)
+        type: string
+      valueUnsignedInt:
+        format: int32
+        description: Value of Example (one of allowed types)
+        type: integer
+      valueUri:
+        description: Value of Example (one of allowed types)
+        type: string
+      valueUrl:
+        description: Value of Example (one of allowed types)
+        type: string
+      valueUuid:
+        description: Value of Example (one of allowed types)
+        type: string
+      valueAddress:
+        $ref: '#/definitions/Address'
+      valueAge:
+        $ref: '#/definitions/Age'
+      valueAnnotation:
+        $ref: '#/definitions/Annotation'
+      valueAttachment:
+        $ref: '#/definitions/Attachment'
+      valueCodeableConcept:
+        $ref: '#/definitions/CodeableConcept'
+      valueCoding:
+        $ref: '#/definitions/Coding'
+      valueContactPoint:
+        $ref: '#/definitions/ContactPoint'
+      valueCount:
+        $ref: '#/definitions/Count'
+      valueDistance:
+        $ref: '#/definitions/Distance'
+      valueDuration:
+        $ref: '#/definitions/Duration'
+      valueHumanName:
+        $ref: '#/definitions/HumanName'
+      valueIdentifier:
+        $ref: '#/definitions/Identifier'
+      valueMoney:
+        $ref: '#/definitions/Money'
+      valuePeriod:
+        $ref: '#/definitions/Period'
+      valueQuantity:
+        $ref: '#/definitions/Quantity'
+      valueRange:
+        $ref: '#/definitions/Range'
+      valueRatio:
+        $ref: '#/definitions/Ratio'
+      valueReference:
+        $ref: '#/definitions/Reference'
+      valueSampledData:
+        $ref: '#/definitions/SampledData'
+      valueSignature:
+        $ref: '#/definitions/Signature'
+      valueTiming:
+        $ref: '#/definitions/Timing'
+      valueContactDetail:
+        $ref: '#/definitions/ContactDetail'
+      valueContributor:
+        $ref: '#/definitions/Contributor'
+      valueDataRequirement:
+        $ref: '#/definitions/DataRequirement'
+      valueExpression:
+        $ref: '#/definitions/Expression'
+      valueParameterDefinition:
+        $ref: '#/definitions/ParameterDefinition'
+      valueRelatedArtifact:
+        $ref: '#/definitions/RelatedArtifact'
+      valueTriggerDefinition:
+        $ref: '#/definitions/TriggerDefinition'
+      valueUsageContext:
+        $ref: '#/definitions/UsageContext'
+      valueDosage:
+        $ref: '#/definitions/Dosage'
+      valueMeta:
+        $ref: '#/definitions/Meta'
+  ElementDefinitionMappingComponent:
+    description: Map element to another set of definitions
+    type: object
+    allOf:
+      - $ref: '#/definitions/Element'
+    properties:
+      comment:
+        description: Comments about the mapping or its use
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      identity:
+        description: Reference to mapping declaration
+        type: string
+      language:
+        description: Computable language of mapping
+        type: string
+      map:
+        description: Details of the mapping
+        type: string
+  ElementDefinitionDiscriminatorComponent:
+    description: Element values that are used to distinguish the slices
+    type: object
+    allOf:
+      - $ref: '#/definitions/Element'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      path:
+        description: Path to element value
+        type: string
+      type:
+        description: value | exists | pattern | type | profile
+        type: string
+  ElementDefinitionSlicingComponent:
+    description: This element is sliced - slices follow
+    type: object
+    allOf:
+      - $ref: '#/definitions/Element'
+    properties:
+      description:
+        description: Text description of how slicing works (or not)
+        type: string
+      discriminator:
+        description: Element values that are used to distinguish the slices
+        type: array
+        items:
+          $ref: '#/definitions/ElementDefinitionDiscriminatorComponent'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      ordered:
+        description: If elements must be in same order as slices
+        type: boolean
+      rules:
+        description: closed | open | openAtEnd
+        type: string
+  ElementDefinitionTypeRefComponent:
+    description: Data type and Profile for this element
+    type: object
+    allOf:
+      - $ref: '#/definitions/Element'
+    properties:
+      aggregation:
+        description: contained | referenced | bundled - how aggregated
+        type: array
+        items:
+          type: string
+      code:
+        description: Data type or Resource (reference to definition)
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      profile:
+        description: Profiles (StructureDefinition or IG) - one must apply
+        type: array
+        items:
+          type: string
+      targetProfile:
+        description: >-
+          Profile (StructureDefinition or IG) on the Reference/canonical target
+          - one must apply
+        type: array
+        items:
+          type: string
+      versioning:
+        description: either | independent | specific
+        type: string
+  ElementDefinition:
+    description: Definition of an element in a resource or extension
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneType'
+    properties:
+      alias:
+        description: Other names
+        type: array
+        items:
+          type: string
+      base:
+        $ref: '#/definitions/ElementDefinitionBaseComponent'
+      binding:
+        $ref: '#/definitions/ElementDefinitionElementDefinitionBindingComponent'
+      code:
+        description: Corresponding codes in terminologies
+        type: array
+        items:
+          $ref: '#/definitions/Coding'
+      comment:
+        description: Comments about the use of this element
+        type: string
+      condition:
+        description: Reference to invariant about presence
+        type: array
+        items:
+          type: string
+      constraint:
+        description: Condition that must evaluate to true
+        type: array
+        items:
+          $ref: '#/definitions/ElementDefinitionConstraintComponent'
+      contentReference:
+        description: Reference to definition of content for the element
+        type: string
+      defaultValueBase64Binary:
+        format: byte
+        description: Specified value if missing from instance
+        type: string
+      defaultValueBoolean:
+        description: Specified value if missing from instance
+        type: boolean
+      defaultValueCanonical:
+        description: Specified value if missing from instance
+        type: string
+      defaultValueCode:
+        description: Specified value if missing from instance
+        type: string
+      defaultValueDate:
+        description: Specified value if missing from instance
+        type: string
+      defaultValueDateTime:
+        description: Specified value if missing from instance
+        type: string
+      defaultValueDecimal:
+        format: double
+        description: Specified value if missing from instance
+        type: number
+      defaultValueId:
+        description: Specified value if missing from instance
+        type: string
+      defaultValueInstant:
+        description: Specified value if missing from instance
+        type: string
+      defaultValueInteger:
+        format: int32
+        description: Specified value if missing from instance
+        type: integer
+      defaultValueInteger64:
+        format: int64
+        description: Specified value if missing from instance
+        type: integer
+      defaultValueMarkdown:
+        description: Specified value if missing from instance
+        type: string
+      defaultValueOid:
+        description: Specified value if missing from instance
+        type: string
+      defaultValuePositiveInt:
+        format: int32
+        description: Specified value if missing from instance
+        type: integer
+      defaultValueString:
+        description: Specified value if missing from instance
+        type: string
+      defaultValueTime:
+        description: Specified value if missing from instance
+        type: string
+      defaultValueUnsignedInt:
+        format: int32
+        description: Specified value if missing from instance
+        type: integer
+      defaultValueUri:
+        description: Specified value if missing from instance
+        type: string
+      defaultValueUrl:
+        description: Specified value if missing from instance
+        type: string
+      defaultValueUuid:
+        description: Specified value if missing from instance
+        type: string
+      defaultValueAddress:
+        $ref: '#/definitions/Address'
+      defaultValueAge:
+        $ref: '#/definitions/Age'
+      defaultValueAnnotation:
+        $ref: '#/definitions/Annotation'
+      defaultValueAttachment:
+        $ref: '#/definitions/Attachment'
+      defaultValueCodeableConcept:
+        $ref: '#/definitions/CodeableConcept'
+      defaultValueCoding:
+        $ref: '#/definitions/Coding'
+      defaultValueContactPoint:
+        $ref: '#/definitions/ContactPoint'
+      defaultValueCount:
+        $ref: '#/definitions/Count'
+      defaultValueDistance:
+        $ref: '#/definitions/Distance'
+      defaultValueDuration:
+        $ref: '#/definitions/Duration'
+      defaultValueHumanName:
+        $ref: '#/definitions/HumanName'
+      defaultValueIdentifier:
+        $ref: '#/definitions/Identifier'
+      defaultValueMoney:
+        $ref: '#/definitions/Money'
+      defaultValuePeriod:
+        $ref: '#/definitions/Period'
+      defaultValueQuantity:
+        $ref: '#/definitions/Quantity'
+      defaultValueRange:
+        $ref: '#/definitions/Range'
+      defaultValueRatio:
+        $ref: '#/definitions/Ratio'
+      defaultValueReference:
+        $ref: '#/definitions/Reference'
+      defaultValueSampledData:
+        $ref: '#/definitions/SampledData'
+      defaultValueSignature:
+        $ref: '#/definitions/Signature'
+      defaultValueTiming:
+        $ref: '#/definitions/Timing'
+      defaultValueContactDetail:
+        $ref: '#/definitions/ContactDetail'
+      defaultValueContributor:
+        $ref: '#/definitions/Contributor'
+      defaultValueDataRequirement:
+        $ref: '#/definitions/DataRequirement'
+      defaultValueExpression:
+        $ref: '#/definitions/Expression'
+      defaultValueParameterDefinition:
+        $ref: '#/definitions/ParameterDefinition'
+      defaultValueRelatedArtifact:
+        $ref: '#/definitions/RelatedArtifact'
+      defaultValueTriggerDefinition:
+        $ref: '#/definitions/TriggerDefinition'
+      defaultValueUsageContext:
+        $ref: '#/definitions/UsageContext'
+      defaultValueDosage:
+        $ref: '#/definitions/Dosage'
+      defaultValueMeta:
+        $ref: '#/definitions/Meta'
+      definition:
+        description: Full formal definition as narrative text
+        type: string
+      example:
+        description: Example value (as defined for type)
+        type: array
+        items:
+          $ref: '#/definitions/ElementDefinitionExampleComponent'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      fixedBase64Binary:
+        format: byte
+        description: Value must be exactly this
+        type: string
+      fixedBoolean:
+        description: Value must be exactly this
+        type: boolean
+      fixedCanonical:
+        description: Value must be exactly this
+        type: string
+      fixedCode:
+        description: Value must be exactly this
+        type: string
+      fixedDate:
+        description: Value must be exactly this
+        type: string
+      fixedDateTime:
+        description: Value must be exactly this
+        type: string
+      fixedDecimal:
+        format: double
+        description: Value must be exactly this
+        type: number
+      fixedId:
+        description: Value must be exactly this
+        type: string
+      fixedInstant:
+        description: Value must be exactly this
+        type: string
+      fixedInteger:
+        format: int32
+        description: Value must be exactly this
+        type: integer
+      fixedInteger64:
+        format: int64
+        description: Value must be exactly this
+        type: integer
+      fixedMarkdown:
+        description: Value must be exactly this
+        type: string
+      fixedOid:
+        description: Value must be exactly this
+        type: string
+      fixedPositiveInt:
+        format: int32
+        description: Value must be exactly this
+        type: integer
+      fixedString:
+        description: Value must be exactly this
+        type: string
+      fixedTime:
+        description: Value must be exactly this
+        type: string
+      fixedUnsignedInt:
+        format: int32
+        description: Value must be exactly this
+        type: integer
+      fixedUri:
+        description: Value must be exactly this
+        type: string
+      fixedUrl:
+        description: Value must be exactly this
+        type: string
+      fixedUuid:
+        description: Value must be exactly this
+        type: string
+      fixedAddress:
+        $ref: '#/definitions/Address'
+      fixedAge:
+        $ref: '#/definitions/Age'
+      fixedAnnotation:
+        $ref: '#/definitions/Annotation'
+      fixedAttachment:
+        $ref: '#/definitions/Attachment'
+      fixedCodeableConcept:
+        $ref: '#/definitions/CodeableConcept'
+      fixedCoding:
+        $ref: '#/definitions/Coding'
+      fixedContactPoint:
+        $ref: '#/definitions/ContactPoint'
+      fixedCount:
+        $ref: '#/definitions/Count'
+      fixedDistance:
+        $ref: '#/definitions/Distance'
+      fixedDuration:
+        $ref: '#/definitions/Duration'
+      fixedHumanName:
+        $ref: '#/definitions/HumanName'
+      fixedIdentifier:
+        $ref: '#/definitions/Identifier'
+      fixedMoney:
+        $ref: '#/definitions/Money'
+      fixedPeriod:
+        $ref: '#/definitions/Period'
+      fixedQuantity:
+        $ref: '#/definitions/Quantity'
+      fixedRange:
+        $ref: '#/definitions/Range'
+      fixedRatio:
+        $ref: '#/definitions/Ratio'
+      fixedReference:
+        $ref: '#/definitions/Reference'
+      fixedSampledData:
+        $ref: '#/definitions/SampledData'
+      fixedSignature:
+        $ref: '#/definitions/Signature'
+      fixedTiming:
+        $ref: '#/definitions/Timing'
+      fixedContactDetail:
+        $ref: '#/definitions/ContactDetail'
+      fixedContributor:
+        $ref: '#/definitions/Contributor'
+      fixedDataRequirement:
+        $ref: '#/definitions/DataRequirement'
+      fixedExpression:
+        $ref: '#/definitions/Expression'
+      fixedParameterDefinition:
+        $ref: '#/definitions/ParameterDefinition'
+      fixedRelatedArtifact:
+        $ref: '#/definitions/RelatedArtifact'
+      fixedTriggerDefinition:
+        $ref: '#/definitions/TriggerDefinition'
+      fixedUsageContext:
+        $ref: '#/definitions/UsageContext'
+      fixedDosage:
+        $ref: '#/definitions/Dosage'
+      fixedMeta:
+        $ref: '#/definitions/Meta'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      isModifier:
+        description: If this modifies the meaning of other elements
+        type: boolean
+      isModifierReason:
+        description: Reason that this element is marked as a modifier
+        type: string
+      isSummary:
+        description: Include when _summary = true?
+        type: boolean
+      label:
+        description: Name for element to display with or prompt for element
+        type: string
+      mapping:
+        description: Map element to another set of definitions
+        type: array
+        items:
+          $ref: '#/definitions/ElementDefinitionMappingComponent'
+      max:
+        description: Maximum Cardinality (a number or *)
+        type: string
+      maxLength:
+        format: int32
+        description: Max length for strings
+        type: integer
+      maxValueDate:
+        description: Maximum Allowed Value (for some types)
+        type: string
+      maxValueDateTime:
+        description: Maximum Allowed Value (for some types)
+        type: string
+      maxValueInstant:
+        description: Maximum Allowed Value (for some types)
+        type: string
+      maxValueTime:
+        description: Maximum Allowed Value (for some types)
+        type: string
+      maxValueDecimal:
+        format: double
+        description: Maximum Allowed Value (for some types)
+        type: number
+      maxValueInteger:
+        format: int32
+        description: Maximum Allowed Value (for some types)
+        type: integer
+      maxValueInteger64:
+        format: int64
+        description: Maximum Allowed Value (for some types)
+        type: integer
+      maxValuePositiveInt:
+        format: int32
+        description: Maximum Allowed Value (for some types)
+        type: integer
+      maxValueUnsignedInt:
+        format: int32
+        description: Maximum Allowed Value (for some types)
+        type: integer
+      maxValueQuantity:
+        $ref: '#/definitions/Quantity'
+      meaningWhenMissing:
+        description: Implicit meaning when this element is missing
+        type: string
+      min:
+        format: int32
+        description: Minimum Cardinality
+        type: integer
+      minValueDate:
+        description: Minimum Allowed Value (for some types)
+        type: string
+      minValueDateTime:
+        description: Minimum Allowed Value (for some types)
+        type: string
+      minValueInstant:
+        description: Minimum Allowed Value (for some types)
+        type: string
+      minValueTime:
+        description: Minimum Allowed Value (for some types)
+        type: string
+      minValueDecimal:
+        format: double
+        description: Minimum Allowed Value (for some types)
+        type: number
+      minValueInteger:
+        format: int32
+        description: Minimum Allowed Value (for some types)
+        type: integer
+      minValueInteger64:
+        format: int64
+        description: Minimum Allowed Value (for some types)
+        type: integer
+      minValuePositiveInt:
+        format: int32
+        description: Minimum Allowed Value (for some types)
+        type: integer
+      minValueUnsignedInt:
+        format: int32
+        description: Minimum Allowed Value (for some types)
+        type: integer
+      minValueQuantity:
+        $ref: '#/definitions/Quantity'
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      mustSupport:
+        description: If the element must be supported
+        type: boolean
+      orderMeaning:
+        description: What the order of the elements means
+        type: string
+      path:
+        description: Path of the element in the hierarchy of elements
+        type: string
+      patternBase64Binary:
+        format: byte
+        description: Value must have at least these property values
+        type: string
+      patternBoolean:
+        description: Value must have at least these property values
+        type: boolean
+      patternCanonical:
+        description: Value must have at least these property values
+        type: string
+      patternCode:
+        description: Value must have at least these property values
+        type: string
+      patternDate:
+        description: Value must have at least these property values
+        type: string
+      patternDateTime:
+        description: Value must have at least these property values
+        type: string
+      patternDecimal:
+        format: double
+        description: Value must have at least these property values
+        type: number
+      patternId:
+        description: Value must have at least these property values
+        type: string
+      patternInstant:
+        description: Value must have at least these property values
+        type: string
+      patternInteger:
+        format: int32
+        description: Value must have at least these property values
+        type: integer
+      patternInteger64:
+        format: int64
+        description: Value must have at least these property values
+        type: integer
+      patternMarkdown:
+        description: Value must have at least these property values
+        type: string
+      patternOid:
+        description: Value must have at least these property values
+        type: string
+      patternPositiveInt:
+        format: int32
+        description: Value must have at least these property values
+        type: integer
+      patternString:
+        description: Value must have at least these property values
+        type: string
+      patternTime:
+        description: Value must have at least these property values
+        type: string
+      patternUnsignedInt:
+        format: int32
+        description: Value must have at least these property values
+        type: integer
+      patternUri:
+        description: Value must have at least these property values
+        type: string
+      patternUrl:
+        description: Value must have at least these property values
+        type: string
+      patternUuid:
+        description: Value must have at least these property values
+        type: string
+      patternAddress:
+        $ref: '#/definitions/Address'
+      patternAge:
+        $ref: '#/definitions/Age'
+      patternAnnotation:
+        $ref: '#/definitions/Annotation'
+      patternAttachment:
+        $ref: '#/definitions/Attachment'
+      patternCodeableConcept:
+        $ref: '#/definitions/CodeableConcept'
+      patternCoding:
+        $ref: '#/definitions/Coding'
+      patternContactPoint:
+        $ref: '#/definitions/ContactPoint'
+      patternCount:
+        $ref: '#/definitions/Count'
+      patternDistance:
+        $ref: '#/definitions/Distance'
+      patternDuration:
+        $ref: '#/definitions/Duration'
+      patternHumanName:
+        $ref: '#/definitions/HumanName'
+      patternIdentifier:
+        $ref: '#/definitions/Identifier'
+      patternMoney:
+        $ref: '#/definitions/Money'
+      patternPeriod:
+        $ref: '#/definitions/Period'
+      patternQuantity:
+        $ref: '#/definitions/Quantity'
+      patternRange:
+        $ref: '#/definitions/Range'
+      patternRatio:
+        $ref: '#/definitions/Ratio'
+      patternReference:
+        $ref: '#/definitions/Reference'
+      patternSampledData:
+        $ref: '#/definitions/SampledData'
+      patternSignature:
+        $ref: '#/definitions/Signature'
+      patternTiming:
+        $ref: '#/definitions/Timing'
+      patternContactDetail:
+        $ref: '#/definitions/ContactDetail'
+      patternContributor:
+        $ref: '#/definitions/Contributor'
+      patternDataRequirement:
+        $ref: '#/definitions/DataRequirement'
+      patternExpression:
+        $ref: '#/definitions/Expression'
+      patternParameterDefinition:
+        $ref: '#/definitions/ParameterDefinition'
+      patternRelatedArtifact:
+        $ref: '#/definitions/RelatedArtifact'
+      patternTriggerDefinition:
+        $ref: '#/definitions/TriggerDefinition'
+      patternUsageContext:
+        $ref: '#/definitions/UsageContext'
+      patternDosage:
+        $ref: '#/definitions/Dosage'
+      patternMeta:
+        $ref: '#/definitions/Meta'
+      representation:
+        description: xmlAttr | xmlText | typeAttr | cdaText | xhtml
+        type: array
+        items:
+          type: string
+      requirements:
+        description: Why this resource has been created
+        type: string
+      short:
+        description: Concise definition for space-constrained presentation
+        type: string
+      sliceIsConstraining:
+        description: >-
+          If this slice definition constrains an inherited slice definition (or
+          not)
+        type: boolean
+      sliceName:
+        description: Name for this particular element (in a set of slices)
+        type: string
+      slicing:
+        $ref: '#/definitions/ElementDefinitionSlicingComponent'
+      type:
+        description: Data type and Profile for this element
+        type: array
+        items:
+          $ref: '#/definitions/ElementDefinitionTypeRefComponent'
+  Expression:
+    description: An expression that can be used to generate a value
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      description:
+        description: Natural language description of the condition
+        type: string
+      expression:
+        description: Expression in specified language
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      language:
+        description: text/cql | text/fhirpath | application/x-fhir-query | etc.
+        type: string
+      name:
+        description: Short name assigned to expression for reuse
+        type: string
+      reference:
+        description: Where the expression is found
         type: string
   Extension:
     description: Optional Extensions Element
@@ -505,8 +1952,31 @@ definitions:
       versionId:
         description: Version specific identifier
         type: string
+  Money:
+    description: An amount of economic utility in some recognized currency
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      currency:
+        description: ISO 4217 Currency Code
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      value:
+        format: double
+        description: Numerical value (with implicit precision)
+        type: number
   Narrative:
-    description: Human-readable summary of the resource (essential clinical and business information)
+    description: >-
+      Human-readable summary of the resource (essential clinical and business
+      information)
     type: object
     allOf:
       - $ref: '#/definitions/DataType'
@@ -525,6 +1995,42 @@ definitions:
       status:
         description: generated | extensions | additional | empty
         type: string
+  ParameterDefinition:
+    description: Definition of a parameter to a module
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      documentation:
+        description: A brief description of the parameter
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      max:
+        description: Maximum cardinality (a number of *)
+        type: string
+      min:
+        format: int32
+        description: Minimum cardinality
+        type: integer
+      name:
+        description: Name used to access the parameter value
+        type: string
+      profile:
+        description: What profile the value is expected to be
+        type: string
+      type:
+        description: What type of value
+        type: string
+      use:
+        description: in | out
+        type: string
   Period:
     description: Time range defined by start and end date/time
     type: object
@@ -532,7 +2038,7 @@ definitions:
       - $ref: '#/definitions/DataType'
     properties:
       end:
-        description: 'End time with inclusive boundary, if not ongoing'
+        description: End time with inclusive boundary, if not ongoing
         type: string
       extension:
         description: Additional content defined by implementations
@@ -593,6 +2099,24 @@ definitions:
         type: string
       low:
         $ref: '#/definitions/Quantity'
+  Ratio:
+    description: A ratio of two Quantity values - a numerator and a denominator
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      denominator:
+        $ref: '#/definitions/Quantity'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      numerator:
+        $ref: '#/definitions/Quantity'
   Reference:
     description: A reference from one resource to another
     type: object
@@ -611,10 +2135,10 @@ definitions:
         description: Unique id for inter-element referencing
         type: string
       identifier:
-        description: 'Logical reference, when literal reference is not known'
+        description: Logical reference, when literal reference is not known
         type: object
       reference:
-        description: 'Literal reference, Relative, internal or absolute URL'
+        description: Literal reference, Relative, internal or absolute URL
         type: string
       type:
         description: Type the reference refers to (e.g. "Patient")
@@ -648,20 +2172,61 @@ definitions:
         description: What resource is being referenced
         type: string
       type:
-        description: documentation | justification | citation | predecessor | successor | derived-from | depends-on | composed-of
+        description: >-
+          documentation | justification | citation | predecessor | successor |
+          derived-from | depends-on | composed-of
         type: string
       url:
         description: Where the artifact can be accessed
         type: string
+  SampledData:
+    description: A series of measurements taken by a device
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      data:
+        description: Decimal values with spaces, or "E" | "U" | "L"
+        type: string
+      dimensions:
+        format: int32
+        description: Number of sample points at each time point
+        type: integer
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      factor:
+        format: double
+        description: Multiply data by this before adding to origin
+        type: number
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      lowerLimit:
+        format: double
+        description: Lower limit of detection
+        type: number
+      origin:
+        $ref: '#/definitions/Quantity'
+      period:
+        format: double
+        description: Number of milliseconds between samples
+        type: number
+      upperLimit:
+        format: double
+        description: Upper limit of detection
+        type: number
   Signature:
-    description: 'A Signature - XML DigSig, JWS, Graphical image of signature, etc.'
+    description: A Signature - XML DigSig, JWS, Graphical image of signature, etc.
     type: object
     allOf:
       - $ref: '#/definitions/DataType'
     properties:
       data:
         format: byte
-        description: 'The actual signature content (XML DigSig. JWS, picture, etc.)'
+        description: The actual signature content (XML DigSig. JWS, picture, etc.)
         type: string
       extension:
         description: Additional content defined by implementations
@@ -689,6 +2254,154 @@ definitions:
         type: string
       who:
         $ref: '#/definitions/Reference'
+  TimingRepeatComponent:
+    description: When the event is to occur
+    type: object
+    allOf:
+      - $ref: '#/definitions/Element'
+    properties:
+      boundsDuration:
+        $ref: '#/definitions/Duration'
+      boundsRange:
+        $ref: '#/definitions/Range'
+      boundsPeriod:
+        $ref: '#/definitions/Period'
+      count:
+        format: int32
+        description: Number of times to repeat
+        type: integer
+      countMax:
+        format: int32
+        description: Maximum number of times to repeat
+        type: integer
+      dayOfWeek:
+        description: mon | tue | wed | thu | fri | sat | sun
+        type: array
+        items:
+          type: string
+      duration:
+        format: double
+        description: How long when it happens
+        type: number
+      durationMax:
+        format: double
+        description: How long when it happens (Max)
+        type: number
+      durationUnit:
+        description: s | min | h | d | wk | mo | a - unit of time (UCUM)
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      frequency:
+        format: int32
+        description: >-
+          Indicates the number of repetitions that should occur within a period.
+          I.e. Event occurs frequency times per period
+        type: integer
+      frequencyMax:
+        format: int32
+        description: Event occurs up to frequencyMax times per period
+        type: integer
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      offset:
+        format: int32
+        description: Minutes from event (before or after)
+        type: integer
+      period:
+        format: double
+        description: >-
+          The duration to which the frequency applies. I.e. Event occurs
+          frequency times per period
+        type: number
+      periodMax:
+        format: double
+        description: Upper limit of period (3-4 hours)
+        type: number
+      periodUnit:
+        description: s | min | h | d | wk | mo | a - unit of time (UCUM)
+        type: string
+      timeOfDay:
+        description: Time of day for action
+        type: array
+        items:
+          type: string
+      when:
+        description: Code for time period of occurrence
+        type: array
+        items:
+          type: string
+  Timing:
+    description: A timing schedule that specifies an event that may occur multiple times
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneType'
+    properties:
+      code:
+        $ref: '#/definitions/CodeableConcept'
+      event:
+        description: When the event occurs
+        type: array
+        items:
+          type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      repeat:
+        $ref: '#/definitions/TimingRepeatComponent'
+  TriggerDefinition:
+    description: Defines an expected trigger for a module
+    type: object
+    allOf:
+      - $ref: '#/definitions/DataType'
+    properties:
+      condition:
+        $ref: '#/definitions/Expression'
+      data:
+        description: Triggering data of the event (multiple = 'and')
+        type: array
+        items:
+          $ref: '#/definitions/DataRequirement'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      name:
+        description: Name or URI that identifies the event
+        type: string
+      timingTiming:
+        $ref: '#/definitions/Timing'
+      timingReference:
+        $ref: '#/definitions/Reference'
+      timingDate:
+        description: Timing of the event
+        type: string
+      timingDateTime:
+        description: Timing of the event
+        type: string
+      type:
+        description: >-
+          named-event | periodic | data-changed | data-added | data-modified |
+          data-removed | data-accessed | data-access-ended
+        type: string
   UsageContext:
     description: Describes the context of use for a conformance or knowledge resource
     type: object
@@ -864,7 +2577,9 @@ definitions:
         items:
           $ref: '#/definitions/Extension'
       relation:
-        description: 'See http://www.iana.org/assignments/link-relations/link-relations.xhtml#link-relations-1'
+        description: >-
+          See
+          http://www.iana.org/assignments/link-relations/link-relations.xhtml#link-relations-1
         type: string
       url:
         description: Reference details for the link
@@ -906,10 +2621,13 @@ definitions:
         type: string
       total:
         format: int32
-        description: 'If search, the total number of matches'
+        description: If search, the total number of matches
         type: integer
       type:
-        description: document | message | transaction | transaction-response | batch | batch-response | history | searchset | collection | subscription-notification
+        description: >-
+          document | message | transaction | transaction-response | batch |
+          batch-response | history | searchset | collection |
+          subscription-notification
         type: string
   CanonicalResource:
     description: Common Ancestor declaration for definitional resources
@@ -924,7 +2642,7 @@ definitions:
         items:
           $ref: '#/definitions/ContactDetail'
       contained:
-        description: 'Contained, inline Resources'
+        description: Contained, inline Resources
         type: array
         items:
           $ref: '#/definitions/Resource'
@@ -935,10 +2653,10 @@ definitions:
         description: Date last changed
         type: string
       description:
-        description: 'Natural language description of the {{title}}'
+        description: Natural language description of the {{title}}
         type: string
       experimental:
-        description: 'For testing purposes, not real usage'
+        description: For testing purposes, not real usage
         type: boolean
       extension:
         description: Additional content defined by implementations
@@ -949,7 +2667,7 @@ definitions:
         description: Logical id of this artifact
         type: string
       identifier:
-        description: 'Additional identifier for the {{title}}'
+        description: Additional identifier for the {{title}}
         type: array
         items:
           $ref: '#/definitions/Identifier'
@@ -957,7 +2675,7 @@ definitions:
         description: A set of rules under which this content was created
         type: string
       jurisdiction:
-        description: 'Intended jurisdiction for {{title}} (if applicable)'
+        description: Intended jurisdiction for {{title}} (if applicable)
         type: array
         items:
           $ref: '#/definitions/CodeableConcept'
@@ -972,13 +2690,13 @@ definitions:
         items:
           $ref: '#/definitions/Extension'
       name:
-        description: 'Name for this {{title}} (computer friendly)'
+        description: Name for this {{title}} (computer friendly)
         type: string
       publisher:
         description: Name of the publisher (organization or individual)
         type: string
       purpose:
-        description: 'Why this {{title}} is defined'
+        description: Why this {{title}} is defined
         type: string
       status:
         description: draft | active | retired | unknown
@@ -986,10 +2704,12 @@ definitions:
       text:
         $ref: '#/definitions/Narrative'
       title:
-        description: 'Name for this {{title}} (human friendly)'
+        description: Name for this {{title}} (human friendly)
         type: string
       url:
-        description: 'Canonical identifier for this {{title}}, represented as a URI (globally unique)'
+        description: >-
+          Canonical identifier for this {{title}}, represented as a URI
+          (globally unique)
         type: string
       useContext:
         description: The context that the content is intended to support
@@ -997,7 +2717,7 @@ definitions:
         items:
           $ref: '#/definitions/UsageContext'
       version:
-        description: 'Business version of the {{title}}'
+        description: Business version of the {{title}}
         type: string
   CapabilityStatementDocumentComponent:
     description: Document definition
@@ -1171,7 +2891,9 @@ definitions:
       - $ref: '#/definitions/BackboneElement'
     properties:
       code:
-        description: read | vread | update | patch | delete | history-instance | history-type | create | search-type
+        description: >-
+          read | vread | update | patch | delete | history-instance |
+          history-type | create | search-type
         type: string
       documentation:
         description: Anything special about operation behavior
@@ -1246,7 +2968,9 @@ definitions:
         description: Name of search parameter
         type: string
       type:
-        description: number | date | string | token | reference | composite | quantity | uri | special
+        description: >-
+          number | date | string | token | reference | composite | quantity |
+          uri | special
         type: string
   CapabilityStatementResourceComponent:
     description: Resource served on the REST interface
@@ -1258,7 +2982,9 @@ definitions:
         description: If allows/uses conditional create
         type: boolean
       conditionalDelete:
-        description: not-supported | single | multiple - how conditional delete is supported
+        description: >-
+          not-supported | single | multiple - how conditional delete is
+          supported
         type: string
       conditionalRead:
         description: not-supported | modified-since | not-match | full-support
@@ -1339,7 +3065,7 @@ definitions:
       - $ref: '#/definitions/BackboneElement'
     properties:
       cors:
-        description: 'Adds CORS Headers (http://enable-cors.org/)'
+        description: Adds CORS Headers (http://enable-cors.org/)
         type: boolean
       description:
         description: General description of how security works
@@ -1455,7 +3181,7 @@ definitions:
         items:
           $ref: '#/definitions/ContactDetail'
       contained:
-        description: 'Contained, inline Resources'
+        description: Contained, inline Resources
         type: array
         items:
           $ref: '#/definitions/Resource'
@@ -1474,7 +3200,7 @@ definitions:
         items:
           $ref: '#/definitions/CapabilityStatementDocumentComponent'
       experimental:
-        description: 'For testing purposes, not real usage'
+        description: For testing purposes, not real usage
         type: boolean
       extension:
         description: Additional content defined by implementations
@@ -1565,7 +3291,9 @@ definitions:
         description: Name for this capability statement (human friendly)
         type: string
       url:
-        description: 'Canonical identifier for this capability statement, represented as a URI (globally unique)'
+        description: >-
+          Canonical identifier for this capability statement, represented as a
+          URI (globally unique)
         type: string
       useContext:
         description: The context that the content is intended to support
@@ -1691,7 +3419,7 @@ definitions:
         items:
           $ref: '#/definitions/Extension'
       role:
-        description: 'Role within the organization, such as professional title'
+        description: Role within the organization, such as professional title
         type: string
   CitationContributionInstanceComponent:
     description: Contributions with accounting for time or number
@@ -1747,7 +3475,9 @@ definitions:
         items:
           $ref: '#/definitions/CodeableConcept'
       correspondingContact:
-        description: Indication of which contributor is the corresponding contributor for the role
+        description: >-
+          Indication of which contributor is the corresponding contributor for
+          the role
         type: boolean
       extension:
         description: Additional content defined by implementations
@@ -1758,7 +3488,7 @@ definitions:
         description: Unique id for inter-element referencing
         type: string
       identifier:
-        description: 'Author identifier, eg ORCID'
+        description: Author identifier, eg ORCID
         type: array
         items:
           $ref: '#/definitions/Identifier'
@@ -1784,7 +3514,9 @@ definitions:
         items:
           $ref: '#/definitions/ContactPoint'
   CitationSummaryComponent:
-    description: Used to record a display of the author/contributor list without separate coding for each list member
+    description: >-
+      Used to record a display of the author/contributor list without separate
+      coding for each list member
     type: object
     allOf:
       - $ref: '#/definitions/BackboneElement'
@@ -1809,7 +3541,9 @@ definitions:
       type:
         $ref: '#/definitions/CodeableConcept'
       value:
-        description: 'The display string for the author list, contributor list, or contributorship statement'
+        description: >-
+          The display string for the author list, contributor list, or
+          contributorship statement
         type: string
   CitationContributorshipComponent:
     description: Attribution of authors and other contributors
@@ -1839,7 +3573,9 @@ definitions:
         items:
           $ref: '#/definitions/Extension'
       summary:
-        description: Used to record a display of the author/contributor list without separate coding for each list member
+        description: >-
+          Used to record a display of the author/contributor list without
+          separate coding for each list member
         type: array
         items:
           $ref: '#/definitions/CitationSummaryComponent'
@@ -1901,7 +3637,9 @@ definitions:
         description: Season on which the issue of the journal was published
         type: string
       text:
-        description: Text representation of the date of which the issue of the journal was published
+        description: >-
+          Text representation of the date of which the issue of the journal was
+          published
         type: string
       year:
         description: Year on which the issue of the journal was published
@@ -1925,7 +3663,7 @@ definitions:
         description: Unique id for inter-element referencing
         type: string
       issue:
-        description: 'Issue, part or supplement of journal in which the article is published'
+        description: Issue, part or supplement of journal in which the article is published
         type: string
       modifierExtension:
         description: Extensions that cannot be ignored even if unrecognized
@@ -1950,7 +3688,9 @@ definitions:
         description: Unique id for inter-element referencing
         type: string
       identifier:
-        description: 'Journal identifiers include ISSN, ISO Abbreviation and NLMuniqueID; Book identifiers include ISBN'
+        description: >-
+          Journal identifiers include ISSN, ISO Abbreviation and NLMuniqueID;
+          Book identifiers include ISBN
         type: array
         items:
           $ref: '#/definitions/Identifier'
@@ -1970,7 +3710,9 @@ definitions:
       type:
         $ref: '#/definitions/CodeableConcept'
   CitationPublicationFormComponent:
-    description: 'If multiple, used to represent alternative forms of the article that are not separate citations'
+    description: >-
+      If multiple, used to represent alternative forms of the article that are
+      not separate citations
     type: object
     allOf:
       - $ref: '#/definitions/BackboneElement'
@@ -1979,7 +3721,9 @@ definitions:
         description: Entry number or identifier for inclusion in a database
         type: string
       articleDate:
-        description: 'The date the article was added to the database, or the date the article was released'
+        description: >-
+          The date the article was added to the database, or the date the
+          article was released
         type: string
       copyright:
         description: Copyright notice for the full article or artifact
@@ -2191,7 +3935,7 @@ definitions:
         description: Unique id for inter-element referencing
         type: string
       identifier:
-        description: 'May include DOI, PMID, PMCID, etc.'
+        description: May include DOI, PMID, PMCID, etc.
         type: array
         items:
           $ref: '#/definitions/Identifier'
@@ -2208,7 +3952,9 @@ definitions:
       part:
         $ref: '#/definitions/CitationPartComponent'
       publicationForm:
-        description: 'If multiple, used to represent alternative forms of the article that are not separate citations'
+        description: >-
+          If multiple, used to represent alternative forms of the article that
+          are not separate citations
         type: array
         items:
           $ref: '#/definitions/CitationPublicationFormComponent'
@@ -2240,7 +3986,9 @@ definitions:
         items:
           $ref: '#/definitions/CitationWebLocationComponent'
   Citation:
-    description: 'A description of identification, location, or contributorship of a publication (article or artifact)'
+    description: >-
+      A description of identification, location, or contributorship of a
+      publication (article or artifact)
     pattern: Citation
     type: object
     allOf:
@@ -2267,12 +4015,14 @@ definitions:
         items:
           $ref: '#/definitions/ContactDetail'
       contained:
-        description: 'Contained, inline Resources'
+        description: Contained, inline Resources
         type: array
         items:
           $ref: '#/definitions/Resource'
       copyright:
-        description: 'Use and/or publishing restrictions for the Citation, not for the cited artifact'
+        description: >-
+          Use and/or publishing restrictions for the Citation, not for the cited
+          artifact
         type: string
       currentState:
         description: The status of the citation
@@ -2298,7 +4048,7 @@ definitions:
         items:
           $ref: '#/definitions/ContactDetail'
       experimental:
-        description: 'For testing purposes, not real usage'
+        description: For testing purposes, not real usage
         type: boolean
       extension:
         description: Additional content defined by implementations
@@ -2343,7 +4093,9 @@ definitions:
         items:
           $ref: '#/definitions/Annotation'
       publisher:
-        description: 'The publisher of the Citation, not the publisher of the article or artifact being cited'
+        description: >-
+          The publisher of the Citation, not the publisher of the article or
+          artifact being cited
         type: string
       purpose:
         description: Why this citation is defined
@@ -2377,7 +4129,9 @@ definitions:
         description: Name for this citation (human friendly)
         type: string
       url:
-        description: 'Canonical identifier for this citation, represented as a globally unique URI'
+        description: >-
+          Canonical identifier for this citation, represented as a globally
+          unique URI
         type: string
       useContext:
         description: The context that the Citation Resource content is intended to support
@@ -2388,14 +4142,14 @@ definitions:
         description: Business version of the citation
         type: string
   DomainResource:
-    description: 'A resource with narrative, extensions, and contained resources'
+    description: A resource with narrative, extensions, and contained resources
     pattern: DomainResource
     type: object
     allOf:
       - $ref: '#/definitions/Resource'
     properties:
       contained:
-        description: 'Contained, inline Resources'
+        description: Contained, inline Resources
         type: array
         items:
           $ref: '#/definitions/Resource'
@@ -2430,27 +4184,27 @@ definitions:
       - $ref: '#/definitions/CanonicalResource'
     properties:
       approvalDate:
-        description: 'When the {{title}} was approved by publisher'
+        description: When the {{title}} was approved by publisher
         type: string
       author:
-        description: 'Who authored the {{title}}'
+        description: Who authored the {{title}}
         type: array
         items:
           $ref: '#/definitions/ContactDetail'
       contained:
-        description: 'Contained, inline Resources'
+        description: Contained, inline Resources
         type: array
         items:
           $ref: '#/definitions/Resource'
       editor:
-        description: 'Who edited the {{title}}'
+        description: Who edited the {{title}}
         type: array
         items:
           $ref: '#/definitions/ContactDetail'
       effectivePeriod:
         $ref: '#/definitions/Period'
       endorser:
-        description: 'Who endorsed the {{title}}'
+        description: Who endorsed the {{title}}
         type: array
         items:
           $ref: '#/definitions/ContactDetail'
@@ -2469,7 +4223,7 @@ definitions:
         description: Language of the resource content
         type: string
       lastReviewDate:
-        description: 'When the {{title}} was last reviewed'
+        description: When the {{title}} was last reviewed
         type: string
       meta:
         $ref: '#/definitions/Meta'
@@ -2479,19 +4233,19 @@ definitions:
         items:
           $ref: '#/definitions/Extension'
       relatedArtifact:
-        description: 'Additional documentation, citations, etc.'
+        description: Additional documentation, citations, etc.
         type: array
         items:
           $ref: '#/definitions/RelatedArtifact'
       reviewer:
-        description: 'Who reviewed the {{title}}'
+        description: Who reviewed the {{title}}
         type: array
         items:
           $ref: '#/definitions/ContactDetail'
       text:
         $ref: '#/definitions/Narrative'
       topic:
-        description: 'E.g. Education, Treatment, Assessment, etc.'
+        description: E.g. Education, Treatment, Assessment, etc.
         type: array
         items:
           $ref: '#/definitions/CodeableConcept'
@@ -2521,7 +4275,7 @@ definitions:
       purpose:
         $ref: '#/definitions/CodeableConcept'
       telecom:
-        description: 'Contact details (telephone, email, etc.)  for a contact'
+        description: Contact details (telephone, email, etc.)  for a contact
         type: array
         items:
           $ref: '#/definitions/ContactPoint'
@@ -2541,7 +4295,9 @@ definitions:
         items:
           $ref: '#/definitions/Address'
       alias:
-        description: 'A list of alternate names that the organization is known as, or was known as in the past'
+        description: >-
+          A list of alternate names that the organization is known as, or was
+          known as in the past
         type: array
         items:
           type: string
@@ -2551,12 +4307,14 @@ definitions:
         items:
           $ref: '#/definitions/OrganizationContactComponent'
       contained:
-        description: 'Contained, inline Resources'
+        description: Contained, inline Resources
         type: array
         items:
           $ref: '#/definitions/Resource'
       endpoint:
-        description: Technical endpoints providing access to services operated for the organization
+        description: >-
+          Technical endpoints providing access to services operated for the
+          organization
         type: array
         items:
           $ref: '#/definitions/Reference'
@@ -2603,6 +4361,450 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/CodeableConcept'
+  OperationDefinitionOverloadComponent:
+    description: Define overloaded variants for when  generating code
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      comment:
+        description: Comments to go on overload
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      parameterName:
+        description: Name of parameter to include in overload
+        type: array
+        items:
+          type: string
+  OperationDefinitionBindingComponent:
+    description: ValueSet details if this is coded
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      strength:
+        description: required | extensible | preferred | example
+        type: string
+      valueSet:
+        description: Source of value set
+        type: string
+  OperationDefinitionReferencedFromComponent:
+    description: References to this parameter
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      source:
+        description: Referencing parameter
+        type: string
+      sourceId:
+        description: Element id of reference
+        type: string
+  OperationDefinitionParameterComponent:
+    description: Parameters for the operation/query
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      binding:
+        $ref: '#/definitions/OperationDefinitionBindingComponent'
+      documentation:
+        description: Description of meaning/use
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      max:
+        description: Maximum Cardinality (a number or *)
+        type: string
+      min:
+        format: int32
+        description: Minimum Cardinality
+        type: integer
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      name:
+        description: Name in Parameters.parameter.name or in URL
+        type: string
+      part:
+        description: Parts of a nested Parameter
+        type: array
+        items:
+          $ref: '#/definitions/OperationDefinitionParameterComponent'
+      referencedFrom:
+        description: References to this parameter
+        type: array
+        items:
+          $ref: '#/definitions/OperationDefinitionReferencedFromComponent'
+      searchType:
+        description: >-
+          number | date | string | token | reference | composite | quantity |
+          uri | special
+        type: string
+      targetProfile:
+        description: If type is Reference | canonical, allowed targets
+        type: array
+        items:
+          type: string
+      type:
+        description: What type this parameter has
+        type: string
+      use:
+        description: in | out
+        type: string
+  OperationDefinition:
+    description: Definition of an operation or a named query
+    pattern: OperationDefinition
+    type: object
+    allOf:
+      - $ref: '#/definitions/CanonicalResource'
+    properties:
+      affectsState:
+        description: Whether content is changed by the operation
+        type: boolean
+      base:
+        description: Marks this as a profile of the base
+        type: string
+      code:
+        description: Name used to invoke the operation
+        type: string
+      comment:
+        description: Additional information about use
+        type: string
+      contact:
+        description: Contact details for the publisher
+        type: array
+        items:
+          $ref: '#/definitions/ContactDetail'
+      contained:
+        description: Contained, inline Resources
+        type: array
+        items:
+          $ref: '#/definitions/Resource'
+      date:
+        description: Date last changed
+        type: string
+      description:
+        description: Natural language description of the operation definition
+        type: string
+      experimental:
+        description: For testing purposes, not real usage
+        type: boolean
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Logical id of this artifact
+        type: string
+      implicitRules:
+        description: A set of rules under which this content was created
+        type: string
+      inputProfile:
+        description: Validation information for in parameters
+        type: string
+      instance:
+        description: Invoke on an instance?
+        type: boolean
+      jurisdiction:
+        description: Intended jurisdiction for operation definition (if applicable)
+        type: array
+        items:
+          $ref: '#/definitions/CodeableConcept'
+      kind:
+        description: operation | query
+        type: string
+      language:
+        description: Language of the resource content
+        type: string
+      meta:
+        $ref: '#/definitions/Meta'
+      modifierExtension:
+        description: Extensions that cannot be ignored
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      name:
+        description: Name for this operation definition (computer friendly)
+        type: string
+      outputProfile:
+        description: Validation information for out parameters
+        type: string
+      overload:
+        description: Define overloaded variants for when  generating code
+        type: array
+        items:
+          $ref: '#/definitions/OperationDefinitionOverloadComponent'
+      parameter:
+        description: Parameters for the operation/query
+        type: array
+        items:
+          $ref: '#/definitions/OperationDefinitionParameterComponent'
+      publisher:
+        description: Name of the publisher (organization or individual)
+        type: string
+      purpose:
+        description: Why this operation definition is defined
+        type: string
+      resource:
+        description: Types this operation applies to
+        type: array
+        items:
+          type: string
+      status:
+        description: draft | active | retired | unknown
+        type: string
+      system:
+        description: Invoke at the system level?
+        type: boolean
+      text:
+        $ref: '#/definitions/Narrative'
+      title:
+        description: Name for this operation definition (human friendly)
+        type: string
+      type:
+        description: Invoke at the type level?
+        type: boolean
+      url:
+        description: >-
+          Canonical identifier for this operation definition, represented as a
+          URI (globally unique)
+        type: string
+      useContext:
+        description: The context that the content is intended to support
+        type: array
+        items:
+          $ref: '#/definitions/UsageContext'
+      version:
+        description: Business version of the operation definition
+        type: string
+  ParametersParameterComponent:
+    description: Operation Parameter
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      name:
+        description: Name from the definition
+        type: string
+      part:
+        description: Named part of a multi-part parameter
+        type: array
+        items:
+          $ref: '#/definitions/ParametersParameterComponent'
+      resource:
+        $ref: '#/definitions/Resource'
+      valueBase64Binary:
+        format: byte
+        description: If parameter is a data type
+        type: string
+      valueBoolean:
+        description: If parameter is a data type
+        type: boolean
+      valueCanonical:
+        description: If parameter is a data type
+        type: string
+      valueCode:
+        description: If parameter is a data type
+        type: string
+      valueDate:
+        description: If parameter is a data type
+        type: string
+      valueDateTime:
+        description: If parameter is a data type
+        type: string
+      valueDecimal:
+        format: double
+        description: If parameter is a data type
+        type: number
+      valueId:
+        description: If parameter is a data type
+        type: string
+      valueInstant:
+        description: If parameter is a data type
+        type: string
+      valueInteger:
+        format: int32
+        description: If parameter is a data type
+        type: integer
+      valueInteger64:
+        format: int64
+        description: If parameter is a data type
+        type: integer
+      valueMarkdown:
+        description: If parameter is a data type
+        type: string
+      valueOid:
+        description: If parameter is a data type
+        type: string
+      valuePositiveInt:
+        format: int32
+        description: If parameter is a data type
+        type: integer
+      valueString:
+        description: If parameter is a data type
+        type: string
+      valueTime:
+        description: If parameter is a data type
+        type: string
+      valueUnsignedInt:
+        format: int32
+        description: If parameter is a data type
+        type: integer
+      valueUri:
+        description: If parameter is a data type
+        type: string
+      valueUrl:
+        description: If parameter is a data type
+        type: string
+      valueUuid:
+        description: If parameter is a data type
+        type: string
+      valueAddress:
+        $ref: '#/definitions/Address'
+      valueAge:
+        $ref: '#/definitions/Age'
+      valueAnnotation:
+        $ref: '#/definitions/Annotation'
+      valueAttachment:
+        $ref: '#/definitions/Attachment'
+      valueCodeableConcept:
+        $ref: '#/definitions/CodeableConcept'
+      valueCoding:
+        $ref: '#/definitions/Coding'
+      valueContactPoint:
+        $ref: '#/definitions/ContactPoint'
+      valueCount:
+        $ref: '#/definitions/Count'
+      valueDistance:
+        $ref: '#/definitions/Distance'
+      valueDuration:
+        $ref: '#/definitions/Duration'
+      valueHumanName:
+        $ref: '#/definitions/HumanName'
+      valueIdentifier:
+        $ref: '#/definitions/Identifier'
+      valueMoney:
+        $ref: '#/definitions/Money'
+      valuePeriod:
+        $ref: '#/definitions/Period'
+      valueQuantity:
+        $ref: '#/definitions/Quantity'
+      valueRange:
+        $ref: '#/definitions/Range'
+      valueRatio:
+        $ref: '#/definitions/Ratio'
+      valueReference:
+        $ref: '#/definitions/Reference'
+      valueSampledData:
+        $ref: '#/definitions/SampledData'
+      valueSignature:
+        $ref: '#/definitions/Signature'
+      valueTiming:
+        $ref: '#/definitions/Timing'
+      valueContactDetail:
+        $ref: '#/definitions/ContactDetail'
+      valueContributor:
+        $ref: '#/definitions/Contributor'
+      valueDataRequirement:
+        $ref: '#/definitions/DataRequirement'
+      valueExpression:
+        $ref: '#/definitions/Expression'
+      valueParameterDefinition:
+        $ref: '#/definitions/ParameterDefinition'
+      valueRelatedArtifact:
+        $ref: '#/definitions/RelatedArtifact'
+      valueTriggerDefinition:
+        $ref: '#/definitions/TriggerDefinition'
+      valueUsageContext:
+        $ref: '#/definitions/UsageContext'
+      valueDosage:
+        $ref: '#/definitions/Dosage'
+      valueMeta:
+        $ref: '#/definitions/Meta'
+  Parameters:
+    description: Operation Request or Response
+    pattern: Parameters
+    type: object
+    allOf:
+      - $ref: '#/definitions/Resource'
+    properties:
+      id:
+        description: Logical id of this artifact
+        type: string
+      implicitRules:
+        description: A set of rules under which this content was created
+        type: string
+      language:
+        description: Language of the resource content
+        type: string
+      meta:
+        $ref: '#/definitions/Meta'
+      parameter:
+        description: Operation Parameter
+        type: array
+        items:
+          $ref: '#/definitions/ParametersParameterComponent'
   Resource:
     description: Base Resource
     required:
@@ -2685,7 +4887,7 @@ definitions:
         items:
           $ref: '#/definitions/ContactDetail'
       contained:
-        description: 'Contained, inline Resources'
+        description: Contained, inline Resources
         type: array
         items:
           $ref: '#/definitions/Resource'
@@ -2699,7 +4901,7 @@ definitions:
         description: Natural language description of the search parameter
         type: string
       experimental:
-        description: 'For testing purposes, not real usage'
+        description: For testing purposes, not real usage
         type: boolean
       expression:
         description: FHIRPath expression that extracts the values
@@ -2726,7 +4928,9 @@ definitions:
       meta:
         $ref: '#/definitions/Meta'
       modifier:
-        description: missing | exact | contains | not | text | in | not-in | below | above | type | identifier | ofType
+        description: >-
+          missing | exact | contains | not | text | in | not-in | below | above
+          | type | identifier | ofType
         type: array
         items:
           type: string
@@ -2761,10 +4965,14 @@ definitions:
       text:
         $ref: '#/definitions/Narrative'
       type:
-        description: number | date | string | token | reference | composite | quantity | uri | special
+        description: >-
+          number | date | string | token | reference | composite | quantity |
+          uri | special
         type: string
       url:
-        description: 'Canonical identifier for this search parameter, represented as a URI (globally unique)'
+        description: >-
+          Canonical identifier for this search parameter, represented as a URI
+          (globally unique)
         type: string
       useContext:
         description: The context that the content is intended to support
@@ -2780,6 +4988,242 @@ definitions:
       xpathUsage:
         description: normal | phonetic | nearby | distance | other
         type: string
+  StructureDefinitionContextComponent:
+    description: If an extension, where it can be used in instances
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      expression:
+        description: Where the extension can be used in instances
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      type:
+        description: fhirpath | element | extension
+        type: string
+  StructureDefinitionDifferentialComponent:
+    description: Differential view of the structure
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      element:
+        description: Definition of elements in the resource (if no StructureDefinition)
+        type: array
+        items:
+          $ref: '#/definitions/ElementDefinition'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+  StructureDefinitionMappingComponent:
+    description: External specification that the content is mapped to
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      comment:
+        description: Versions, Issues, Scope limitations etc.
+        type: string
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      identity:
+        description: Internal id when this mapping is used
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      name:
+        description: Names what this mapping refers to
+        type: string
+      uri:
+        description: Identifies what this mapping refers to
+        type: string
+  StructureDefinitionSnapshotComponent:
+    description: Snapshot view of the structure
+    type: object
+    allOf:
+      - $ref: '#/definitions/BackboneElement'
+    properties:
+      element:
+        description: Definition of elements in the resource (if no StructureDefinition)
+        type: array
+        items:
+          $ref: '#/definitions/ElementDefinition'
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      id:
+        description: Unique id for inter-element referencing
+        type: string
+      modifierExtension:
+        description: Extensions that cannot be ignored even if unrecognized
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+  StructureDefinition:
+    description: Structural Definition
+    pattern: StructureDefinition
+    type: object
+    allOf:
+      - $ref: '#/definitions/CanonicalResource'
+    properties:
+      abstract:
+        description: Whether the structure is abstract
+        type: boolean
+      baseDefinition:
+        description: Definition that this type is constrained/specialized from
+        type: string
+      contact:
+        description: Contact details for the publisher
+        type: array
+        items:
+          $ref: '#/definitions/ContactDetail'
+      contained:
+        description: Contained, inline Resources
+        type: array
+        items:
+          $ref: '#/definitions/Resource'
+      context:
+        description: If an extension, where it can be used in instances
+        type: array
+        items:
+          $ref: '#/definitions/StructureDefinitionContextComponent'
+      contextInvariant:
+        description: FHIRPath invariants - when the extension can be used
+        type: array
+        items:
+          type: string
+      copyright:
+        description: Use and/or publishing restrictions
+        type: string
+      date:
+        description: Date last changed
+        type: string
+      derivation:
+        description: specialization | constraint - How relates to base definition
+        type: string
+      description:
+        description: Natural language description of the structure definition
+        type: string
+      differential:
+        $ref: '#/definitions/StructureDefinitionDifferentialComponent'
+      experimental:
+        description: For testing purposes, not real usage
+        type: boolean
+      extension:
+        description: Additional content defined by implementations
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      fhirVersion:
+        description: FHIR Version this StructureDefinition targets
+        type: string
+      id:
+        description: Logical id of this artifact
+        type: string
+      identifier:
+        description: Additional identifier for the structure definition
+        type: array
+        items:
+          $ref: '#/definitions/Identifier'
+      implicitRules:
+        description: A set of rules under which this content was created
+        type: string
+      jurisdiction:
+        description: Intended jurisdiction for structure definition (if applicable)
+        type: array
+        items:
+          $ref: '#/definitions/CodeableConcept'
+      keyword:
+        description: Assist with indexing and finding
+        type: array
+        items:
+          $ref: '#/definitions/Coding'
+      kind:
+        description: primitive-type | complex-type | resource | logical
+        type: string
+      language:
+        description: Language of the resource content
+        type: string
+      mapping:
+        description: External specification that the content is mapped to
+        type: array
+        items:
+          $ref: '#/definitions/StructureDefinitionMappingComponent'
+      meta:
+        $ref: '#/definitions/Meta'
+      modifierExtension:
+        description: Extensions that cannot be ignored
+        type: array
+        items:
+          $ref: '#/definitions/Extension'
+      name:
+        description: Name for this structure definition (computer friendly)
+        type: string
+      publisher:
+        description: Name of the publisher (organization or individual)
+        type: string
+      purpose:
+        description: Why this structure definition is defined
+        type: string
+      snapshot:
+        $ref: '#/definitions/StructureDefinitionSnapshotComponent'
+      status:
+        description: draft | active | retired | unknown
+        type: string
+      text:
+        $ref: '#/definitions/Narrative'
+      title:
+        description: Name for this structure definition (human friendly)
+        type: string
+      type:
+        description: Type defined or constrained by this structure
+        type: string
+      url:
+        description: >-
+          Canonical identifier for this structure definition, represented as a
+          URI (globally unique)
+        type: string
+      useContext:
+        description: The context that the content is intended to support
+        type: array
+        items:
+          $ref: '#/definitions/UsageContext'
+      version:
+        description: Business version of the structure definition
+        type: string
 externalDocs:
   description: Find out more about Swagger
-  url: 'http://swagger.io'
+  url: http://swagger.io

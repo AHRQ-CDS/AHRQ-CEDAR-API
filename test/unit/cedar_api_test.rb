@@ -115,4 +115,27 @@ describe 'cedar_api' do
       assert_equal(resource.parameter.count, MeshTreeNode.where(parent_id: 401).count)
     end
   end
+
+  describe '/fhir/SearchParameter endpoint' do
+    it 'supports search by url' do
+      url = 'http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citiation-artifact-current-state'
+      get "/fhir/SearchParameter?url=#{url}"
+
+      resource = assert_fhir_response(FHIR::SearchParameter)
+      assert_equal(resource.url, url)
+    end
+
+    it 'supports read by id' do
+      id = 'cedar-citiation-artifact-current-state'
+      get "/fhir/SearchParameter/#{id}"
+      resource = assert_fhir_response(FHIR::SearchParameter)
+      assert_equal(id, resource.id)
+    end
+
+    it 'returns 404 if not found' do
+      id = 'unknown'
+      get "/fhir/SearchParameter/#{id}"
+      assert last_response.not_found?
+    end
+  end
 end

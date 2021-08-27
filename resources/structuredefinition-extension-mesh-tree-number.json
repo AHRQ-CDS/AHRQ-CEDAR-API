@@ -1,7 +1,7 @@
 {
   "resourceType": "StructureDefinition",
   "id": "extension-mesh-tree-number",
-  "url": "http://cedar.arhq.org/StructureDefinition/extension-mesh-tree-number",
+  "url": "http://cedar.arhq.org/fhir/StructureDefinition/extension-mesh-tree-number",
   "version": "0.1.0",
   "name": "extension-mesh-tree-number",
   "status": "draft",
@@ -179,7 +179,7 @@
             "code": "http://hl7.org/fhirpath/System.String"
           }
         ],
-        "fixedUri": "http://cedar.arhq.org/StructureDefinition/extension-mesh-tree-number",
+        "fixedUri": "http://cedar.arhq.org/fhir/StructureDefinition/extension-mesh-tree-number",
         "isModifier": false,
         "isSummary": false,
         "mapping": [
@@ -246,7 +246,7 @@
       {
         "id": "Extension.url",
         "path": "Extension.url",
-        "fixedUri": "http://cedar.arhq.org/StructureDefinition/extension-mesh-tree-number"
+        "fixedUri": "http://cedar.arhq.org/fhir/StructureDefinition/extension-mesh-tree-number"
       },
       {
         "id": "Extension.value[x]",

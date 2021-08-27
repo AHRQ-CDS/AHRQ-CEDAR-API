@@ -1,7 +1,7 @@
 {
   "resourceType": "OperationDefinition",
   "id": "CodeSystem-get-mesh-children",
-  "url": "http://cedar.arhq.org/OperationDefinition/CodeSystem-get-mesh-children",
+  "url": "http://cedar.arhq.org/fhir/OperationDefinition/CodeSystem-get-mesh-children",
   "version": "0.1.0",
   "name": "get-mesh-children",
   "title": "Get MeSH child concepts from MeSH Tree Number",
