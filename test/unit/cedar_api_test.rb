@@ -106,4 +106,13 @@ describe 'cedar_api' do
       assert_equal(resource.total, resource.entry.length)
     end
   end
+
+  describe '/fhir/CodeSystem endpoint' do
+    it 'supports $get-mesh-children operation' do
+      get '/fhir/CodeSystem/$get-mesh-children?code=A00'
+
+      resource = assert_fhir_response(FHIR::Parameters)
+      assert_equal(resource.parameter.count, MeshTreeNode.where(parent_id: 401).count)
+    end
+  end
 end

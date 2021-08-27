@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_20_115000) do
+ActiveRecord::Schema.define(version: 2021_08_23_125203) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -72,7 +72,20 @@ ActiveRecord::Schema.define(version: 2021_07_20_115000) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "delete_count", default: 0, null: false
+    t.integer "error_count", default: 0, null: false
     t.index ["repository_id"], name: "index_import_runs_on_repository_id"
+  end
+
+  create_table "mesh_tree_nodes", force: :cascade do |t|
+    t.string "code"
+    t.string "tree_number"
+    t.string "name"
+    t.text "description"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "parent_id"
+    t.index ["parent_id"], name: "index_mesh_tree_nodes_on_parent_id"
+    t.index ["tree_number"], name: "index_mesh_tree_nodes_on_tree_number"
   end
 
   create_table "repositories", force: :cascade do |t|

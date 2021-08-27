@@ -279,4 +279,31 @@ class FHIRAdapter
              end
     )
   end
+
+  def self.create_mesh_children_output(mesh_tree_node)
+    if mesh_tree_node.nil? || mesh_tree_node.children.empty?
+      return FHIR::Parameters.new(
+        parameter: []
+      )
+    end
+
+    FHIR::Parameters.new(
+      parameter: mesh_tree_node.children.map do |r|
+        FHIR::Parameters::Parameter.new(
+          name: 'concept',
+          valueCoding: FHIR::Coding.new(
+            extension: [
+              FHIR::Extension.new(
+                url: 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-tree-number',
+                valueCode: r.tree_number
+              )
+            ],
+            code: r.code,
+            system: 'http://terminology.hl7.org/CodeSystem/MSH',
+            display: r.name
+          )
+        )
+      end
+    )
+  end
 end

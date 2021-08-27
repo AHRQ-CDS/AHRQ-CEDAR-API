@@ -25,3 +25,8 @@ end
 class SearchParameterLog < Sequel::Model
   many_to_one :search_log
 end
+
+class MeshTreeNode < Sequel::Model
+  many_to_one :parent, class: self
+  one_to_many :children, key: :parent_id, class: self
+end

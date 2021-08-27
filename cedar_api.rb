@@ -145,4 +145,10 @@ namespace '/fhir' do
 
     bundle.to_json
   end
+
+  get '/CodeSystem/$get-mesh-children' do
+    tree_node = MeshTreeNode.where(tree_number: params[:code]).first
+    output = FHIRAdapter.create_mesh_children_output(tree_node)
+    output.to_json
+  end
 end

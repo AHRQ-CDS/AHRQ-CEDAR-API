@@ -95,3 +95,29 @@ DB[:artifacts_concepts].insert(
   artifact_id: 201,
   concept_id: 302
 )
+DB[:mesh_tree_nodes].insert(
+  id: 401,
+  code: 'D00',
+  tree_number: 'A00',
+  name: 'Parent',
+  created_at: timestamp,
+  updated_at: timestamp
+)
+DB[:mesh_tree_nodes].insert(
+  id: 411,
+  code: 'D00',
+  tree_number: 'A00.1',
+  name: 'Child.1',
+  parent_id: 401,
+  created_at: timestamp,
+  updated_at: timestamp
+)
+DB[:mesh_tree_nodes].insert(
+  id: 412,
+  code: 'D00',
+  tree_number: 'A00.2',
+  name: 'Child.2',
+  parent_id: 401,
+  created_at: timestamp,
+  updated_at: timestamp
+)
