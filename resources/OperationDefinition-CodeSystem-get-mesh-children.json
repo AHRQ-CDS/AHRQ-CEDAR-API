@@ -29,12 +29,12 @@
   "instance": false,
   "parameter": [
     {
-      "name": "coding",
+      "name": "code",
       "use": "in",
       "min": 1,
       "max": "1",
       "documentation": "MESH Tree Number for parent concept",
-      "type": "Coding"
+      "type": "code"
     },
     {
       "name": "concept",
