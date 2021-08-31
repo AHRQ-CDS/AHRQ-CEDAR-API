@@ -24,7 +24,7 @@
           "operation": [
             {
               "name": "get-mesh-children",
-              "definition": "http://cedar.arhq.org/fhir/OperationDefinition/CodeSystem-get-mesh-children"
+              "definition": "http://cedar.arhq.gov/fhir/OperationDefinition/CodeSystem-get-mesh-children"
             }
           ]
         },
