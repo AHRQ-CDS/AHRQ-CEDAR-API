@@ -20,6 +20,15 @@
       "mode": "server",
       "resource": [
         {
+          "type": "CodeSystem",
+          "operation": [
+            {
+              "name": "get-mesh-children",
+              "definition": "http://cedar.arhq.org/fhir/OperationDefinition/CodeSystem-get-mesh-children"
+            }
+          ]
+        },
+        {
           "type": "Citation",
           "interaction": [
             {
