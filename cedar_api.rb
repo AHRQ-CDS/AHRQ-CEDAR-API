@@ -168,7 +168,7 @@ namespace '/fhir' do
     if !params[:id].nil?
       filename = "#{file_prefix}#{params[:id]}.json"
     elsif !params[:url].nil?
-      filename = "#{params['url'].gsub(%r{.*#{file_prefix}/}, folder)}.json"
+      filename = "#{params['url'].gsub(%r{.*#{path}/}, file_prefix)}.json"
     else
       halt(400)
     end
