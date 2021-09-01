@@ -296,6 +296,10 @@ class FHIRAdapter
               FHIR::Extension.new(
                 url: 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-tree-number',
                 valueCode: r.tree_number
+              ),
+              FHIR::Extension.new(
+                url: 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-has-children',
+                valueBoolean: r.children.nil? || r.children.empty? ? false : true
               )
             ],
             code: r.code,
