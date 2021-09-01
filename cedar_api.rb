@@ -164,11 +164,11 @@ namespace '/fhir' do
   end
 
   def read_resource_from_file(params, path)
-    folder = "resources/#{path}-"
+    file_prefix = "resources/#{path}-"
     if !params[:id].nil?
-      filename = "#{folder}#{params[:id]}.json"
+      filename = "#{file_prefix}#{params[:id]}.json"
     elsif !params[:url].nil?
-      filename = "#{params['url'].gsub(%r{.*#{path}/}, folder)}.json"
+      filename = "#{params['url'].gsub(%r{.*#{file_prefix}/}, folder)}.json"
     else
       halt(400)
     end
