@@ -2,6 +2,8 @@
 
 require 'addressable'
 require 'time'
+require 'date'
+require 'active_support/core_ext/numeric/time'
 require 'sinatra'
 
 require_relative '../database/models'
@@ -106,6 +108,9 @@ class CitationFilter
         }
 
         filter = filter.full_text_search(:content_search, cols, opt)
+      when '_lastUpdated'
+        postgres_search_terms = self.class.fhir_datetime_to_postgres_search(value)
+        filter = filter.where(Sequel.lit(*postgres_search_terms))
       when 'classification'
         @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
         artifact_ids = get_artifacts_with_concept(value)
@@ -206,6 +211,50 @@ class CitationFilter
           url: build_link_url(@page_no + 1, @page_size)
         }
       )
+    end
+  end
+
+  def self.get_fhir_datetime_range(datetime)
+    range = { start: DateTime.xmlschema(datetime), end: nil }
+    range[:end] =
+      case datetime
+      when /^\d{4}$/ # YYYY
+        range[:start].next_year - 1.seconds
+      when /^\d{4}-\d{2}$/ # YYYY-MM
+        range[:start].next_month - 1.seconds
+      when /^\d{4}-\d{2}-\d{2}$/ # YYYY-MM-DD
+        range[:start].next_day - 1.seconds
+      else # YYYY-MM-DDThh:mm:ss+zz:zz
+        range[:start]
+      end
+    range
+  end
+
+  def self.parse_fhir_datetime_search(expression)
+    comparator = expression[0..1]
+    if %w[eq ge gt le lt ne sa eb ap].include? comparator
+      expression = expression[2..]
+    else
+      comparator = 'eq'
+    end
+    get_fhir_datetime_range(expression).merge(comparator: comparator)
+  end
+
+  def self.fhir_datetime_to_postgres_search(expression)
+    fhir_expr = parse_fhir_datetime_search(expression)
+    case fhir_expr[:comparator]
+    when 'gt', 'sa'
+      ['updated_at > ?', fhir_expr[:end]]
+    when 'ge'
+      ['updated_at >= ?', fhir_expr[:start]]
+    when 'lt', 'eb'
+      ['updated_at < ?', fhir_expr[:start]]
+    when 'le'
+      ['updated_at <= ?', fhir_expr[:end]]
+    when 'ne'
+      ['updated_at < ? OR updated_at > ?', fhir_expr[:start], fhir_expr[:end]]
+    else # eq, ap
+      ['updated_at >= ? AND updated_at <= ?', fhir_expr[:start], fhir_expr[:end]]
     end
   end
 

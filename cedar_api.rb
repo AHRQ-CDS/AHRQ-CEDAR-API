@@ -31,6 +31,12 @@ get '/demo' do
       <button type="submit">Search</button>
     </form>
     <form action="fhir/Citation" method="get">
+      <label for="Last Updated">Last Updated:</label>
+      <input type="text" id="_lastUpdated" name="_lastUpdated">
+      <input type="hidden" id="artifact-current-state" name="artifact-current-state" value="active">
+      <button type="submit">Search</button>
+    </form>
+    <form action="fhir/Citation" method="get">
       <label for="keyword">Search Keywords:</label>
       <input type="text" id="classification:text" name="classification:text">
       <input type="hidden" id="artifact-current-state" name="artifact-current-state" value="active">

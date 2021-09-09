@@ -116,6 +116,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord (~> 6.0.3, >= 6.0.3.4)
+  activesupport (~> 6.0.3, >= 6.0.3.4)
   addressable
   erb
   fhir_models

@@ -16,6 +16,7 @@ gem 'erb'
 gem 'sinatra-contrib'
 gem 'sinatra-cross_origin'
 gem 'warning'
+gem 'activesupport', '~> 6.0.3', '>= 6.0.3.4'
 
 group :test do
   gem 'minitest', require: false

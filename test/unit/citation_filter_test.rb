@@ -46,6 +46,46 @@ describe CitationFilter do
     end
   end
 
+  describe 'parse FHIR datetime search' do
+    it 'handles year only' do
+      range = CitationFilter.get_fhir_datetime_range('2010')
+      assert_equal(DateTime.parse('2010-01-01T00:00:00'), range[:start])
+      assert_equal(DateTime.parse('2010-12-31T23:59:59'), range[:end])
+    end
+
+    it 'handles year and month only' do
+      range = CitationFilter.get_fhir_datetime_range('2010-12')
+      assert_equal(DateTime.parse('2010-12-01T00:00:00'), range[:start])
+      assert_equal(DateTime.parse('2010-12-31T23:59:59'), range[:end])
+    end
+
+    it 'handles year, month and day only' do
+      range = CitationFilter.get_fhir_datetime_range('2010-12-01')
+      assert_equal(DateTime.parse('2010-12-01T00:00:00'), range[:start])
+      assert_equal(DateTime.parse('2010-12-01T23:59:59'), range[:end])
+    end
+
+    it 'handles fully specified date time' do
+      range = CitationFilter.get_fhir_datetime_range('2010-12-01T13:30:20')
+      assert_equal(DateTime.parse('2010-12-01T13:30:20'), range[:start])
+      assert_equal(DateTime.parse('2010-12-01T13:30:20'), range[:end])
+    end
+
+    it 'handles missing comparator' do
+      search = CitationFilter.parse_fhir_datetime_search('2010')
+      assert_equal(DateTime.parse('2010-01-01T00:00:00'), search[:start])
+      assert_equal(DateTime.parse('2010-12-31T23:59:59'), search[:end])
+      assert_equal('eq', search[:comparator])
+    end
+
+    it 'supports explicit comparator' do
+      search = CitationFilter.parse_fhir_datetime_search('gt2010')
+      assert_equal(DateTime.parse('2010-01-01T00:00:00'), search[:start])
+      assert_equal(DateTime.parse('2010-12-31T23:59:59'), search[:end])
+      assert_equal('gt', search[:comparator])
+    end
+  end
+
   describe 'find citiation' do
     before do
       @artifact_base_url = 'http://localhost/fhir/Citation'
@@ -65,6 +105,38 @@ describe CitationFilter do
       assert bundle.entry.all? do |entry|
         entry.resource.title.downcase.include?(expected) ||
           entry.resource.description.downcase.include?(expected)
+      end
+    end
+
+    it 'supports search for older artifacts' do
+      cutoff_date = Date.new(2010, 6, 2)
+
+      params = {
+        '_lastUpdated' => "lt#{cutoff_date.strftime('%F')}"
+      }
+
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+
+      assert_bundle(bundle)
+
+      assert bundle.entry.all? do |entry|
+        Date.new(entry.resource.date) < cutoff_date
+      end
+    end
+
+    it 'supports search for newer artifacts' do
+      cutoff_date = Date.new(2010, 6, 2)
+
+      params = {
+        '_lastUpdated' => "gt#{cutoff_date.strftime('%F')}"
+      }
+
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+
+      assert_bundle(bundle)
+
+      assert bundle.entry.all? do |entry|
+        Date.new(entry.resource.date) > cutoff_date
       end
     end
 
@@ -283,7 +355,7 @@ describe CitationFilter do
       @request_url = 'http://example.com/fhir/Citation'
     end
 
-    it 'logs rquest to database' do
+    it 'logs request to database' do
       expected = 'cancer'
       params = {
         '_content' => expected

@@ -4,6 +4,7 @@
 # Use distinct id ranges to ensure code is working as expected and not because of accidental
 # id matches
 timestamp = Date.today
+old_artifact_timestamp = Date.new(2010, 6, 1)
 DB[:repositories].insert(id: 101,
                          name: 'USPSTF',
                          fhir_id: 'uspstf',
@@ -26,8 +27,8 @@ DB[:artifacts].insert(
   keywords: '["cancer", "adult"]',
   keyword_text: 'cancer, adult',
   repository_id: 101,
-  created_at: timestamp,
-  updated_at: timestamp
+  created_at: old_artifact_timestamp,
+  updated_at: old_artifact_timestamp
 )
 DB[:artifacts].insert(
   id: 202,
