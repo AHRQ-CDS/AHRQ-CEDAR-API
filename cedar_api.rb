@@ -2,7 +2,6 @@
 
 require 'fhir_models'
 require 'json'
-require 'pry'
 require 'sinatra'
 require 'sinatra/namespace'
 require 'sinatra/cross_origin'

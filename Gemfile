@@ -4,8 +4,6 @@ source 'https://rubygems.org'
 
 gem 'addressable'
 gem 'fhir_models'
-gem 'pry'
-gem 'pry-byebug'
 gem 'rake'
 gem 'sinatra'
 gem 'puma'
@@ -17,6 +15,11 @@ gem 'sinatra-contrib'
 gem 'sinatra-cross_origin'
 gem 'warning'
 gem 'activesupport', '~> 6.0.3', '>= 6.0.3.4'
+
+group :development do
+  gem 'pry'
+  gem 'pry-byebug'
+end
 
 group :test do
   gem 'minitest', require: false
