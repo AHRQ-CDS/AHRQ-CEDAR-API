@@ -41,7 +41,7 @@
       "use": "out",
       "min": 0,
       "max": "*",
-      "documentation": "Coding for child concepts. Each concept has an extension for the tree number of that concept. If the parent concept does not have any child, server SHALL return an empty array",
+      "documentation": "Coding for child concepts. Each concept has an extension for the tree number of that concept, whether that concept has children and the number of artifacts directly or indirectly (via child concepts) associated with that concept. If the parent concept does not have any child, server SHALL return an empty array",
       "type": "Coding"
     }
   ]
