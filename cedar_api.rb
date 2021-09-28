@@ -144,9 +144,12 @@ namespace '/fhir' do
                                 request_url: request_url,
                                 client_ip: request.ip,
                                 log_to_db: true)
-    bundle = filter.citations
-
-    bundle.to_json
+    begin
+      bundle = filter.citations
+      bundle.to_json
+    rescue InvalidParameterError => e
+      e.to_operation_outcome_json
+    end
   end
 
   get '/CodeSystem/$get-mesh-children' do

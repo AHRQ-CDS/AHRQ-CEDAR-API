@@ -87,6 +87,16 @@ describe 'cedar_api' do
         issue.severity == 'error' && issue.code == 'required'
       end
     end
+
+    it 'validate search parameter values' do
+      get 'fhir/Citation?_content=cancer&artifact-current-state=active&_lastUpdated=et1990-01-01'
+
+      resource = assert_fhir_response(FHIR::OperationOutcome)
+      assert resource.issue.size.positive?
+      assert resource.issue.any? do |issue|
+        issue.severity == 'error' && issue.code == 'value'
+      end
+    end
   end
 
   describe '/fhir/Organization endpoint' do

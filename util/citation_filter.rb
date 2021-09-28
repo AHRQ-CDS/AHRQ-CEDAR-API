@@ -8,6 +8,7 @@ require 'sinatra'
 
 require_relative '../database/models'
 require_relative '../fhir/fhir_adapter'
+require_relative 'invalid_parameter_error'
 
 # Helper methods for CEDAR API
 class CitationFilter
@@ -109,7 +110,12 @@ class CitationFilter
 
         filter = filter.full_text_search(:content_search, cols, opt)
       when '_lastUpdated'
-        postgres_search_terms = self.class.fhir_datetime_to_postgres_search(value)
+        begin
+          postgres_search_terms = self.class.fhir_datetime_to_postgres_search(value)
+        rescue StandardError
+          raise InvalidParameterError.new(parameter: key, value: value)
+        end
+
         filter = filter.where(Sequel.lit(*postgres_search_terms))
       when 'classification'
         @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
