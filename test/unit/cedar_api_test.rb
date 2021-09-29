@@ -55,10 +55,13 @@ describe 'cedar_api' do
       assert_equal 2, resource.citedArtifact.classification[1].classifier.size
       assert_equal 'CUI1 desc', resource.citedArtifact.classification[1].classifier[0].text
       assert_equal 'CUI2 desc', resource.citedArtifact.classification[1].classifier[1].text
-      assert_equal 1, resource.citedArtifact.classification[1].classifier[0].coding.size
+      assert_equal 2, resource.citedArtifact.classification[1].classifier[0].coding.size
       assert_equal 'D0001', resource.citedArtifact.classification[1].classifier[0].coding[0].code
       assert_equal 'https://www.nlm.nih.gov/mesh/',
                    resource.citedArtifact.classification[1].classifier[0].coding[0].system
+      assert_equal 'D0002', resource.citedArtifact.classification[1].classifier[0].coding[1].code
+      assert_equal 'https://www.nlm.nih.gov/mesh/',
+                   resource.citedArtifact.classification[1].classifier[0].coding[1].system
       assert_equal 0, resource.citedArtifact.classification[1].classifier[1].coding.size
     end
 

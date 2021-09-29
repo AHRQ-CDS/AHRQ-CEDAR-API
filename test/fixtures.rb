@@ -66,7 +66,7 @@ DB[:concepts].insert(
   umls_description: 'CUI1 desc',
   synonyms_text: '["foo", "bar", "baz"]',
   synonyms_psql: '["foo", "bar", "baz"]',
-  codes: '[{"system": "MSH", "code": "D0001", "description": "D001 desc"}]',
+  codes: '[{"system": "MSH", "code": "D0001"}, {"system": "MSH", "code": "D0002"}]',
   created_at: timestamp,
   updated_at: timestamp
 )

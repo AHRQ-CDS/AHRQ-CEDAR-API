@@ -124,8 +124,10 @@ class CitationFilter
           filter = filter.where(Sequel.lit(*postgres_search_terms))
         when 'classification'
           @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
-          artifact_ids = get_artifacts_with_concept(value)
-          filter = filter.where(Sequel[:artifacts][:id] => artifact_ids)
+          value.split(',').each do |term|
+            artifact_ids = get_artifacts_with_concept(term)
+            filter = filter.where(Sequel[:artifacts][:id] => artifact_ids)
+          end
         when 'classification:text'
           @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
           cols = SearchParser.parse(value)
