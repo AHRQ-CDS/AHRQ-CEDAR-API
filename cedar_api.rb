@@ -149,6 +149,20 @@ namespace '/fhir' do
       bundle.to_json
     rescue FhirError => e
       e.to_operation_outcome_json
+    rescue StandardError => e
+      oo = FHIR::OperationOutcome.new(
+        issue: [
+          {
+            severity: 'error',
+            code: 'exception',
+            details: {
+              text: e.message
+            }
+          }
+        ]
+      )
+
+      return oo.to_json
     end
   end
 
