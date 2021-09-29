@@ -120,7 +120,6 @@ class CitationFilter
 
           filter = filter.full_text_search(:content_search, cols, opt)
         when '_lastUpdated'
-          @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
           postgres_search_terms = self.class.fhir_datetime_to_postgres_search(value)
           filter = filter.where(Sequel.lit(*postgres_search_terms))
         when 'classification'
