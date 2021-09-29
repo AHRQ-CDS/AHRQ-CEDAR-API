@@ -8,7 +8,7 @@ require 'sinatra'
 
 require_relative '../database/models'
 require_relative '../fhir/fhir_adapter'
-require_relative 'invalid_parameter_error'
+require_relative 'errors'
 
 # Helper methods for CEDAR API
 class CitationFilter
@@ -58,7 +58,11 @@ class CitationFilter
 
     filter = build_filter
 
-    paged_result = add_pagination(filter)
+    begin
+      paged_result = add_pagination(filter)
+    rescue StandardError => e
+      raise DatabaseError.new(message: e.message)
+    end
 
     artifacts = paged_result[:artifacts]
     total = paged_result[:total]
@@ -77,10 +81,15 @@ class CitationFilter
       @search_log.total = total
       @search_log.end_time = Time.now
 
-      @search_log.save_changes
-      @search_log.search_parameter_logs.each do |p|
-        p.search_log = @search_log
-        p.save_changes
+      begin
+        @search_log.save_changes
+        @search_log.search_parameter_logs.each do |p|
+          p.search_log = @search_log
+          p.save_changes
+        end
+      rescue StandardError
+        # We should continue the workflow if logging failed.
+        # Do we need to log to somewhere that logging failed?
       end
     end
 
@@ -97,53 +106,53 @@ class CitationFilter
     @search_log.search_params&.each do |key, value|
       search_terms = value.split(',').map { |v| v.strip.downcase.to_s }
 
-      case key
-      when '_content'
-        @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
+      begin
+        case key
+        when '_content'
+          @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
 
-        cols = SearchParser.parse(value)
-        opt = {
-          language: 'english',
-          rank: true,
-          tsvector: true
-        }
+          cols = SearchParser.parse(value)
+          opt = {
+            language: 'english',
+            rank: true,
+            tsvector: true
+          }
 
-        filter = filter.full_text_search(:content_search, cols, opt)
-      when '_lastUpdated'
-        begin
+          filter = filter.full_text_search(:content_search, cols, opt)
+        when '_lastUpdated'
+          @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
           postgres_search_terms = self.class.fhir_datetime_to_postgres_search(value)
-        rescue StandardError
-          raise InvalidParameterError.new(parameter: key, value: value)
+          filter = filter.where(Sequel.lit(*postgres_search_terms))
+        when 'classification'
+          @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
+          artifact_ids = get_artifacts_with_concept(value)
+          filter = filter.where(Sequel[:artifacts][:id] => artifact_ids)
+        when 'classification:text'
+          @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
+          cols = SearchParser.parse(value)
+          opt = {
+            language: 'english',
+            rank: true
+          }
+
+          # Need to decide if we need use ts_vector to get better performance
+          filter = filter.full_text_search(:keyword_text, cols, opt)
+        when 'title'
+          @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
+          search_terms.map! { |t| "#{t}%" }
+          filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
+        when 'title:contains'
+          @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
+          search_terms.map! { |t| "%#{t}%" }
+          filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
+        when 'artifact-current-state'
+          filter = filter.where(artifact_status: search_terms)
+        when 'artifact-publisher'
+          repository_ids = Repository.where { |o| { o.lower(:fhir_id) => search_terms } }.map(&:id)
+          filter = filter.where(repository_id: repository_ids)
         end
-
-        filter = filter.where(Sequel.lit(*postgres_search_terms))
-      when 'classification'
-        @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
-        artifact_ids = get_artifacts_with_concept(value)
-        filter = filter.where(Sequel[:artifacts][:id] => artifact_ids)
-      when 'classification:text'
-        @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
-        cols = SearchParser.parse(value)
-        opt = {
-          language: 'english',
-          rank: true
-        }
-
-        # Need to decide if we need use ts_vector to get better performance
-        filter = filter.full_text_search(:keyword_text, cols, opt)
-      when 'title'
-        @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
-        search_terms.map! { |t| "#{t}%" }
-        filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
-      when 'title:contains'
-        @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
-        search_terms.map! { |t| "%#{t}%" }
-        filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
-      when 'artifact-current-state'
-        filter = filter.where(artifact_status: search_terms)
-      when 'artifact-publisher'
-        repository_ids = Repository.where { |o| { o.lower(:fhir_id) => search_terms } }.map(&:id)
-        filter = filter.where(repository_id: repository_ids)
+      rescue StandardError
+        raise InvalidParameterError.new(parameter: key, value: value)
       end
     end
 

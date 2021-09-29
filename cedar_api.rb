@@ -147,7 +147,7 @@ namespace '/fhir' do
     begin
       bundle = filter.citations
       bundle.to_json
-    rescue InvalidParameterError => e
+    rescue FhirError => e
       e.to_operation_outcome_json
     end
   end

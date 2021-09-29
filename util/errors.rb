@@ -25,9 +25,18 @@ end
 class InvalidParameterError < FhirError
   def initialize(parameter:, value: nil)
     message = "Search parameter #{parameter} has invalid value"
-    message += " #{value}" if value.present?
+    message += " #{value}." if value.present?
     super(message)
 
     @code = 'value'
+  end
+end
+
+# Error for Database connection
+class DatabaseError < FhirError
+  def initialize(message:)
+    super(message)
+
+    @code = 'exception'
   end
 end
