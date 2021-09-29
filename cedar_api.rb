@@ -162,7 +162,7 @@ namespace '/fhir' do
         ]
       )
 
-      return oo.to_json
+      oo.to_json
     end
   end
 
