@@ -144,9 +144,26 @@ namespace '/fhir' do
                                 request_url: request_url,
                                 client_ip: request.ip,
                                 log_to_db: true)
-    bundle = filter.citations
+    begin
+      bundle = filter.citations
+      bundle.to_json
+    rescue FhirError => e
+      e.to_operation_outcome_json
+    rescue StandardError => e
+      oo = FHIR::OperationOutcome.new(
+        issue: [
+          {
+            severity: 'error',
+            code: 'exception',
+            details: {
+              text: e.message
+            }
+          }
+        ]
+      )
 
-    bundle.to_json
+      oo.to_json
+    end
   end
 
   get '/CodeSystem/$get-mesh-children' do
