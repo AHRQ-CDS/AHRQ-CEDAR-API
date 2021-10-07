@@ -55,10 +55,13 @@ describe 'cedar_api' do
       assert_equal 2, resource.citedArtifact.classification[1].classifier.size
       assert_equal 'CUI1 desc', resource.citedArtifact.classification[1].classifier[0].text
       assert_equal 'CUI2 desc', resource.citedArtifact.classification[1].classifier[1].text
-      assert_equal 1, resource.citedArtifact.classification[1].classifier[0].coding.size
+      assert_equal 2, resource.citedArtifact.classification[1].classifier[0].coding.size
       assert_equal 'D0001', resource.citedArtifact.classification[1].classifier[0].coding[0].code
       assert_equal 'https://www.nlm.nih.gov/mesh/',
                    resource.citedArtifact.classification[1].classifier[0].coding[0].system
+      assert_equal 'D0002', resource.citedArtifact.classification[1].classifier[0].coding[1].code
+      assert_equal 'https://www.nlm.nih.gov/mesh/',
+                   resource.citedArtifact.classification[1].classifier[0].coding[1].system
       assert_equal 0, resource.citedArtifact.classification[1].classifier[1].coding.size
     end
 
@@ -123,6 +126,23 @@ describe 'cedar_api' do
 
       resource = assert_fhir_response(FHIR::Parameters)
       assert_equal(MeshTreeNode.where(parent_id: 401).count, resource.parameter.count)
+      resource.parameter.each do |p|
+        extensions_present = {}
+        p.valueCoding.extension.each do |e|
+          extensions_present[e.url] = true
+          case e.url
+          when 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-tree-number'
+            assert_includes(['A00.1', 'A00.2'], e.valueCode)
+          when 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-has-children'
+            refute e.valueBoolean
+          when 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-direct-artifact-count'
+            assert_equal(1, e.valueUnsignedInt)
+          when 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-indirect-artifact-count'
+            assert_equal(0, e.valueUnsignedInt)
+          end
+        end
+        assert_equal(4, extensions_present.size)
+      end
     end
 
     it 'gets first level tree nodes without parenet tree number' do
@@ -130,6 +150,21 @@ describe 'cedar_api' do
 
       resource = assert_fhir_response(FHIR::Parameters)
       assert_equal(1, resource.parameter.count)
+      extensions_present = {}
+      resource.parameter[0].valueCoding.extension.each do |e|
+        extensions_present[e.url] = true
+        case e.url
+        when 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-tree-number'
+          assert_equal('A00', e.valueCode)
+        when 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-has-children'
+          assert e.valueBoolean
+        when 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-direct-artifact-count'
+          assert_equal(0, e.valueUnsignedInt)
+        when 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-indirect-artifact-count'
+          assert_equal(2, e.valueUnsignedInt)
+        end
+      end
+      assert_equal(4, extensions_present.size)
     end
   end
 

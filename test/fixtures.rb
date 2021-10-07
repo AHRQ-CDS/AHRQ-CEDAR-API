@@ -66,7 +66,7 @@ DB[:concepts].insert(
   umls_description: 'CUI1 desc',
   synonyms_text: '["foo", "bar", "baz"]',
   synonyms_psql: '["foo", "bar", "baz"]',
-  codes: '[{"system": "MSH", "code": "D0001", "description": "D001 desc"}]',
+  codes: '[{"system": "MSH", "code": "D0001"}, {"system": "MSH", "code": "D0002"}]',
   created_at: timestamp,
   updated_at: timestamp
 )
@@ -100,6 +100,8 @@ DB[:mesh_tree_nodes].insert(
   id: 401,
   code: 'D00',
   tree_number: 'A00',
+  indirect_artifact_count: 2,
+  direct_artifact_count: 0,
   name: 'Parent',
   created_at: timestamp,
   updated_at: timestamp
@@ -108,6 +110,8 @@ DB[:mesh_tree_nodes].insert(
   id: 411,
   code: 'D00',
   tree_number: 'A00.1',
+  indirect_artifact_count: 0,
+  direct_artifact_count: 1,
   name: 'Child.1',
   parent_id: 401,
   created_at: timestamp,
@@ -117,6 +121,8 @@ DB[:mesh_tree_nodes].insert(
   id: 412,
   code: 'D00',
   tree_number: 'A00.2',
+  indirect_artifact_count: 0,
+  direct_artifact_count: 1,
   name: 'Child.2',
   parent_id: 401,
   created_at: timestamp,

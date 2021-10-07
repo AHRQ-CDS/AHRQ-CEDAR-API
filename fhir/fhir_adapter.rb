@@ -300,6 +300,14 @@ class FHIRAdapter
               FHIR::Extension.new(
                 url: 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-has-children',
                 valueBoolean: r.children.nil? || r.children.empty? ? false : true
+              ),
+              FHIR::Extension.new(
+                url: 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-direct-artifact-count',
+                valueUnsignedInt: r.direct_artifact_count
+              ),
+              FHIR::Extension.new(
+                url: 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-indirect-artifact-count',
+                valueUnsignedInt: r.indirect_artifact_count
               )
             ],
             code: r.code,
