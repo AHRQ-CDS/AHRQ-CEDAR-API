@@ -167,7 +167,7 @@ namespace '/fhir' do
 
   get '/CodeSystem/$get-mesh-children' do
     if params[:code].nil?
-      tree_nodes = MeshTreeNode.where(parent_id: nil)
+      tree_nodes = MeshTreeNode.where(parent_id: nil).order(:name)
     else
       parent_node = MeshTreeNode.where(tree_number: params[:code]).first
       return FHIR::Parameters.new.to_json if parent_node.nil?
