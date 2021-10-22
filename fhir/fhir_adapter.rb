@@ -299,7 +299,7 @@ class FHIRAdapter
               ),
               FHIR::Extension.new(
                 url: 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-has-children',
-                valueBoolean: r.children.nil? || r.children.empty? ? false : true
+                valueBoolean: !(r.children.nil? || r.children.empty?)
               ),
               FHIR::Extension.new(
                 url: 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-direct-artifact-count',
