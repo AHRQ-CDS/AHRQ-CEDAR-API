@@ -27,6 +27,8 @@
   "expression": "Citation.citedArtifact.classification.classifier",
   "xpath": "f:Citation/f:citedArtifact/f:classification/f:classifier",
   "xpathUsage": "normal",
+  "multipleOr": "true",
+  "multipleAnd": "true",
   "modifier": [
     "text"
   ]
