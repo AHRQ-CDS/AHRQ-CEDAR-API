@@ -127,17 +127,13 @@ class CitationFilter
           @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
           artifact_ids = []
 
-          require 'pry'; byebug
-
           # handle multipleAnd search
           Array(value).each do |search_value|
             temp_ids = []
-            require 'pry'; byebug
 
             search_value.split(',').each do |term|
               temp_ids = (temp_ids + get_artifacts_with_concept(term)).uniq
             end
-
 
             artifact_ids = artifact_ids.empty? ? temp_ids : artifact_ids & temp_ids
 

@@ -59,10 +59,10 @@ describe 'cedar_api' do
       assert_equal 'D0001', resource.citedArtifact.classification[1].classifier[0].coding[0].code
       assert_equal 'https://www.nlm.nih.gov/mesh/',
                    resource.citedArtifact.classification[1].classifier[0].coding[0].system
-      assert_equal 'D0002', resource.citedArtifact.classification[1].classifier[0].coding[1].code
-      assert_equal 'https://www.nlm.nih.gov/mesh/',
+      assert_equal '10001', resource.citedArtifact.classification[1].classifier[0].coding[1].code
+      assert_equal 'http://snomed.info/sct',
                    resource.citedArtifact.classification[1].classifier[0].coding[1].system
-      assert_equal 0, resource.citedArtifact.classification[1].classifier[1].coding.size
+      assert_equal 1, resource.citedArtifact.classification[1].classifier[1].coding.size
     end
 
     it 'returns not found when read with invalid id' do

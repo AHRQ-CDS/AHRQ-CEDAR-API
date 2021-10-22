@@ -66,7 +66,7 @@ DB[:concepts].insert(
   umls_description: 'CUI1 desc',
   synonyms_text: '["foo", "bar", "baz"]',
   synonyms_psql: '["foo", "bar", "baz"]',
-  codes: '[{"system": "MSH", "code": "D0001"}, {"system": "MSH", "code": "D0002"}]',
+  codes: '[{"system": "MSH", "code": "D0001"}, {"system": "SNOMEDCT_US", "code": "10001"}]',
   created_at: timestamp,
   updated_at: timestamp
 )
@@ -76,6 +76,7 @@ DB[:concepts].insert(
   umls_description: 'CUI2 desc',
   synonyms_text: '["abc", "foo, bar, baz"]',
   synonyms_psql: '["abc", "foo<->bar<->baz"]',
+  codes: '[{"system": "MSH", "code": "D0002"}]',
   created_at: timestamp,
   updated_at: timestamp
 )
@@ -91,6 +92,10 @@ DB[:concepts].insert(
 DB[:artifacts_concepts].insert(
   artifact_id: 201,
   concept_id: 301
+)
+DB[:artifacts_concepts].insert(
+  artifact_id: 202,
+  concept_id: 302
 )
 DB[:artifacts_concepts].insert(
   artifact_id: 201,

@@ -260,7 +260,7 @@ describe CitationFilter do
       end
     end
 
-    it 'supports search by multiple ANDed classification codes' do
+    it 'supports search by multiple ORed classification codes' do
       expected_codes = %w[D0001 D0002]
       params = {
         'classification' => expected_codes.join(',')
@@ -273,9 +273,34 @@ describe CitationFilter do
       assert bundle.entry.all? do |entry|
         entry.resource.citedArtifact.classification.any? do |classification|
           classification.classifier.any? do |classifier|
-            classifier.coding.any? { |coding| coding.code == expected_codes[0] }
-            classifier.coding.any? { |coding| coding.code == expected_codes[1] }
+            classifier.coding.any? { |coding| coding.code == expected_codes[0] || coding.code == expected_codes[1] }
           end
+        end
+      end
+    end
+
+    it 'supports search by multiple ANDed classification codes' do
+      expected_codes = %w[D0001 D0002]
+      params = {
+        'classification' => expected_codes
+      }
+
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      assert_bundle(bundle)
+
+      assert bundle.entry.all? do |entry|
+        entry.resource.citedArtifact.classification.any? do |classification|
+          # the classification has one classifier with expected_codes[0] AND one classifier with expected_codes[1]
+          (
+            classification.classifier.any? do |classifier|
+              classifier.coding.any? { |coding| coding.code == expected_codes[0] }
+            end
+          ) &&
+            (
+              classification.classifier.any? do |classifier|
+                classifier.coding.any? { |coding| coding.code == expected_codes[1] }
+              end
+            )
         end
       end
     end
