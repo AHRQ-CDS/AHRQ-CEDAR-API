@@ -13,6 +13,7 @@ require_relative 'errors'
 # Helper methods for CEDAR API
 class CitationFilter
   UMLS_CODE_SYSTEM_IDS = FHIRAdapter::FHIR_CODE_SYSTEM_URLS.invert.freeze
+  MULTIPLE_AND_PARAMETERS = ['classification'].freeze
 
   def initialize(params:, base_url:, request_url:, client_ip: nil, log_to_db: false)
     @artifact_base_url = base_url
@@ -104,7 +105,7 @@ class CitationFilter
     filter = Artifact.dataset
 
     @search_log.search_params&.each do |key, value|
-      search_terms = value.split(',').map { |v| v.strip.downcase.to_s }
+      search_terms = value.split(',').map { |v| v.strip.downcase.to_s } if value.is_a?(String)
 
       begin
         case key
@@ -124,10 +125,27 @@ class CitationFilter
           filter = filter.where(Sequel.lit(*postgres_search_terms))
         when 'classification'
           @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
-          value.split(',').each do |term|
-            artifact_ids = get_artifacts_with_concept(term)
-            filter = filter.where(Sequel[:artifacts][:id] => artifact_ids)
+          artifact_ids = []
+
+          require 'pry'; byebug
+
+          # handle multipleAnd search
+          Array(value).each do |search_value|
+            temp_ids = []
+            require 'pry'; byebug
+
+            search_value.split(',').each do |term|
+              temp_ids = (temp_ids + get_artifacts_with_concept(term)).uniq
+            end
+
+
+            artifact_ids = artifact_ids.empty? ? temp_ids : artifact_ids & temp_ids
+
+            break if artifact_ids.empty?
           end
+
+          filter = filter.where(Sequel[:artifacts][:id] => artifact_ids)
+
         when 'classification:text'
           @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
           cols = SearchParser.parse(value)

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'cgi'
 require 'fhir_models'
 require 'json'
 require 'sinatra'
@@ -137,8 +138,12 @@ namespace '/fhir' do
       return oo.to_json
     end
 
+    multiple_and_parameters = CGI.parse(request.query_string).select do |k, _v|
+      CitationFilter::MULTIPLE_AND_PARAMETERS.include?(k)
+    end
+
     request_url = "#{request.scheme}://#{request.host}:#{request.port}#{request.path}"
-    filter = CitationFilter.new(params: params,
+    filter = CitationFilter.new(params: params.merge(multiple_and_parameters),
                                 base_url: uri('fhir/Citation').to_s,
                                 request_url: request_url,
                                 client_ip: request.ip,
