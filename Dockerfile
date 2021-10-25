@@ -1,4 +1,4 @@
-FROM ruby:2.7.1-alpine
+FROM ruby:2.7.4-alpine
 
 RUN apk update && apk upgrade && apk add --update --no-cache build-base postgresql-dev libxml2-dev libxslt-dev
 

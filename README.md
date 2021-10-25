@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Ruby 2.7.1 or later
+- Ruby 2.7.4 or later
 - Bundler
 - Docker (if building Docker image)
 
