@@ -73,15 +73,15 @@ namespace '/fhir' do
   end
 
   get '/SearchParameter/?:id?' do
-    read_resource_from_file(params, 'SearchParameter')
+    read_resource_from_file('SearchParameter', params)
   end
 
   get '/OperationDefinition/?:id?' do
-    read_resource_from_file(params, 'OperationDefinition')
+    read_resource_from_file('OperationDefinition', params)
   end
 
   get '/StructureDefinition/?:id?' do
-    read_resource_from_file(params, 'StructureDefinition')
+    read_resource_from_file('StructureDefinition', params)
   end
 
   get '/Organization' do
@@ -179,18 +179,15 @@ namespace '/fhir' do
     output.to_json
   end
 
-  def read_resource_from_file(params, path)
-    file_prefix = "resources/#{path}-"
-    if !params[:id].nil?
-      filename = "#{file_prefix}#{params[:id]}.json"
-    elsif !params[:url].nil?
-      filename = "#{params['url'].gsub(%r{.*#{path}/}, file_prefix)}.json"
-    else
-      halt(400)
-    end
-
-    if File.exist? filename
-      FHIR.from_contents(File.read(filename)).to_json
+  def read_resource_from_file(path, params)
+    # We do not return files based on file names build from user-supplied parameters to prevent users from
+    # reading arbitrary files; instead, we 1) get a listing of valid files 2) see if there's a file that
+    # matches the requested file, and 3) return the matching file if present
+    id = params[:id] || params[:url].split('/').last
+    valid_files = Dir['resources/*.json']
+    matching_file = valid_files.detect { |f| f == "resources/#{path}-#{id}.json" }
+    if matching_file && File.exist?(matching_file)
+      FHIR.from_contents(File.read(matching_file)).to_json
     else
       halt(404)
     end
