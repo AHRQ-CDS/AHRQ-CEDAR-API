@@ -42,8 +42,12 @@ paths:
           description: term in description, title, and keywords. support full text search
           in: query
           type: string
+        - name: _lastUpdated
+          description: date when artifact was updated / imported
+          in: query
+          type: string
         - name: classification
-          description: term in keywords. support full text search
+          description: concept in keywords.
           in: query
           type: string
         - name: artifact-publisher
