@@ -8,6 +8,9 @@
   "experimental": false,
   "date": "2021-02-17",
   "publisher": "ARHQ CEDAR",
+  "alias": [
+    "CedarCitationArtifactPublisherAlias"
+  ],
   "contact": [
     {
       "telecom": [

@@ -258,6 +258,9 @@ class FHIRAdapter
     FHIR::Organization.new(
       id: repository.fhir_id,
       name: repository.name,
+      alias: [
+        repository.alias
+      ],
       telecom: [
         {
           system: 'url',
