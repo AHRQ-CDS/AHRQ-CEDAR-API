@@ -170,7 +170,7 @@ describe 'cedar_api' do
 
   describe '/fhir/SearchParameter endpoint' do
     it 'supports search by url' do
-      url = 'http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citiation-artifact-current-state'
+      url = 'http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-artifact-current-state'
       get "/fhir/SearchParameter?url=#{url}"
 
       resource = assert_fhir_response(FHIR::SearchParameter)
@@ -178,7 +178,7 @@ describe 'cedar_api' do
     end
 
     it 'supports read by id' do
-      id = 'cedar-citiation-artifact-current-state'
+      id = 'cedar-citation-artifact-current-state'
       get "/fhir/SearchParameter/#{id}"
       resource = assert_fhir_response(FHIR::SearchParameter)
       assert_equal(id, resource.id)

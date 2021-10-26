@@ -86,7 +86,7 @@ describe CitationFilter do
     end
   end
 
-  describe 'find citiation' do
+  describe 'find citation' do
     before do
       @artifact_base_url = 'http://localhost/fhir/Citation'
       @request_url = 'http://example.com/fhir/Citation'
