@@ -13,6 +13,7 @@ require_relative 'errors'
 # Helper methods for CEDAR API
 class CitationFilter
   UMLS_CODE_SYSTEM_IDS = FHIRAdapter::FHIR_CODE_SYSTEM_URLS.invert.freeze
+  MULTIPLE_AND_PARAMETERS = ['classification'].freeze
 
   def initialize(params:, base_url:, request_url:, client_ip: nil, log_to_db: false)
     @artifact_base_url = base_url
@@ -104,7 +105,7 @@ class CitationFilter
     filter = Artifact.dataset
 
     @search_log.search_params&.each do |key, value|
-      search_terms = value.split(',').map { |v| v.strip.downcase.to_s }
+      search_terms = value.split(',').map { |v| v.strip.downcase.to_s } if value.is_a?(String)
 
       begin
         case key
@@ -124,10 +125,14 @@ class CitationFilter
           filter = filter.where(Sequel.lit(*postgres_search_terms))
         when 'classification'
           @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
-          value.split(',').each do |term|
-            artifact_ids = get_artifacts_with_concept(term)
-            filter = filter.where(Sequel[:artifacts][:id] => artifact_ids)
-          end
+
+          # handle multipleAnd search
+          artifact_ids = Array(value).map do |terms|
+            terms.split(',').map { |term| get_artifacts_with_concept(term) }.inject(:|) # OR for comma separated terms
+          end.inject(:&) # AND for terms from separate arguments
+
+          filter = filter.where(Sequel[:artifacts][:id] => artifact_ids)
+
         when 'classification:text'
           @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
           cols = SearchParser.parse(value)
