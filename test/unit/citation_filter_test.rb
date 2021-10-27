@@ -290,19 +290,13 @@ describe CitationFilter do
       bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
       assert_bundle(bundle)
 
-      result = bundle.entry.all? do |entry|
-        entry.resource.citedArtifact.classification.any? do |classification|
-          # the classification has one classifier with expected_codes[0] AND one classifier with expected_codes[1]
-          (
+      result = expected_codes.all? do |expected_code|
+        bundle.entry.all? do |entry|
+          entry.resource.citedArtifact.classification.any? do |classification|
             classification.classifier.any? do |classifier|
-              classifier.coding.any? { |coding| coding.code == expected_codes[0] }
+              classifier.coding.any? { |coding| coding.code == expected_code }
             end
-          ) &&
-            (
-              classification.classifier.any? do |classifier|
-                classifier.coding.any? { |coding| coding.code == expected_codes[1] }
-              end
-            )
+          end
         end
       end
 

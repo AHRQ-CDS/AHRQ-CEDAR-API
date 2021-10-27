@@ -125,20 +125,11 @@ class CitationFilter
           filter = filter.where(Sequel.lit(*postgres_search_terms))
         when 'classification'
           @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
-          artifact_ids = []
 
           # handle multipleAnd search
-          Array(value).each do |search_value|
-            temp_ids = []
-
-            search_value.split(',').each do |term|
-              temp_ids = (temp_ids + get_artifacts_with_concept(term)).uniq
-            end
-
-            artifact_ids = artifact_ids.empty? ? temp_ids : artifact_ids & temp_ids
-
-            break if artifact_ids.empty?
-          end
+          artifact_ids = Array(value).map do |terms|
+            terms.split(',').map { |term| get_artifacts_with_concept(term) }.inject(:|) # OR for comma separated terms
+          end.inject(:&) # AND for terms from separate arguments
 
           filter = filter.where(Sequel[:artifacts][:id] => artifact_ids)
 
