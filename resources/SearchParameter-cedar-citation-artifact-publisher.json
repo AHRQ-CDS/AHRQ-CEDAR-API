@@ -1,7 +1,7 @@
 {
   "resourceType": "SearchParameter",
-  "id": "cedar-citiation-artifact-publisher",
-  "url": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citiation-artifact-publisher",
+  "id": "cedar-citation-artifact-publisher",
+  "url": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-artifact-publisher",
   "version": "0.1.0",
   "name": "CedarCitationArtifactPublisher",
   "status": "active",

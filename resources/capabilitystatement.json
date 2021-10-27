@@ -53,7 +53,7 @@
             },
             {
               "name": "classification",
-              "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citiation-classification",
+              "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-classification",
               "type": "string"
             },
             {
@@ -68,17 +68,17 @@
                 }
               ],
               "name": "artifact-current-state",
-              "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citiation-artifact-current-state",
+              "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-artifact-current-state",
               "type": "token"
             },
             {
               "name": "artifact-publisher",
-              "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citiation-artifact-publisher",
+              "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-artifact-publisher",
               "type": "string"
             },
             {
               "name": "title",
-              "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citiation-title",
+              "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-title",
               "type": "string"
             }
           ]

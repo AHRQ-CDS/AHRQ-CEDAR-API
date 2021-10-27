@@ -1,7 +1,7 @@
 {
   "resourceType": "SearchParameter",
-  "id": "cedar-citiation-title",
-  "url": "http://cedar-ahrq.gov/fhir/SearchParameter/cedar-citiation-title",
+  "id": "cedar-citation-title",
+  "url": "http://cedar-ahrq.gov/fhir/SearchParameter/cedar-citation-title",
   "version": "0.1.0",
   "name": "CedarCitationTitle",
   "derivedFrom": "http://hl7.org/fhir/SearchParameter/Citation-title",
