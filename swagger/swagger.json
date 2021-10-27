@@ -20,7 +20,7 @@
     },
     {
       "name": "Profiles"
-    },
+    }
   ],
   "schemes": [
     "https"
@@ -70,8 +70,14 @@
             "type": "string"
           },
           {
+            "name": "_lastUpdated",
+            "description": "date when artifact was updated / imported",
+            "in": "query",
+            "type": "string"
+          },
+          {
             "name": "classification",
-            "description": "term in keywords. support full text search",
+            "description": "concept in keywords.",
             "in": "query",
             "type": "string"
           },
@@ -142,7 +148,7 @@
           }
         }
       }
-    },    
+    },
     "/CodeSystem/$get-mesh-children": {
       "get": {
         "tags": [
@@ -205,7 +211,7 @@
             "required": true,
             "type": "string"
           }
-        ],        
+        ],
         "responses": {
           "200": {
             "description": "successful operation",
@@ -215,8 +221,8 @@
           }
         }
       }
-    },    
-    "/OperationDefinition":{
+    },
+    "/OperationDefinition": {
       "get": {
         "tags": [
           "Profiles"
@@ -269,7 +275,7 @@
           }
         }
       }
-    },    
+    },
     "/SearchParameter": {
       "get": {
         "tags": [
@@ -323,7 +329,7 @@
           }
         }
       }
-    },    
+    },
     "/StructureDefinition": {
       "get": {
         "tags": [
@@ -486,7 +492,7 @@
           "type": "number"
         }
       }
-    },    
+    },
     "Annotation": {
       "description": "Text node with attribution",
       "type": "object",
@@ -663,7 +669,7 @@
           }
         }
       }
-    },    
+    },
     "CodeableConcept": {
       "description": "Concept - reference to a terminology or just  text",
       "type": "object",
@@ -850,7 +856,7 @@
           "type": "string"
         }
       }
-    },    
+    },
     "Count": {
       "description": "A measured or measurable amount",
       "type": "object",
@@ -893,7 +899,7 @@
           "type": "number"
         }
       }
-    },    
+    },
     "DataRequirementCodeFilterComponent": {
       "description": "What codes are expected",
       "type": "object",
@@ -1004,7 +1010,7 @@
           "type": "string"
         }
       }
-    },    
+    },
     "DataRequirement": {
       "description": "Describes a required data item",
       "type": "object",
@@ -1076,7 +1082,7 @@
           "type": "string"
         }
       }
-    },    
+    },
     "DataType": {
       "description": "Reuseable Types",
       "type": "object",
@@ -1265,7 +1271,7 @@
           "$ref": "#/definitions/Timing"
         }
       }
-    },    
+    },
     "Duration": {
       "description": "A length of time",
       "type": "object",
@@ -1308,7 +1314,7 @@
           "type": "number"
         }
       }
-    },    
+    },
     "Element": {
       "description": "Base for all elements",
       "type": "object",
@@ -2602,7 +2608,7 @@
           }
         }
       }
-    },    
+    },
     "Expression": {
       "description": "An expression that can be used to generate a value",
       "type": "object",
@@ -2644,7 +2650,7 @@
           "type": "string"
         }
       }
-    },    
+    },
     "Extension": {
       "description": "Optional Extensions Element",
       "type": "object"
@@ -2835,7 +2841,7 @@
           "type": "number"
         }
       }
-    },    
+    },
     "Narrative": {
       "description": "Human-readable summary of the resource (essential clinical and business information)",
       "type": "object",
@@ -2916,7 +2922,7 @@
           "type": "string"
         }
       }
-    },    
+    },
     "Period": {
       "description": "Time range defined by start and end date/time",
       "type": "object",
@@ -3186,7 +3192,7 @@
           "type": "number"
         }
       }
-    },    
+    },
     "Signature": {
       "description": "A Signature - XML DigSig, JWS, Graphical image of signature, etc.",
       "type": "object",
@@ -3343,7 +3349,7 @@
           }
         }
       }
-    },    
+    },
     "Timing": {
       "description": "A timing schedule that specifies an event that may occur multiple times",
       "type": "object",
@@ -3385,7 +3391,7 @@
           "$ref": "#/definitions/TimingRepeatComponent"
         }
       }
-    }, 
+    },
     "TriggerDefinition": {
       "description": "Defines an expected trigger for a module",
       "type": "object",
@@ -3439,7 +3445,7 @@
           "type": "string"
         }
       }
-    },    
+    },
     "UsageContext": {
       "description": "Describes the context of use for a conformance or knowledge resource",
       "type": "object",
@@ -6578,7 +6584,7 @@
           "type": "string"
         }
       }
-    },    
+    },
     "ParametersParameterComponent": {
       "description": "Operation Parameter",
       "type": "object",
@@ -6834,7 +6840,7 @@
           }
         }
       }
-    },    
+    },
     "Resource": {
       "description": "Base Resource",
       "required": [
@@ -7417,7 +7423,7 @@
           "type": "string"
         }
       }
-    }    
+    }
   },
   "externalDocs": {
     "description": "Find out more about Swagger",
