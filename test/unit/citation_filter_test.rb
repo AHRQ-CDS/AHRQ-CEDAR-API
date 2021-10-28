@@ -3,6 +3,7 @@
 require 'warning'
 require_relative '../test_helper'
 require_relative '../../database/models'
+require_relative '../../fhir/fhir_code_systems'
 
 describe CitationFilter do
   include Rack::Test::Methods
@@ -222,7 +223,7 @@ describe CitationFilter do
     end
 
     it 'supports search by classification system and code' do
-      expected_system = 'https://www.nlm.nih.gov/mesh/'
+      expected_system = FHIRCodeSystems::FHIR_CODE_SYSTEM_URLS['MSH']
       expected_code = 'D0001'
       params = {
         'classification' => "#{expected_system}|#{expected_code}"

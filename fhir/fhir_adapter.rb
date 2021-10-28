@@ -1,18 +1,11 @@
 # frozen_string_literal: true
 
 require_relative './citation'
+require_relative './fhir_code_systems'
 
 # Service to read artifact from database and convert to FHIR resources
 class FHIRAdapter
-  FHIR_CODE_SYSTEM_URLS = {
-    'MSH' => 'https://www.nlm.nih.gov/mesh/',
-    'MEDLINEPLUS' => 'http://www.nlm.nih.gov/research/umls/medlineplus',
-    'SNOMEDCT_US' => 'http://snomed.info/sct',
-    'SCTSPA' => 'http://snomed.info/sct/449081005',
-    'MSHSPA' => 'http://www.nlm.nih.gov/research/umls/mshspa',
-    'ICD10CM' => 'http://hl7.org/fhir/sid/icd-10-cm',
-    'RXNORM' => 'http://www.nlm.nih.gov/research/umls/rxnorm'
-  }.freeze
+  include FHIRCodeSystems
 
   HOSTNAME = ENV['HOSTNAME'] || 'http://cedar.arhq.gov'
 
@@ -314,7 +307,7 @@ class FHIRAdapter
               )
             ],
             code: r.code,
-            system: 'http://terminology.hl7.org/CodeSystem/MSH',
+            system: FHIR_CODE_SYSTEM_URLS['MSH'],
             display: r.name
           )
         )
