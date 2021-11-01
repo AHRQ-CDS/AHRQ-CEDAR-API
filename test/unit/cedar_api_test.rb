@@ -3,10 +3,13 @@
 require 'warning'
 require_relative '../test_helper'
 require_relative '../../database/models'
+require_relative '../../fhir/fhir_code_systems'
 
 describe 'cedar_api' do
   include Rack::Test::Methods
   include CedarApi::TestHelper
+
+  let(:code_system_consts) { Class.new { extend FHIRCodeSystems } }
 
   def assert_fhir_response(resource_class)
     assert last_response.ok?
@@ -57,10 +60,10 @@ describe 'cedar_api' do
       assert_equal 'CUI2 desc', resource.citedArtifact.classification[1].classifier[1].text
       assert_equal 2, resource.citedArtifact.classification[1].classifier[0].coding.size
       assert_equal 'D0001', resource.citedArtifact.classification[1].classifier[0].coding[0].code
-      assert_equal 'https://www.nlm.nih.gov/mesh/',
+      assert_equal FHIRCodeSystems::FHIR_CODE_SYSTEM_URLS['MSH'],
                    resource.citedArtifact.classification[1].classifier[0].coding[0].system
       assert_equal '10001', resource.citedArtifact.classification[1].classifier[0].coding[1].code
-      assert_equal 'http://snomed.info/sct',
+      assert_equal FHIRCodeSystems::FHIR_CODE_SYSTEM_URLS['SNOMEDCT_US'],
                    resource.citedArtifact.classification[1].classifier[0].coding[1].system
       assert_equal 1, resource.citedArtifact.classification[1].classifier[1].coding.size
     end
