@@ -6,6 +6,7 @@ require_relative 'setup'
 class Artifact < Sequel::Model
   many_to_one :repository
   many_to_many :concepts
+  one_to_many :versions, key: :item_id, order: :id
 end
 
 class Repository < Sequel::Model
@@ -29,4 +30,8 @@ end
 class MeshTreeNode < Sequel::Model
   many_to_one :parent, class: self
   one_to_many :children, key: :parent_id, order: :name, class: self
+end
+
+class Version < Sequel::Model
+  many_to_one :artifacts, key: :item_id
 end

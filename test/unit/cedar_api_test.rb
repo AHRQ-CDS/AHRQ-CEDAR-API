@@ -94,7 +94,7 @@ describe 'cedar_api' do
       end
     end
 
-    it 'validate search parameter values' do
+    it 'validates search parameter values' do
       get 'fhir/Citation?_content=cancer&artifact-current-state=active&_lastUpdated=et1990-01-01'
 
       resource = assert_fhir_response(FHIR::OperationOutcome)
@@ -102,6 +102,24 @@ describe 'cedar_api' do
       assert resource.issue.any? do |issue|
         issue.severity == 'error' && issue.code == 'value'
       end
+    end
+
+    it 'supports read history with version id' do
+      get 'fhir/Citation/abc-1/_history/1'
+
+      resource = assert_fhir_response(FHIR::Citation)
+      assert_equal 'abc-1', resource.id
+      assert_equal 1, resource.meta.versionId
+    end
+
+    it 'returns current version if version id is 0' do
+      get 'fhir/Citation/abc-1/_history/0'
+
+      current_version = Version.count
+
+      resource = assert_fhir_response(FHIR::Citation)
+      assert_equal 'abc-1', resource.id
+      assert_equal current_version, resource.meta.versionId
     end
   end
 

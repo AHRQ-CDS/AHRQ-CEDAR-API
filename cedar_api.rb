@@ -123,7 +123,26 @@ namespace '/fhir' do
     artifact = Artifact.first(cedar_identifier: id)
     halt(404) if artifact.nil?
 
-    citation = FHIRAdapter.create_citation(artifact, uri('fhir/Citation'))
+    citation = FHIRAdapter.create_citation(artifact, uri('fhir/Citation'), artifact.versions.count)
+    citation.to_json
+  end
+
+  get '/Citation/:id/_history/:vid' do
+    id = params[:id]
+    vid = params[:vid].to_i
+
+    artifact = Artifact.first(cedar_identifier: id)
+    halt(404) if artifact.nil?
+
+    citation = nil
+
+    if vid.positive? && vid < artifact.versions.count
+      history = artifact.versions[vid].object
+      citation = FHIRAdapter.create_citation_history(history, uri('fhir/Citation'), vid)
+    else
+      citation = FHIRAdapter.create_citation(artifact, uri('fhir/Citation'), artifact.versions.count)
+    end
+
     citation.to_json
   end
 
