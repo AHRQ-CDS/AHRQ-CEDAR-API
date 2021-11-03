@@ -1,16 +1,27 @@
 # CEDAR
 
+The Patient Protection and Affordable Care Act (ACA) of 2010 emphasized the importance of
+patient-centered outcomes research (PCOR). The ACA mandated that the Agency for Healthcare Research
+and Quality (AHRQ) invest in the dissemination of PCOR findings. AHRQ disseminates PCOR findings to
+stakeholders and end users, including providers, health systems, patients, payers, and policymakers.
+To facilitate this dissemination, AHRQ and its Center for Evidence and Practice Improvement (CEPI)
+develop electronic means to transfer research findings, maintains publicly available databases of
+government-funded scientific study data, and trains researchers in PCOR methods.
+
 CEDAR (CEPI Evidence Discovery And Retrieval) is a standards-based application programming interface
 (API) that supports search, access, and use of PCOR and other research findings across multiple
 repositories within AHRQ CEPI. CEDAR makes access to all of these different resources in one place
 possible by using health IT standards such as Health Level 7's Fast Healthcare Interoperability
 Resources (FHIR) standard.
 
-CEDAR will help health IT developers to integrate AHRQ CEPI research findings directly into their
+CEDAR enables health IT developers to integrate AHRQ CEPI research findings directly into their
 existing systems, where the findings can then be accessed and used by researchers, clinicians,
-policymakers, patients, and others. CEDAR will make AHRQ CEPI's research resources more FAIR,
-providing fast and efficient access to information. The goal is to make it easy to find the right
-data, at the right time, all in one place, directly from the systems that people are already using.
+policymakers, patients, and others.  CEDAR optimizes the use of PCOR and research data by following
+standard guidelines for improving the Findability, Accessibility, Interoperability, and Reuse
+([the FAIR principles](https://www.go-fair.org/fair-principles/))
+of digital assets, providing fast and efficient access to information. The goal is to make it easy
+to find the right data, at the right time, all in one place, directly from the systems that people
+are already using.
 
 CEDAR is intended to be publicly available for other platforms to use to discover and retrieve AHRQ
 evidence from multiple resources simultaneously.
@@ -26,9 +37,9 @@ as well as to allow CEDAR to be more easily integrated with existing systems.
 
 The CEDAR API uses a RESTful approach. REST, or
 [Representational State Transfer](http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm),
-is an API design pattern that leverages internet technologies like the
-[Hypertext Transfer Protocol (HTTP)](https://datatracker.ietf.org/doc/html/rfc2616) and [JavaScript Object Notation
-(JSON)](https://datatracker.ietf.org/doc/html/rfc8259).
+is an architectural style that is typically implemented using internet technologies like the
+[Hypertext Transfer Protocol (HTTP)](https://datatracker.ietf.org/doc/html/rfc2616) and
+[JavaScript Object Notation (JSON)](https://datatracker.ietf.org/doc/html/rfc8259).
 REST offers a simple stateless request-response pattern that makes building applications straight forward.
 
 The CEDAR API is built using the
