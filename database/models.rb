@@ -38,8 +38,7 @@ class Version < Sequel::Model
   many_to_one :artifacts
 
   def build_artifact
-    artifact = Artifact.new
-    object.each { |k, v| artifact[k.to_sym] = v }
-    artifact
+    Artifact.unrestrict_primary_key
+    Artifact.new(object)
   end
 end
