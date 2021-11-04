@@ -9,12 +9,6 @@ class FHIRAdapter
 
   HOSTNAME = ENV['HOSTNAME'] || 'http://cedar.arhq.gov'
 
-  def self.create_citation_history(history_item, artifact_base_url, version_id)
-    old_artifact = Artifact.new
-    history_item.each { |k, v| old_artifact[k.to_sym] = v }
-    create_citation(old_artifact, artifact_base_url, version_id, skip_concept: true)
-  end
-
   def self.create_citation(artifact, artifact_base_url, version_id, skip_concept: false)
     cedar_identifier = artifact[:cedar_identifier]
     # TODO: Put handling of JSONP array into model
