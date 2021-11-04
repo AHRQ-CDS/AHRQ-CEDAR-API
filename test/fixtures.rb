@@ -155,5 +155,6 @@ DB[:versions].insert(
   item_type: 'Artifact',
   event: 'update',
   import_run_id: 501,
-  object: '{"id": 201, "cedar_identifier": "abc-1", "keywords": ["cancer", "adult"], "repository_id": 101}'
+  object: '{"id": 201, "cedar_identifier": "abc-1", "title": "title v1", "keywords": ["cancer", "adult"], '\
+          '"repository_id": 101}'
 )

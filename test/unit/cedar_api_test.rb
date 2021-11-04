@@ -105,21 +105,27 @@ describe 'cedar_api' do
     end
 
     it 'supports read history with version id' do
-      get 'fhir/Citation/abc-1/_history/1'
+      cedar_identifier = 'abc-1'
+      artifact = Artifact.first(cedar_identifier: cedar_identifier)
+
+      get "fhir/Citation/#{cedar_identifier}/_history/1"
 
       resource = assert_fhir_response(FHIR::Citation)
-      assert_equal 'abc-1', resource.id
+      assert_equal cedar_identifier, resource.id
       assert_equal 1, resource.meta.versionId
+      assert_equal artifact.versions[1].object['title'], resource.title
     end
 
     it 'returns current version if version id is 0' do
-      get 'fhir/Citation/abc-1/_history/0'
+      cedar_identifier = 'abc-1'
+      artifact = Artifact.first(cedar_identifier: cedar_identifier)
 
-      current_version = Version.count
+      get "fhir/Citation/#{cedar_identifier}/_history/0"
 
       resource = assert_fhir_response(FHIR::Citation)
-      assert_equal 'abc-1', resource.id
-      assert_equal current_version, resource.meta.versionId
+      assert_equal cedar_identifier, resource.id
+      assert_equal artifact.versions.count, resource.meta.versionId
+      assert_equal artifact.title, resource.title
     end
   end
 

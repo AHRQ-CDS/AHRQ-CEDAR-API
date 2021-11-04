@@ -137,8 +137,8 @@ namespace '/fhir' do
     citation = nil
 
     if vid.positive? && vid < artifact.versions.count
-      history = artifact.versions[vid].object
-      citation = FHIRAdapter.create_citation_history(history, uri('fhir/Citation'), vid)
+      old_artifact = artifact.versions[vid].build_artifact
+      citation = FHIRAdapter.create_citation(old_artifact, uri('fhir/Citation'), vid, skip_concept: true)
     else
       citation = FHIRAdapter.create_citation(artifact, uri('fhir/Citation'), artifact.versions.count)
     end
