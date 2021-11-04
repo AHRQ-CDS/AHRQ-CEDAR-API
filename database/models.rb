@@ -7,9 +7,7 @@ require_relative '../fhir/citation'
 class Artifact < Sequel::Model
   many_to_one :repository
   many_to_many :concepts
-  one_to_many :versions, key: :item_id, class: :Version do |ds|
-    ds.where(item_type: 'Artifact').exclude(event: 'create')
-  end
+  one_to_many :versions, key: :item_id, order: :id, conditions: { item_type: 'Artifact', event: 'update' }
 end
 
 class Repository < Sequel::Model
