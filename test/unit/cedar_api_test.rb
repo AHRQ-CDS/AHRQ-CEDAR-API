@@ -113,7 +113,7 @@ describe 'cedar_api' do
       resource = assert_fhir_response(FHIR::Citation)
       assert_equal cedar_identifier, resource.id
       assert_equal 1, resource.meta.versionId
-      assert_equal artifact.versions[1].object['title'], resource.title
+      assert_equal artifact.versions.first.object['title'], resource.title
     end
 
     it 'returns current version if version id is 0' do
