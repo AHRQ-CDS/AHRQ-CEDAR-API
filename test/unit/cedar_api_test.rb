@@ -49,9 +49,12 @@ describe 'cedar_api' do
 
   describe '/fhir/Citation endpoint' do
     it 'supports read with id' do
+      artifact = Artifact.first(cedar_identifier: 'abc-1')
+
       get '/fhir/Citation/abc-1'
 
       resource = assert_fhir_response(FHIR::Citation)
+
       assert_equal 'abc-1', resource.id
       assert_equal 'active', resource.status
       assert_equal 2, resource.citedArtifact.classification.size
@@ -66,6 +69,7 @@ describe 'cedar_api' do
       assert_equal FHIRCodeSystems::FHIR_CODE_SYSTEM_URLS['SNOMEDCT_US'],
                    resource.citedArtifact.classification[1].classifier[0].coding[1].system
       assert_equal 1, resource.citedArtifact.classification[1].classifier[1].coding.size
+      assert_equal artifact.versions.count + 1, resource.meta.versionId
     end
 
     it 'returns not found when read with invalid id' do
@@ -124,7 +128,7 @@ describe 'cedar_api' do
 
       resource = assert_fhir_response(FHIR::Citation)
       assert_equal cedar_identifier, resource.id
-      assert_equal artifact.versions.count, resource.meta.versionId
+      assert_equal artifact.versions.count + 1, resource.meta.versionId
       assert_equal artifact.title, resource.title
     end
   end
