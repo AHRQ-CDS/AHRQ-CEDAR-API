@@ -43,9 +43,17 @@ paths:
           in: query
           type: string
         - name: _lastUpdated
-          description: date when artifact was updated / imported
+          description: date when citation was updated / imported
           in: query
           type: string
+        - name: article-date
+          description: date when cited artifact was published
+          in: query
+          type: string    
+        - name: article-date:missing
+          description: cited artifact without publishing date
+          in: query
+          type: boolean                  
         - name: classification
           description: concept in keywords.
           in: query
