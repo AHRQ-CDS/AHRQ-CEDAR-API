@@ -121,8 +121,13 @@ class CitationFilter
 
           filter = filter.full_text_search(:content_search, cols, opt)
         when '_lastUpdated'
-          postgres_search_terms = self.class.fhir_datetime_to_postgres_search(value)
+          postgres_search_terms = self.class.fhir_datetime_to_postgres_search(value, 'updated_at')
           filter = filter.where(Sequel.lit(*postgres_search_terms))
+        when 'article-date'
+          postgres_search_terms = self.class.fhir_datetime_to_postgres_search(value, 'published_on')
+          filter = filter.where(Sequel.lit(*postgres_search_terms))
+        when 'article-date:missing'
+          filter = filter.where(published_on: nil) if value
         when 'classification'
           @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
 
@@ -263,21 +268,21 @@ class CitationFilter
     get_fhir_datetime_range(expression).merge(comparator: comparator)
   end
 
-  def self.fhir_datetime_to_postgres_search(expression)
+  def self.fhir_datetime_to_postgres_search(expression, column)
     fhir_expr = parse_fhir_datetime_search(expression)
     case fhir_expr[:comparator]
     when 'gt', 'sa'
-      ['updated_at > ?', fhir_expr[:end]]
+      ["#{column} > ?", fhir_expr[:end]]
     when 'ge'
-      ['updated_at >= ?', fhir_expr[:start]]
+      ["#{column} >= ?", fhir_expr[:start]]
     when 'lt', 'eb'
-      ['updated_at < ?', fhir_expr[:start]]
+      ["#{column} < ?", fhir_expr[:start]]
     when 'le'
-      ['updated_at <= ?', fhir_expr[:end]]
+      ["#{column} <= ?", fhir_expr[:end]]
     when 'ne'
-      ['updated_at < ? OR updated_at > ?', fhir_expr[:start], fhir_expr[:end]]
+      ["#{column} < ? OR #{column} > ?", fhir_expr[:start], fhir_expr[:end]]
     else # eq, ap
-      ['updated_at >= ? AND updated_at <= ?', fhir_expr[:start], fhir_expr[:end]]
+      ["#{column} >= ? AND #{column} <= ?", fhir_expr[:start], fhir_expr[:end]]
     end
   end
 

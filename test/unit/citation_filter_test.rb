@@ -141,6 +141,40 @@ describe CitationFilter do
       end
     end
 
+    it 'supports search for article-date' do
+      cutoff_date = Date.new(2021, 1, 1)
+
+      params = {
+        'article-date' => "gt#{cutoff_date.strftime('%F')}"
+      }
+
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+
+      assert_bundle(bundle)
+
+      assert bundle.entry.all? do |entry|
+        entry.resource.citedArtifact.publicationForm.any? do |publication|
+          publication.articleDate.present? && Date.new(publication.articleDate) > cutoff_date
+        end
+      end
+    end
+
+    it 'supports search for article-date:missing' do
+      params = {
+        'article-date:missing' => true
+      }
+
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+
+      assert_bundle(bundle)
+
+      assert bundle.entry.all? do |entry|
+        entry.resource.citedArtifact.publicationForm.any? do |publication|
+          publication.articleDate.nil?
+        end
+      end
+    end
+
     it 'supports search by title' do
       expected = 'diabetes'
       params = {
