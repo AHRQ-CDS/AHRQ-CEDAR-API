@@ -105,7 +105,10 @@ class CitationFilter
     filter = Artifact.dataset
 
     @search_log.search_params&.each do |key, value|
-      search_terms = value.split(',').map { |v| v.strip.downcase.to_s } if value.is_a?(String)
+      if value.is_a?(String)
+        search_terms = value.split(',').map { |v| v.strip.to_s }
+        search_terms.map!(&:downcase) unless key == 'artifact-type'
+      end
 
       begin
         case key
@@ -156,6 +159,8 @@ class CitationFilter
         when 'artifact-publisher'
           repository_ids = Repository.where { |o| { o.lower(:fhir_id) => search_terms } }.map(&:id)
           filter = filter.where(repository_id: repository_ids)
+        when 'artifact-type'
+          filter = filter.where(artifact_type: search_terms)
         end
       rescue StandardError
         raise InvalidParameterError.new(parameter: key, value: value)
