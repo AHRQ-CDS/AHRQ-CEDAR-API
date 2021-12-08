@@ -27,5 +27,5 @@
   ],
   "description" : "Type of the cited artifact",
   "type": "string",
-  "expression": "Citation.citedArtifact.classification.classifier"
+  "expression": "Citation.citedArtifact.classification.where(type.coding.code = 'knowledge-artifact-type').classifier"
 }
