@@ -80,6 +80,11 @@
               "name": "title",
               "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-title",
               "type": "string"
+            },
+            {
+              "name": "artifact-type",
+              "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-artifact-type",
+              "type": "string"
             }
           ]
         },
