@@ -356,7 +356,7 @@ describe CitationFilter do
     end
 
     it 'supports search by multiple artifact-type' do
-      expected = %w[Guidance Tool]
+      expected = ['Guidance', 'Systematic Review']
       params = {
         'artifact-type': expected.join(',')
       }
