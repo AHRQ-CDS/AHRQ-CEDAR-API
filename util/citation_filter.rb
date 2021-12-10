@@ -157,7 +157,7 @@ class CitationFilter
           repository_ids = Repository.where { |o| { o.lower(:fhir_id) => search_terms } }.map(&:id)
           filter = filter.where(repository_id: repository_ids)
         when 'artifact-type'
-          filter = filter.where(Sequel.lit('LOWER(artifact_type) = ?', search_terms))
+          filter = filter.where(Sequel.lit('LOWER(artifact_type) IN ?', search_terms))
         end
       rescue StandardError
         raise InvalidParameterError.new(parameter: key, value: value)
