@@ -314,4 +314,23 @@ class FHIRAdapter
       end
     )
   end
+
+  def self.create_artifact_types_output(artifact_types)
+    if artifact_types.nil? || artifact_types.empty?
+      return FHIR::Parameters.new(
+        parameter: []
+      )
+    end
+
+    FHIR::Parameters.new(
+      parameter: artifact_types.map do |r|
+        FHIR::Parameters::Parameter.new(
+          name: 'artifact-type',
+          valueCoding: FHIR::Coding.new(
+            display: r.artifact_type
+          )
+        )
+      end
+    )
+  end
 end

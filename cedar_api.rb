@@ -110,6 +110,13 @@ namespace '/fhir' do
     citation.to_json
   end
 
+  get '/Citation/$get-artifact-types' do
+    output = Artifact.exclude(artifact_type: nil).order(:artifact_type).distinct(:artifact_type).select(:artifact_type)
+
+    output = FHIRAdapter.create_artifact_types_output(output)
+    output.to_json
+  end
+
   get '/Citation/:id' do
     id = params[:id]
 
@@ -183,6 +190,8 @@ namespace '/fhir' do
     output = FHIRAdapter.create_mesh_children_output(tree_nodes)
     output.to_json
   end
+
+
 
   def read_resource_from_file(path, params)
     # We do not return files based on file names build from user-supplied parameters to prevent users from
