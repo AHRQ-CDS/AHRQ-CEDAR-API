@@ -84,6 +84,19 @@ paths:
           description: successful operation
           schema:
             $ref: '#/definitions/Bundle'
+  /CodeSystem/$get-mesh-children:  
+    get:
+      tags:
+        - Citation
+      summary: Get all knowledge artifact types for Citation
+      produces:
+        - application/fhir+json
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Parameters'
+          
   /Citation/{id}:
     get:
       tags:

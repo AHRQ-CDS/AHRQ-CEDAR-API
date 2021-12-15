@@ -86,6 +86,12 @@
               "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-artifact-type",
               "type": "string"
             }
+          ],
+          "operation": [
+            {
+              "name": "get-artifact-types",
+              "definition": "http://cedar.arhq.gov/fhir/OperationDefinition/Citation-get-artifact-types"
+            }
           ]
         },
         {
