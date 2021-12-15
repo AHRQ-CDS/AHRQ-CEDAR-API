@@ -35,6 +35,7 @@ DB[:artifacts].insert(
   cedar_identifier: 'abc-2',
   remote_identifier: '202',
   artifact_status: 'active',
+  artifact_type: 'Abstract',
   title: 'Diabetes',
   description: 'Lower vitamin D levels have been reported to increase risk for some types of cancer, diabetes.',
   keywords: '["diabetes", "adult"]',

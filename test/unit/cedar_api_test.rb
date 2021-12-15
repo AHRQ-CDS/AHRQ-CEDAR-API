@@ -105,6 +105,18 @@ describe 'cedar_api' do
     end
   end
 
+  describe '/fhir/Citation/$get-artifact-types endpoint' do
+    it 'gets artifact types in Parameter' do
+      get '/fhir/Citation/$get-artifact-types'
+
+      resource = assert_fhir_response(FHIR::Parameters)
+      resource.parameter.each do |p|
+        assert_equal('artifact-type', p.name)
+        assert p.valueCoding.display.present?
+      end
+    end
+  end
+
   describe '/fhir/Organization endpoint' do
     it 'supports read by id' do
       repo_id = 'uspstf'
