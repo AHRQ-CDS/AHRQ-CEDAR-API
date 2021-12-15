@@ -1,0 +1,31 @@
+{
+  "resourceType": "SearchParameter",
+  "id": "cedar-citation-artifact-type",
+  "url": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-artifact-type",
+  "version": "0.1.0",
+  "name": "CedarCitationArtifactType",
+  "status": "active",
+  "experimental": false,
+  "date": "2021-12-07",
+  "publisher": "ARHQ CEDAR",
+  "alias": [
+    "CedarCitationArtifactTypeAlias"
+  ],
+  "contact": [
+    {
+      "telecom": [
+        {
+          "system": "url",
+          "value": "http://cedar.arhq.gov"
+        }
+      ]
+    }
+  ],
+  "code": "artifact-type",
+  "base": [
+    "Citation"
+  ],
+  "description" : "Type of the cited artifact",
+  "type": "string",
+  "expression": "Citation.citedArtifact.classification.where(type.coding.code = 'knowledge-artifact-type').classifier"
+}

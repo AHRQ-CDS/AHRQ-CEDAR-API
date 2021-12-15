@@ -338,6 +338,40 @@ describe CitationFilter do
       end
     end
 
+    it 'supports search by artifact-type' do
+      expected = 'Guidance'
+      params = {
+        'artifact-type': expected
+      }
+
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+
+      assert_bundle(bundle)
+
+      assert bundle.entry.all? do |entry|
+        entry.resource.citedArtifact.classification.any? do |state|
+          state.classifier.any? { |classifier| classifier.text == expected }
+        end
+      end
+    end
+
+    it 'supports search by multiple artifact-type' do
+      expected = ['Guidance', 'Systematic Review']
+      params = {
+        'artifact-type': expected.join(',')
+      }
+
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+
+      assert_bundle(bundle)
+
+      assert bundle.entry.all? do |entry|
+        entry.resource.citedArtifact.classification.any? do |state|
+          state.classifier.any? { |classifier| classifier.text == expected }
+        end
+      end
+    end
+
     it 'supports _count parameter for pagination' do
       expected = 1
       params = {
