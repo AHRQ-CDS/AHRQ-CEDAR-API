@@ -1,0 +1,40 @@
+{
+  "resourceType": "OperationDefinition",
+  "id": "Citation-get-artifact-types",
+  "url": "http://cedar.arhq.gov/fhir/OperationDefinition/Citation-get-artifact-types",
+  "version": "0.1.0",
+  "name": "get-artifact-types",
+  "title": "Get Citation knowledge artifact types",
+  "status": "draft",
+  "kind": "operation",
+  "date": "2021-12-14",
+  "publisher": "ARHQ CEDAR",
+  "contact": [
+    {
+      "telecom": [
+        {
+          "system": "url",
+          "value": "http://cedar.arhq.gov"
+        }
+      ]
+    }
+  ],
+  "description": "Get all knowledge artifact types for Citation",
+  "code": "get-artifact-types",
+  "resource": [
+    "Citation"
+  ],
+  "system": false,
+  "type": true,
+  "instance": false,
+  "parameter": [
+    {
+      "name": "artifact-type",
+      "use": "out",
+      "min": 0,
+      "max": "*",
+      "documentation": "Coding for artifact types used by citedArtifact's classifier",
+      "type": "Coding"
+    }
+  ]
+}
