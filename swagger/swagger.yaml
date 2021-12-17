@@ -84,7 +84,7 @@ paths:
           description: successful operation
           schema:
             $ref: '#/definitions/Bundle'
-  /CodeSystem/$get-mesh-children:  
+  /Citation/$get-artifact-types:  
     get:
       tags:
         - Citation
