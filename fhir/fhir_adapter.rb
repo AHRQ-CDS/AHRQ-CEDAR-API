@@ -28,6 +28,11 @@ class FHIRAdapter
             display: c['description']
           }
         end
+        codes << {
+          system: FHIR_CODE_SYSTEM_URLS['MTH'],
+          code: concept.umls_cui,
+          display: concept.umls_description
+        }
         FHIR::CodeableConcept.new(text: concept.umls_description, coding: codes)
       end
     end

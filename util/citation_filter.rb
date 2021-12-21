@@ -47,7 +47,9 @@ class CitationFilter
     end
     synonyms_op = Sequel.pg_jsonb_op(:codes)
     concepts = if system.nil?
-                 Concept.where(synonyms_op.contains([{ code: code }]))
+                 Concept.where(synonyms_op.contains([{ code: code }])).or(umls_cui: code)
+               elsif UMLS_CODE_SYSTEM_IDS[system] == 'MTH'
+                 Concept.where(umls_cui: code)
                else
                  Concept.where(synonyms_op.contains([{ system: UMLS_CODE_SYSTEM_IDS[system], code: code }]))
                end
