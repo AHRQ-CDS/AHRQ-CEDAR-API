@@ -108,7 +108,13 @@ describe 'cedar_api' do
       end
     end
 
-    it 'supports read history with version id' do
+    it 'returns 404 if version id is 0' do
+      cedar_identifier = 'abc-1'
+      get "fhir/Citation/#{cedar_identifier}/_history/0"
+      assert last_response.not_found?
+    end
+
+    it 'supports read history with version id for a historical version' do
       cedar_identifier = 'abc-1'
       artifact = Artifact.first(cedar_identifier: cedar_identifier)
 
@@ -120,16 +126,27 @@ describe 'cedar_api' do
       assert_equal artifact.versions.first.object['title'], resource.title
     end
 
-    it 'returns current version if version id is 0' do
+    it 'supports read history with version id for the current version' do
       cedar_identifier = 'abc-1'
       artifact = Artifact.first(cedar_identifier: cedar_identifier)
+      latest_version = artifact.versions.count + 1
 
-      get "fhir/Citation/#{cedar_identifier}/_history/0"
+      get "fhir/Citation/#{cedar_identifier}/_history/#{latest_version}"
 
       resource = assert_fhir_response(FHIR::Citation)
       assert_equal cedar_identifier, resource.id
-      assert_equal artifact.versions.count + 1, resource.meta.versionId
+      assert_equal latest_version, resource.meta.versionId
       assert_equal artifact.title, resource.title
+    end
+
+    it 'returns 404 if version id is > latest version' do
+      cedar_identifier = 'abc-1'
+      artifact = Artifact.first(cedar_identifier: cedar_identifier)
+      latest_version = artifact.versions.count + 1
+
+      get "fhir/Citation/#{cedar_identifier}/_history/#{latest_version + 1}"
+
+      assert last_response.not_found?
     end
   end
 

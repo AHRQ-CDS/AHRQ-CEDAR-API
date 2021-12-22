@@ -174,7 +174,7 @@
         }
       }
     },
-    "/Citation/{id}/_history/{vid}": {
+    "/Citation/{id}/_history/{version_id}": {
       "get": {
         "tags": [
           "Citation"
@@ -191,7 +191,7 @@
             "type": "string"
           },
           {
-            "name": "vid",
+            "name": "version_id",
             "in": "path",
             "required": true,
             "type": "string"
