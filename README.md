@@ -21,7 +21,7 @@ bundle install
 
 This application requires that the CEDAR Admin application has been setup and run at least once for underlying CEDAR data models and initial data imports. The CEDAR Admin application is not required to be running for CEDAR API to function.
 
-To complete initial setup of CEDAR Admin, clone the CEDAR Admin repository. Follow the instructions on the CEDAR Admin README for any required dependencies specific to CEDAR Admin.
+To complete initial setup of CEDAR Admin, clone the CEDAR Admin repository. Follow the instructions on the CEDAR Admin README for any required dependencies specific to CEDAR Admin. (Particularly umls_concepts and mesh_concepts imports)
 
 To run CEDAR API:
 ```
