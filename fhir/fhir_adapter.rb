@@ -9,26 +9,34 @@ class FHIRAdapter
 
   HOSTNAME = ENV['HOSTNAME'] || 'http://cedar.arhq.gov'
 
-  def self.create_citation(artifact, artifact_base_url)
+  def self.create_citation(artifact, artifact_base_url, version_id, skip_concept: false)
     cedar_identifier = artifact[:cedar_identifier]
     # TODO: Put handling of JSONP array into model
     # TODO: Separate different types of keywords
     keywords = artifact.keywords
     keyword_list = keywords.map { |k| FHIR::CodeableConcept.new(text: k) }
-    umls_concepts = artifact.concepts
-    umls_concept_list = umls_concepts.map do |concept|
-      codes = concept.codes.map do |c|
-        {
-          system: FHIR_CODE_SYSTEM_URLS[c['system']],
-          code: c['code'],
-          display: c['description']
-        }
+
+    if skip_concept
+      umls_concept_list = []
+    else
+      umls_concepts = artifact.concepts
+      umls_concept_list = umls_concepts.map do |concept|
+        codes = concept.codes.map do |c|
+          {
+            system: FHIR_CODE_SYSTEM_URLS[c['system']],
+            code: c['code'],
+            display: c['description']
+          }
+        end
+        FHIR::CodeableConcept.new(text: concept.umls_description, coding: codes)
       end
-      FHIR::CodeableConcept.new(text: concept.umls_description, coding: codes)
     end
 
     citation = FHIR::Citation.new(
       id: cedar_identifier,
+      meta: {
+        versionId: version_id
+      },
       url: "#{artifact_base_url}/#{cedar_identifier}",
       identifier: [
         {
@@ -238,7 +246,7 @@ class FHIRAdapter
     return bundle if artifacts.nil?
 
     artifacts.each do |artifact|
-      citation = create_citation(artifact, base_url)
+      citation = create_citation(artifact, base_url, artifact.versions.count)
       bundle.entry << FHIR::Bundle::Entry.new(
         resource: citation
       )

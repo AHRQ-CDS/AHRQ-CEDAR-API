@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 require_relative 'setup'
+require_relative '../fhir/citation'
 
 # Data models
 class Artifact < Sequel::Model
   many_to_one :repository
   many_to_many :concepts
+  one_to_many :versions, key: :item_id, order: :id, conditions: { item_type: 'Artifact', event: 'update' }
 end
 
 class Repository < Sequel::Model
@@ -29,4 +31,14 @@ end
 class MeshTreeNode < Sequel::Model
   many_to_one :parent, class: self
   one_to_many :children, key: :parent_id, order: :name, class: self
+end
+
+# Data model for versions table
+class Version < Sequel::Model
+  many_to_one :artifacts
+
+  def build_artifact
+    Artifact.unrestrict_primary_key
+    Artifact.new(object)
+  end
 end

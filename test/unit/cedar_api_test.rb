@@ -49,9 +49,12 @@ describe 'cedar_api' do
 
   describe '/fhir/Citation endpoint' do
     it 'supports read with id' do
+      artifact = Artifact.first(cedar_identifier: 'abc-1')
+
       get '/fhir/Citation/abc-1'
 
       resource = assert_fhir_response(FHIR::Citation)
+
       assert_equal 'abc-1', resource.id
       assert_equal 'active', resource.status
       assert_equal 2, resource.citedArtifact.classification.size
@@ -66,6 +69,7 @@ describe 'cedar_api' do
       assert_equal FHIRCodeSystems::FHIR_CODE_SYSTEM_URLS['SNOMEDCT_US'],
                    resource.citedArtifact.classification[1].classifier[0].coding[1].system
       assert_equal 1, resource.citedArtifact.classification[1].classifier[1].coding.size
+      assert_equal artifact.versions.count + 1, resource.meta.versionId
     end
 
     it 'returns not found when read with invalid id' do
@@ -94,7 +98,7 @@ describe 'cedar_api' do
       end
     end
 
-    it 'validate search parameter values' do
+    it 'validates search parameter values' do
       get 'fhir/Citation?_content=cancer&artifact-current-state=active&_lastUpdated=et1990-01-01'
 
       resource = assert_fhir_response(FHIR::OperationOutcome)
@@ -102,6 +106,47 @@ describe 'cedar_api' do
       assert resource.issue.any? do |issue|
         issue.severity == 'error' && issue.code == 'value'
       end
+    end
+
+    it 'returns 404 if version id is 0' do
+      cedar_identifier = 'abc-1'
+      get "fhir/Citation/#{cedar_identifier}/_history/0"
+      assert last_response.not_found?
+    end
+
+    it 'supports read history with version id for a historical version' do
+      cedar_identifier = 'abc-1'
+      artifact = Artifact.first(cedar_identifier: cedar_identifier)
+
+      get "fhir/Citation/#{cedar_identifier}/_history/1"
+
+      resource = assert_fhir_response(FHIR::Citation)
+      assert_equal cedar_identifier, resource.id
+      assert_equal 1, resource.meta.versionId
+      assert_equal artifact.versions.first.object['title'], resource.title
+    end
+
+    it 'supports read history with version id for the current version' do
+      cedar_identifier = 'abc-1'
+      artifact = Artifact.first(cedar_identifier: cedar_identifier)
+      latest_version = artifact.versions.count + 1
+
+      get "fhir/Citation/#{cedar_identifier}/_history/#{latest_version}"
+
+      resource = assert_fhir_response(FHIR::Citation)
+      assert_equal cedar_identifier, resource.id
+      assert_equal latest_version, resource.meta.versionId
+      assert_equal artifact.title, resource.title
+    end
+
+    it 'returns 404 if version id is > latest version' do
+      cedar_identifier = 'abc-1'
+      artifact = Artifact.first(cedar_identifier: cedar_identifier)
+      latest_version = artifact.versions.count + 1
+
+      get "fhir/Citation/#{cedar_identifier}/_history/#{latest_version + 1}"
+
+      assert last_response.not_found?
     end
   end
 

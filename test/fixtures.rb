@@ -134,3 +134,27 @@ DB[:mesh_tree_nodes].insert(
   created_at: timestamp,
   updated_at: timestamp
 )
+DB[:import_runs].insert(
+  id: 501,
+  repository_id: 101,
+  total_count: 1,
+  created_at: timestamp,
+  updated_at: timestamp
+)
+
+DB[:versions].insert(
+  id: 601,
+  item_type: 'Artifact',
+  item_id: 201,
+  event: 'create',
+  import_run_id: 501
+)
+DB[:versions].insert(
+  id: 602,
+  item_id: 201,
+  item_type: 'Artifact',
+  event: 'update',
+  import_run_id: 501,
+  object: '{"id": 201, "cedar_identifier": "abc-1", "title": "title v1", "keywords": ["cancer", "adult"], '\
+          '"repository_id": 101}'
+)
