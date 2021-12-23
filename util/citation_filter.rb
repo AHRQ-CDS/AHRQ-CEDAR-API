@@ -269,6 +269,10 @@ class CitationFilter
   end
 
   def self.fhir_datetime_to_postgres_search(expression, column)
+    # Because column is passed in and is used directly in a SQL statement in a way that could allow SQL
+    # injection if it were user specified we take extra care to ensure that it's one of two valid values
+    raise 'Invalid column name specified' unless %w[updated_at published_on].include?(column)
+
     fhir_expr = parse_fhir_datetime_search(expression)
     case fhir_expr[:comparator]
     when 'gt', 'sa'
