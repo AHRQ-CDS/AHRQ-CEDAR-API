@@ -11,3 +11,9 @@ this Swagger UI release:
 
 During deployment this directory is copied into the nginx container
 and served statically.
+
+You can also explore it standalone via docker:
+```
+docker run -p 80:8080 -e SWAGGER_JSON=/tmp/swagger.json -v `pwd`:/tmp swaggerapi/swagger-ui
+```
+where `pwd` is this directory. Then view by navigating to localhost in browser.
