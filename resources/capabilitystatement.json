@@ -57,6 +57,11 @@
               "type": "string"
             },
             {
+              "name": "article-date",
+              "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-article-date",
+              "type": "date"
+            },
+            {
               "name": "page",
               "type": "number"
             },
