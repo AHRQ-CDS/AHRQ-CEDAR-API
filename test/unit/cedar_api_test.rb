@@ -108,6 +108,16 @@ describe 'cedar_api' do
       end
     end
 
+    it 'returns version number for all artifacts' do
+      Warning.ignore(/extra states are no longer copied/)
+      get '/fhir/Citation?_content=cancer&artifact-current-state=active'
+      bundle = assert_fhir_response(FHIR::Bundle)
+      bundle.entry.each do |entry|
+        artifact = Artifact.first(cedar_identifier: entry.resource.id)
+        assert_equal artifact.versions.count + 1, entry.resource.meta.versionId
+      end
+    end
+
     it 'returns 404 if version id is 0' do
       cedar_identifier = 'abc-1'
       get "fhir/Citation/#{cedar_identifier}/_history/0"
