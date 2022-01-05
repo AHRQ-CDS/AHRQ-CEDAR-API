@@ -57,7 +57,7 @@ class CitationFilter
   end
 
   def citations
-    @search_log.start_time = Time.now
+    @search_log.start_time = Time.now.utc
 
     filter = build_filter
 
@@ -82,7 +82,7 @@ class CitationFilter
     if @log_to_db
       @search_log.count = artifacts.count unless @page_size.zero?
       @search_log.total = total
-      @search_log.end_time = Time.now
+      @search_log.end_time = Time.now.utc
 
       begin
         @search_log.save_changes
