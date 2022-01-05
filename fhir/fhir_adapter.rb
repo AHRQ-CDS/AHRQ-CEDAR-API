@@ -251,7 +251,7 @@ class FHIRAdapter
     return bundle if artifacts.nil?
 
     artifacts.each do |artifact|
-      citation = create_citation(artifact, base_url, artifact.versions.count)
+      citation = create_citation(artifact, base_url, artifact.versions.count + 1)
       bundle.entry << FHIR::Bundle::Entry.new(
         resource: citation
       )
