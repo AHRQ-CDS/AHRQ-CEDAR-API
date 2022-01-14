@@ -111,8 +111,7 @@ namespace '/fhir' do
   end
 
   get '/Citation/$get-artifact-types' do
-    output = Artifact.exclude(artifact_type: nil).order(:artifact_type).distinct(:artifact_type).select(:artifact_type)
-
+    output = Artifact.exclude(artifact_type: '').order(:artifact_type).distinct(:artifact_type).select(:artifact_type)
     output = FHIRAdapter.create_artifact_types_output(output)
     output.to_json
   end
