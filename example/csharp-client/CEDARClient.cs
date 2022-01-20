@@ -29,9 +29,8 @@ namespace CEDARClient
           return fhirParameters;
         }
       } catch (Exception error) {
-        Console.WriteLine(error.ToString());
+        throw error;
       }
-      throw new Exception("Unknown Error");
     }
 
     private static async Task<Bundle> Search(
@@ -63,9 +62,8 @@ namespace CEDARClient
           return fhirBundle;
         }
       } catch (Exception error) {
-        Console.WriteLine(error.ToString());
+        throw error;
       }
-      throw new Exception("Unknown Error");
     }
 
     // Basic text search
