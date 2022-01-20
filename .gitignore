@@ -4,26 +4,8 @@ coverage
 .nova
 
 # C# Example
-*.swp
-*.*~
-project.lock.json
-*.pyc
-nupkg/
-*.suo
-*.user
-*.userosscache
-*.sln.docstates
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-x64/
-x86/
-build/
-bld/
-[Bb]in/
-[Oo]bj/
-[Oo]ut/
-msbuild.log
-msbuild.err
-msbuild.wrn
+example/csharp-client/[Dd]ebug/
+example/csharp-client/[Bb]in/
+example/csharp-client/[Oo]bj/
+example/csharp-client/[Oo]ut/
+example/csharp-client/*.*~
