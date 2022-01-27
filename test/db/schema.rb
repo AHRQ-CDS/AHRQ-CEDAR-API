@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_22_153224) do
+ActiveRecord::Schema.define(version: 2022_01_24_153500) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,6 +33,10 @@ ActiveRecord::Schema.define(version: 2021_10_22_153224) do
     t.tsvector "content_search"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "strength_of_recommendation_statement"
+    t.integer "strength_of_recommendation_score", default: 0
+    t.string "quality_of_evidence_statement"
+    t.integer "quality_of_evidence_score", default: 0
     t.index "to_tsvector('english'::regconfig, COALESCE(keyword_text, ''::text))", name: "index_artifacts_on_keyword_text", using: :gin
     t.index ["content_search"], name: "index_artifacts_on_content_search", using: :gin
     t.index ["keywords"], name: "index_artifacts_on_keywords", using: :gin
@@ -72,7 +76,8 @@ ActiveRecord::Schema.define(version: 2021_10_22_153224) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "delete_count", default: 0, null: false
-    t.integer "error_count", default: 0, null: false
+    t.jsonb "error_msgs", default: []
+    t.jsonb "warning_msgs", default: []
     t.index ["repository_id"], name: "index_import_runs_on_repository_id"
   end
 
@@ -93,11 +98,11 @@ ActiveRecord::Schema.define(version: 2021_10_22_153224) do
 
   create_table "repositories", force: :cascade do |t|
     t.string "alias"
-    t.string "name"
     t.string "fhir_id"
     t.string "home_page"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "name"
     t.index ["fhir_id"], name: "index_artifacts_on_fhir_id"
   end
 
@@ -117,6 +122,18 @@ ActiveRecord::Schema.define(version: 2021_10_22_153224) do
     t.string "name"
     t.string "value"
     t.index ["search_log_id"], name: "index_search_parameter_logs_on_search_log_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "username", default: "", null: false
+    t.integer "sign_in_count", default: 0, null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.inet "current_sign_in_ip"
+    t.inet "last_sign_in_ip"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["username"], name: "index_users_on_username", unique: true
   end
 
   create_table "versions", force: :cascade do |t|

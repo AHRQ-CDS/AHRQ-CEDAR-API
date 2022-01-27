@@ -28,6 +28,8 @@ DB[:artifacts].insert(
   keyword_text: 'cancer, adult',
   repository_id: 101,
   published_on: '2020-07-16',
+  strength_of_recommendation_score: 0,
+  quality_of_evidence_score: 0,
   created_at: old_artifact_timestamp,
   updated_at: old_artifact_timestamp
 )
@@ -43,6 +45,8 @@ DB[:artifacts].insert(
   keyword_text: 'diabetes, adult',
   repository_id: 102,
   published_on: '2021-07-16',
+  strength_of_recommendation_score: 0,
+  quality_of_evidence_score: 0,
   created_at: timestamp,
   updated_at: timestamp
 )
@@ -55,6 +59,8 @@ DB[:artifacts].insert(
   keywords: '["diabetes"]',
   keyword_text: 'diabetes',
   repository_id: 101,
+  strength_of_recommendation_score: 0,
+  quality_of_evidence_score: 0,
   created_at: timestamp,
   updated_at: timestamp
 )

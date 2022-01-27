@@ -316,6 +316,30 @@ describe CitationFilter do
       assert result
     end
 
+    it 'sorts results by code match count' do
+      search_codes = %w[D0001 D0002]
+      params = {
+        'classification' => search_codes.join(',')
+      }
+
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+
+      assert_bundle(bundle)
+      assert_equal('Bladder cancer', bundle.entry[0].resource.title)
+    end
+
+    it 'sorts results by publication date, all else being equal' do
+      search_codes = %w[D0002]
+      params = {
+        'classification' => search_codes.join(',')
+      }
+
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+
+      assert_bundle(bundle)
+      assert_equal('Diabetes', bundle.entry[0].resource.title)
+    end
+
     it 'supports search by multiple ANDed classification codes' do
       expected_codes = %w[D0001 D0002]
       params = {
