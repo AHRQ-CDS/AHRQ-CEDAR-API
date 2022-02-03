@@ -8,6 +8,20 @@ class FHIRAdapter
   include FHIRCodeSystems
 
   HOSTNAME = ENV['HOSTNAME'] || 'http://cedar.arhq.gov'
+  QUALITY_OF_EVIDENCE_CODES = [
+    {
+      code: 'low',
+      display: 'Low quality'
+    },
+    {
+      code: 'moderate',
+      display: 'Moderate quality'
+    },
+    {
+      code: 'high',
+      display: 'High quality'
+    }
+  ].freeze
 
   def self.create_citation(artifact, artifact_base_url, version_id, skip_concept: false)
     cedar_identifier = artifact[:cedar_identifier]
@@ -234,7 +248,46 @@ class FHIRAdapter
       )
     end
 
+    code = to_quality_code(artifact.strength_of_recommendation_score)
+    citation.citedArtifact.extension << FHIR::Extension.new(
+      url: 'http://cedar.arhq.gov/StructureDefinition/extension-strength-of-recommendation',
+      valueCodeableConcept: FHIR::CodeableConcept.new(
+        text: artifact.strength_of_recommendation_statement,
+        coding: [
+          FHIR::Coding.new(
+            code: code[:code],
+            system: 'http://terminology.hl7.org/CodeSystem/certainty-rating',
+            display: code[:display]
+          )
+        ]
+      )
+    )
+    code = to_quality_code(artifact.quality_of_evidence_score)
+    citation.citedArtifact.extension << FHIR::Extension.new(
+      url: 'http://cedar.arhq.gov/StructureDefinition/extension-quality-of-evidence',
+      valueCodeableConcept: FHIR::CodeableConcept.new(
+        text: artifact.quality_of_evidence_statement,
+        coding: [
+          FHIR::Coding.new(
+            code: code[:code],
+            system: 'http://terminology.hl7.org/CodeSystem/certainty-rating',
+            display: code[:display]
+          )
+        ]
+      )
+    )
+
     citation
+  end
+
+  def self.to_quality_code(score)
+    index = score.to_i # handle nil
+    index = if index.negative?
+              0
+            else
+              [index, QUALITY_OF_EVIDENCE_CODES.size - 1].min
+            end
+    QUALITY_OF_EVIDENCE_CODES[index]
   end
 
   def self.to_fhir_date(timestamp)
