@@ -1,22 +1,43 @@
-﻿using System.IO;
-using System.Text;
+﻿using System.Text;
 using System.Net.Http.Headers;
 using Bundle = Hl7.Fhir.Model.Bundle;
 using Parameters = Hl7.Fhir.Model.Parameters;
 using Hl7.Fhir.Serialization;
 
-
+/**
+ * CEDARClient namespace contains two classes implementing a basic dotnet 
+ * console app to demo usage of basic CEDAR API functionality. Also takes
+ * advantage of the C# FHIR SDK's implementation of the FHIR standard to provide
+ * interoperability, serialization, and deserialization without additional effort.
+ */
 namespace CEDARClient
 {
+  /**
+   * APIClient makes HttpClient requests to a running instance of the CEDAR
+   * API (assumed to be http://localhost:4567 by default) while FhirJsonParser
+   * from the FHIR SDK parses incoming FHIR+JSON responses from the CEDAR API
+   * into locally usable objects. It demos CEDAR functionality for searches and
+   * resource retrieval. For additional CEDAR API functionality, see CEDAR API docs
+   */
   class APIClient {
     private static readonly HttpClient client = new HttpClient();
     private static readonly string apiHost = "http://localhost:4567";
-    // Since CEDAR implements FHIR, we can just use the FHIR SDK
+
+    /**
+     * CEDAR API responses seem to contain some members that don't exactly match
+     * up to SDK definitions (maybe because SDK version is currently listed as 
+     * experimental). Accept them to avoid error, but they won't be available on
+     * the parsed object.
+     */ 
     private static FhirJsonParser fhirParser = new FhirJsonParser(
       new ParserSettings { AcceptUnknownMembers = true }
     );
 
-    // Retrieval of all artifact types
+    /**
+     * Demo CEDAR API resource retrieval via Artifact Types
+     * - API Request: GET /fhir/Citation/$get-artifact-types
+     * - Response: Parameter FHIR model in application/fhir+json format
+     */
     public static async Task<Parameters> GetArtifactTypes() {
       client.DefaultRequestHeaders.Accept.Clear();
       client.DefaultRequestHeaders.Accept.Add(
@@ -29,10 +50,25 @@ namespace CEDARClient
           return fhirParameters;
         }
       } catch (Exception error) {
-        throw error;
+        Console.WriteLine("ERROR: Unable to complete client request.\n{0}", error.StackTrace);
+        throw;
       }
     }
 
+    /**
+     * Demo CEDAR API search functionality with some basic query params/filters
+     * (more available, see CEDAR API docs)
+     * - API Request: GET /fhir/Citation?<query params>
+     * - Response: Bundle FHIR model in application/fhir+json format
+     * + Supported Params:
+     *   - count: number of items per page to be included in your bundle. default = 10
+     *   - page: desired page to be viewed in your bundle. default = 1
+     *   - artifactState: enum; either active, retired, draft, or unknown. default = active
+     *   - searchString: populated for searches of citations by text, otherwise null
+     *   - keywordString: populated for searches of citations by keyword, otherwise null
+     *   - artifactTypeString: filter for searches of citations by an available
+     *                         artifact type as indicated by GetArtifactTypes(), otherwise null
+     */
     private static async Task<Bundle> Search(
       string? searchString, string? keywordString, string? artifactTypeString,
       int count = 10, int page = 1, string artifactState = "active")
@@ -62,7 +98,8 @@ namespace CEDARClient
           return fhirBundle;
         }
       } catch (Exception error) {
-        throw error;
+        Console.WriteLine("ERROR: Unable to complete client request.\n{0}", error.StackTrace);
+        throw;
       }
     }
 
@@ -80,12 +117,14 @@ namespace CEDARClient
     public static async Task<Bundle> FilteredTextSearch(string searchString, string artifactTypeFilter) {
       return await Search(searchString, null, artifactTypeFilter);
     }
-
-    // Parsing responses and pulling out key data elements
-    // Deserialization (Parsing) and Serialization provided by Hl7.Fhir.R5 package
-    // Example use of parsed property Bundle.Total below
   }
 
+  /**
+   * ConsoleApp is a toy example allowing for APIClient to be called via
+   * `dotnet run` (which also handles building the project). It presents four
+   * options corresponding to APIClient methods and uses
+   * ControlFlow(methodSelection) to handle the bulk of console app I/O.
+   */
   class ConsoleApp {
     private static FhirJsonSerializer fhirSerializer = new FhirJsonSerializer(
       new SerializerSettings() { Pretty = true }
@@ -112,6 +151,14 @@ namespace CEDARClient
       Environment.Exit(0);
     }
 
+    /**
+     * Uses selection from Main() to run a demo method. Depending on method,
+     * further console input is piped to method as parameters. Output for each
+     * method simply utilizes FhirSerializer from the FHIR SDK to print the
+     * parsed FHIR model (received as a response from CEDAR API) back to the
+     * console as a prettified JSON string. Also demos use of parsed model to 
+     * report number of results returned from search methods.
+     */
     private static async Task ControlFlow(int methodSelection) {
       switch (methodSelection) {
         // Get Artifact Types
@@ -136,7 +183,7 @@ namespace CEDARClient
           }
           string textSearchContent = fhirSerializer.SerializeToString(textSearchBundle);
           Console.WriteLine(textSearchContent);
-          Console.WriteLine(String.Format("Successfully returned {0} result(s).", textSearchBundle.Total));
+          Console.WriteLine("Successfully returned {0} result(s).", textSearchBundle.Total);
           break;
 
         // Keyword Search
@@ -154,7 +201,7 @@ namespace CEDARClient
           }
           string keywordSearchContent = fhirSerializer.SerializeToString(keywordSearchBundle);
           Console.WriteLine(keywordSearchContent);
-          Console.WriteLine(String.Format("Successfully returned {0} result(s).", keywordSearchBundle.Total));
+          Console.WriteLine("Successfully returned {0} result(s).", keywordSearchBundle.Total);
           break;
 
         // Text Search with Artifact Type Filtering
@@ -176,7 +223,7 @@ namespace CEDARClient
             }
             string fallbackContent = fhirSerializer.SerializeToString(fallbackBundle);
             Console.WriteLine(fallbackContent);
-            Console.WriteLine(String.Format("Successfully returned {0} fallback result(s).", fallbackBundle.Total));
+            Console.WriteLine("Successfully returned {0} fallback result(s).", fallbackBundle.Total);
             break;
           }
           Bundle filteredTextSearchBundle = await APIClient.FilteredTextSearch(filteredTextQuery, artifactTypeFilter);
@@ -186,7 +233,7 @@ namespace CEDARClient
           }
           string filteredTextSearchContent = fhirSerializer.SerializeToString(filteredTextSearchBundle);
           Console.WriteLine(filteredTextSearchContent);
-          Console.WriteLine(String.Format("Successfully returned {0} result(s).", filteredTextSearchBundle.Total));
+          Console.WriteLine("Successfully returned {0} result(s).", filteredTextSearchBundle.Total);
           break;
 
         default:
