@@ -64,9 +64,9 @@ class CitationFilter
     # Create the filter then add the default ordering after whatever primary ordering (e.g. rank for free text)
     # is present
     filter = build_filter.order_append(Sequel.case(STATUS_SORT_ORDER, 4, :artifact_status))
-                         .order_append(Sequel.desc(:strength_of_recommendation_score))
                          .order_append(Sequel.desc(:published_on))
-                         .order_append(Sequel.desc(:quality_of_evidence_score))
+                         .order_append(Sequel.desc(:strength_of_recommendation_sort))
+                         .order_append(Sequel.desc(:quality_of_evidence_sort))
 
     begin
       paged_result = add_pagination(filter)

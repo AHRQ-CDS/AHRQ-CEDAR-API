@@ -9,3 +9,10 @@ example/csharp-client/[Bb]in/
 example/csharp-client/[Oo]bj/
 example/csharp-client/[Oo]ut/
 example/csharp-client/*.*~
+
+# FSH IG Sources
+fsh/fsh-generated
+fsh/input-cache
+fsh/output
+fsh/temp
+fsh/template

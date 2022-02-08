@@ -248,34 +248,31 @@ class FHIRAdapter
       )
     end
 
-    code = to_quality_code(artifact.strength_of_recommendation_score)
-    citation.citedArtifact.extension << FHIR::Extension.new(
-      url: 'http://cedar.arhq.gov/StructureDefinition/extension-strength-of-recommendation',
-      valueCodeableConcept: FHIR::CodeableConcept.new(
-        text: artifact.strength_of_recommendation_statement,
-        coding: [
-          FHIR::Coding.new(
-            code: code[:code],
-            system: 'http://terminology.hl7.org/CodeSystem/certainty-rating',
-            display: code[:display]
-          )
-        ]
+    %w[strength_of_recommendation quality_of_evidence].each do |property|
+      next if artifact.send("#{property}_statement").nil? && artifact.send("#{property}_score").nil?
+
+      code = to_quality_code(artifact.send("#{property}_sort"))
+      ext = FHIR::Extension.new(
+        url: "http://cedar.arhq.gov/StructureDefinition/extension-#{property.gsub('_', '-')}",
+        valueCodeableConcept: FHIR::CodeableConcept.new(
+          text: artifact.send("#{property}_statement"),
+          coding: [
+            FHIR::Coding.new(
+              code: code[:code],
+              system: 'http://terminology.hl7.org/CodeSystem/certainty-rating',
+              display: code[:display]
+            )
+          ]
+        )
       )
-    )
-    code = to_quality_code(artifact.quality_of_evidence_score)
-    citation.citedArtifact.extension << FHIR::Extension.new(
-      url: 'http://cedar.arhq.gov/StructureDefinition/extension-quality-of-evidence',
-      valueCodeableConcept: FHIR::CodeableConcept.new(
-        text: artifact.quality_of_evidence_statement,
-        coding: [
-          FHIR::Coding.new(
-            code: code[:code],
-            system: 'http://terminology.hl7.org/CodeSystem/certainty-rating',
-            display: code[:display]
-          )
-        ]
-      )
-    )
+      if artifact.send("#{property}_score").present?
+        ext.valueCodeableConcept.coding << FHIR::Coding.new(
+          display: artifact.send("#{property}_score"),
+          userSelected: true
+        )
+      end
+      citation.citedArtifact.extension << ext
+    end
 
     citation
   end
