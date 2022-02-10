@@ -16,6 +16,10 @@ This document explains how to use CEDAR API to search for PCOR artifacts using a
 
 This document is aimed at software developers intending to write code that interacts with the API. Some familiarity with the [Hypertext Transfer Protocol (HTTP)](https://datatracker.ietf.org/doc/html/rfc2616), [Uniform Resource Locators (URLs)](https://datatracker.ietf.org/doc/html/rfc3986) and [JavaScript Object Notation (JSON)](https://datatracker.ietf.org/doc/html/rfc8259) is assumed.
 
+## Example Code
+
+A simple [demonstration C# console application](c_sharp_example.html) that uses the CEDAR API is available as an example of API usage.
+
 ## API Usage
 
 The API is used via the simple HTTP request+response pattern. All API requests are read-only, use the HTTP `GET` method, and each request is standalone and idempotent.
