@@ -7,6 +7,7 @@ require 'sinatra'
 require 'sinatra/namespace'
 require 'sinatra/cross_origin'
 
+require_relative 'util/cedar_logger'
 require_relative 'database/models'
 require_relative 'fhir/fhir_adapter'
 require_relative 'util/citation_filter'
@@ -15,6 +16,7 @@ require_relative 'util/search_parser'
 configure do
   # Support cross-origin requests to allow JavaScript-based UIs hosted on different servers
   enable :cross_origin
+  set :logger, CedarLogger.logger
 end
 
 get '/' do
@@ -58,6 +60,7 @@ get '/demo' do
 end
 
 not_found do
+  logger.info "Request for unknown URL (#{request.url})"
   'Not found'
 end
 
@@ -104,7 +107,10 @@ namespace '/fhir' do
     id = params[:id]
 
     repository = Repository.first(fhir_id: id)
-    halt(404) if repository.nil?
+    if repository.nil?
+      logger.info "Request for unknown repository id (#{id})"
+      halt(404)
+    end
 
     citation = FHIRAdapter.create_organization(repository)
     citation.to_json
@@ -120,7 +126,10 @@ namespace '/fhir' do
     id = params[:id]
 
     artifact = Artifact.first(cedar_identifier: id)
-    halt(404) if artifact.nil?
+    if artifact.nil?
+      logger.info "Request for unknown artifact id (#{id})"
+      halt(404)
+    end
 
     citation = FHIRAdapter.create_citation(artifact, uri('fhir/Citation'), artifact.versions.count + 1)
     citation.to_json
@@ -131,11 +140,21 @@ namespace '/fhir' do
   get '/Citation/:id/_history/:version_id' do
     id = params[:id]
     version_id = params[:version_id].to_i
-    halt(404) if version_id < 1
+    if version_id < 1
+      logger.info "Request for invalid artifact (#{id}) version id (#{version_id})"
+      halt(404)
+    end
 
     base_artifact = Artifact.first(cedar_identifier: id)
-    halt(404) if base_artifact.nil?
-    halt(404) if version_id > base_artifact.versions.count + 1
+    if base_artifact.nil?
+      logger.info "Request for unknown artifact id (#{id})"
+      halt(404)
+    end
+
+    if version_id > base_artifact.versions.count + 1
+      logger.info "Request for invalid artifact (#{id}) version id (#{version_id})"
+      halt(404)
+    end
 
     citation = nil
 
@@ -152,6 +171,7 @@ namespace '/fhir' do
   get '/Citation' do
     # artifact-current-state is required
     unless params&.any? { |key, _value| key == 'artifact-current-state' }
+      logger.info 'Search request missing artifact-current-state'
       oo = FHIR::OperationOutcome.new(
         issue: [
           {
@@ -181,8 +201,10 @@ namespace '/fhir' do
       bundle = filter.citations
       bundle.to_json
     rescue FhirError => e
+      logger.error "Error creating FHIR Bundle: #{e.full_message}"
       e.to_operation_outcome_json
     rescue StandardError => e
+      logger.error "Search error: #{e.full_message}"
       oo = FHIR::OperationOutcome.new(
         issue: [
           {
@@ -223,6 +245,7 @@ namespace '/fhir' do
     if matching_file && File.exist?(matching_file)
       FHIR.from_contents(File.read(matching_file)).to_json
     else
+      logger.info "Request for unknown resource: #{id}"
       halt(404)
     end
   end

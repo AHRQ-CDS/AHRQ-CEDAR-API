@@ -9,6 +9,7 @@ require 'sinatra'
 require_relative '../database/models'
 require_relative '../fhir/fhir_adapter'
 require_relative 'errors'
+require_relative 'cedar_logger'
 
 # Helper methods for CEDAR API
 class CitationFilter
@@ -64,6 +65,7 @@ class CitationFilter
     begin
       paged_result = add_pagination(filter)
     rescue StandardError => e
+      CedarLogger.error "Failed to add search pagination: #{e.full_message}"
       raise DatabaseError.new(message: e.message)
     end
 
@@ -90,9 +92,9 @@ class CitationFilter
           p.search_log = @search_log
           p.save_changes
         end
-      rescue StandardError
+      rescue StandardError => e
+        CedarLogger.error "Failed to log search: #{e.full_message}"
         # We should continue the workflow if logging failed.
-        # Do we need to log to somewhere that logging failed?
       end
     end
 
@@ -166,7 +168,8 @@ class CitationFilter
         when 'artifact-type'
           filter = filter.where(Sequel.lit('LOWER(artifact_type) IN ?', search_terms))
         end
-      rescue StandardError
+      rescue StandardError => e
+        CedarLogger.error "Failed to add filter: #{e.full_message}"
         raise InvalidParameterError.new(parameter: key, value: value)
       end
     end
@@ -273,7 +276,7 @@ class CitationFilter
   def self.fhir_datetime_to_postgres_search(expression, column)
     # Because column is passed in and is used directly in a SQL statement in a way that could allow SQL
     # injection if it were user specified we take extra care to ensure that it's one of two valid values
-    raise 'Invalid column name specified' unless %w[updated_at published_on].include?(column)
+    raise "Invalid datetime column name specified (#{column})" unless %w[updated_at published_on].include?(column)
 
     fhir_expr = parse_fhir_datetime_search(expression)
     case fhir_expr[:comparator]
