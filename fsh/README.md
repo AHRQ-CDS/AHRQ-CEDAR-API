@@ -1,10 +1,13 @@
 # Generating FHIR Artifacts
 
+The [FHIR `StructureDefinition`](http://hl7.org/fhir/structuredefinition.html) resources used in the CEDAR API are generated from [FHIR Shorthand (FSH)](http://hl7.org/fhir/uv/shorthand/) source files. Instead of changing an extension by editing the corresponding file in the [`resources`](resources) directory, make changes to the files in [`fsh/input/fsh`](fsh/input/fsh) and follow the instructions below to update the generated files.
+
 ## Install Tools
 
 ```bash
 gem install jekyll
 npm install -g fsh-sushi
+cd fsh
 ./_updatePublisher.sh
 ```
 
