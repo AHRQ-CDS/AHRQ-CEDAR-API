@@ -32,6 +32,9 @@ require_relative '../cedar_api'
 require 'minitest/autorun'
 require 'rack/test'
 
+require_relative '../util/cedar_logger'
+CedarLogger.suppress_logging
+
 module CedarApi
   module TestHelper
     def app
