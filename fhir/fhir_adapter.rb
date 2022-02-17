@@ -8,6 +8,20 @@ class FHIRAdapter
   include FHIRCodeSystems
 
   HOSTNAME = ENV['HOSTNAME'] || 'http://cedar.arhq.gov'
+  QUALITY_OF_EVIDENCE_CODES = [
+    {
+      code: 'low',
+      display: 'Low quality'
+    },
+    {
+      code: 'moderate',
+      display: 'Moderate quality'
+    },
+    {
+      code: 'high',
+      display: 'High quality'
+    }
+  ].freeze
 
   def self.create_citation(artifact, artifact_base_url, version_id, skip_concept: false)
     cedar_identifier = artifact[:cedar_identifier]
@@ -234,7 +248,38 @@ class FHIRAdapter
       )
     end
 
+    %w[strength_of_recommendation quality_of_evidence].each do |property|
+      next if artifact.send("#{property}_statement").nil? && artifact.send("#{property}_score").nil?
+
+      code = to_quality_code(artifact.send("#{property}_sort"))
+      ext = FHIR::Extension.new(
+        url: "http://cedar.arhq.gov/StructureDefinition/extension-#{property.gsub('_', '-')}",
+        valueCodeableConcept: FHIR::CodeableConcept.new(
+          text: artifact.send("#{property}_statement"),
+          coding: [
+            FHIR::Coding.new(
+              code: code[:code],
+              system: 'http://terminology.hl7.org/CodeSystem/certainty-rating',
+              display: code[:display]
+            )
+          ]
+        )
+      )
+      if artifact.send("#{property}_score").present?
+        ext.valueCodeableConcept.coding << FHIR::Coding.new(
+          display: artifact.send("#{property}_score"),
+          userSelected: true
+        )
+      end
+      citation.citedArtifact.extension << ext
+    end
+
     citation
+  end
+
+  def self.to_quality_code(score)
+    index = score.to_i.clamp(0, QUALITY_OF_EVIDENCE_CODES.size - 1)
+    QUALITY_OF_EVIDENCE_CODES[index]
   end
 
   def self.to_fhir_date(timestamp)

@@ -44,3 +44,7 @@ ruby cedar_api.rb
 ```
 bundle exec rake
 ```
+
+## FHIR Definitions
+
+Read [Generating FHIR Artifacts](fsh/README.md) before making changes to the [FHIR `StructureDefinition`](http://hl7.org/fhir/structuredefinition.html) resources in the [`resources`](resources) directory.

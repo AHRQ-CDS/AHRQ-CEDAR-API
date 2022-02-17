@@ -15,6 +15,7 @@ require_relative 'cedar_logger'
 class CitationFilter
   UMLS_CODE_SYSTEM_IDS = FHIRAdapter::FHIR_CODE_SYSTEM_URLS.invert.freeze
   MULTIPLE_AND_PARAMETERS = ['classification'].freeze
+  STATUS_SORT_ORDER = { 'active' => 1, 'draft' => 2, 'unknown' => 3, 'retired' => 4 }.freeze
 
   def initialize(params:, base_url:, request_url:, client_ip: nil, log_to_db: false)
     @artifact_base_url = base_url
@@ -60,7 +61,12 @@ class CitationFilter
   def citations
     @search_log.start_time = Time.now.utc
 
-    filter = build_filter
+    # Create the filter then add the default ordering after whatever primary ordering (e.g. rank for free text)
+    # is present
+    filter = build_filter.order_append(Sequel.case(STATUS_SORT_ORDER, 4, :artifact_status))
+                         .order_append(Sequel.desc(:published_on))
+                         .order_append(Sequel.desc(:strength_of_recommendation_sort))
+                         .order_append(Sequel.desc(:quality_of_evidence_sort))
 
     begin
       paged_result = add_pagination(filter)
@@ -135,13 +141,33 @@ class CitationFilter
         when 'classification'
           @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
 
-          # handle multipleAnd search
-          artifact_ids = Array(value).map do |terms|
-            terms.split(',').map { |term| get_artifacts_with_concept(term) }.inject(:|) # OR for comma separated terms
+          # All matching artifacts for each concept, structure is three level nested array.
+          # E.g. classification=A,B&classification=C would yield the following
+          # [
+          #   [
+          #     [ artifact ids for concept A],
+          #     [ artifact ids for concept B]
+          #   ],
+          #   [
+          #     [ artifact ids for concept C],
+          #   ]
+          # ]
+          artifact_id_list = Array(value).map do |terms|
+            terms.split(',').map { |term| get_artifacts_with_concept(term) }
+          end
+
+          # distinct list of matching artifacts after applying ORs and ANDs between sets
+          distinct_ids = artifact_id_list.map do |ored_terms|
+            ored_terms.inject(:|) # OR for comma separated terms
           end.inject(:&) # AND for terms from separate arguments
 
-          filter = filter.where(Sequel[:artifacts][:id] => artifact_ids)
+          # Count how often each artifact id is present, a higher count means that artifact matched more concepts
+          id_frequency_counts = artifact_id_list.flatten.each_with_object({}) do |item, hsh|
+            hsh[item] = hsh[item].to_i + 1 # to_i since initial value will be nil
+          end
 
+          filter = filter.where(Sequel[:artifacts][:id] => distinct_ids)
+                         .order_append(Sequel.desc(Sequel.case(id_frequency_counts, 0, :id)))
         when 'classification:text'
           @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
           cols = SearchParser.parse(value)
