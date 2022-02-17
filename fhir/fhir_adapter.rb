@@ -278,12 +278,7 @@ class FHIRAdapter
   end
 
   def self.to_quality_code(score)
-    index = score.to_i # handle nil
-    index = if index.negative?
-              0
-            else
-              [index, QUALITY_OF_EVIDENCE_CODES.size - 1].min
-            end
+    index = score.to_i.clamp(0, QUALITY_OF_EVIDENCE_CODES.size - 1)
     QUALITY_OF_EVIDENCE_CODES[index]
   end
 
