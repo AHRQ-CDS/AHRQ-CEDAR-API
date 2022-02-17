@@ -1,23 +1,34 @@
-# Example C# Client App
-This is a small C# console app implementing some basic CEDAR API client demo
-functionality. Since the CEDAR API implements the FHIR standard, the client
-takes advantage of the [firely-net-sdk FHIR SDK](https://github.com/FirelyTeam/firely-net-sdk/tree/develop-r5)
-for deserialization (parsing) and serialization.
+# CEDAR C# Client Example
+This is a basic .NET console application that demonstrates usage of the
+[CEDAR API](https://cedar.ahrqdev.org/) as well as interoperability supported
+by the [FHIR standard](https://www.hl7.org/fhir/). CEDAR API features you can see
+in action include:
+- Basic resource retrieval
+- Text search support
+- Keyword search support
+- Text search with additional filtering parameter(s) support
+- FHIR Data Serialization & Deserialization (parsing) via 
+[firely-net-sdk FHIR SDK](https://github.com/FirelyTeam/firely-net-sdk/tree/develop-r5)
 
 ## Prerequisites
-- [dotnet](https://docs.microsoft.com/en-us/dotnet/core/install/)
 
-## Build & Run
-You may consider editing the `apiHost` variable in `CEDARClient.cs` depending on
-where the CEDAR API instance you plan to use is hosted. By default it is:
-```C#
-private static readonly string apiHost = "http://localhost:4567";
+- [dotnet](https://docs.microsoft.com/en-us/dotnet/core/install/) 6.0 or later
+
+## Getting Started
+The CEDAR API requires Basic Authentication in order to complete requests. To obtain
+credentials this application searches for `CEDAR_USER` and `CEDAR_PASS` in `System.Environment`.
+It also uses `DotNetEnv` to support `.env` files as an alternative. To quickly
+provide credentials, create a `.env` file in this directory and fill in the values:
 ```
-Once ready, simply:
+CEDAR_USER=
+CEDAR_PASS=
+```
+
+To build and run the application simply:
 ```
 dotnet run
 ```
-and follow the prompts from the console app.
+and follow the prompts on the console.
 
 ## Available Demo Operations
 1. **Get Artifact Types**: return a FHIR Parameters JSON string with all

@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DotNetEnv" Version="2.3.0" />
     <PackageReference Include="Hl7.Fhir.R5" Version="3.8.0" />
   </ItemGroup>
 
