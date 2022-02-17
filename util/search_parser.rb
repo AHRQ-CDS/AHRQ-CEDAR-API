@@ -28,7 +28,8 @@ class SearchParser
   # Returns a Concept for which the supplied term is a synonym or nil if none found
   def get_concepts(term)
     synonyms_op = Sequel.pg_jsonb_op(:synonyms_psql)
-    Concept.where(synonyms_op.contains([term]))
+    # Concept.where(...).empty? is very slow (20X) compared to Concept.where(...).all.empty?
+    Concept.where(synonyms_op.contains([term])).all
   end
 
   # Returns the supplied term if no synonyms are found or a bracketed set of synonyms
