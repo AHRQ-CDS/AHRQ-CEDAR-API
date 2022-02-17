@@ -9,6 +9,7 @@ example/csharp-client/[Bb]in/
 example/csharp-client/[Oo]bj/
 example/csharp-client/[Oo]ut/
 example/csharp-client/*.*~
+example/csharp-client/.env
 
 # FSH IG Sources
 fsh/fsh-generated

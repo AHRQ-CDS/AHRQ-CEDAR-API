@@ -4,31 +4,31 @@ using Bundle = Hl7.Fhir.Model.Bundle;
 using Parameters = Hl7.Fhir.Model.Parameters;
 using Hl7.Fhir.Serialization;
 
-/**
- * CEDARClient namespace contains two classes implementing a basic dotnet 
- * console app to demo usage of basic CEDAR API functionality. Also takes
- * advantage of the C# FHIR SDK's implementation of the FHIR standard to provide
- * interoperability, serialization, and deserialization without additional effort.
- */
-namespace CEDARClient
+
+namespace CEDARExample
 {
   /**
    * APIClient makes HttpClient requests to a running instance of the CEDAR
-   * API (assumed to be http://localhost:4567 by default) while FhirJsonParser
-   * from the FHIR SDK parses incoming FHIR+JSON responses from the CEDAR API
-   * into locally usable objects. It demos CEDAR functionality for searches and
-   * resource retrieval. For additional CEDAR API functionality, see CEDAR API docs
+   * API (assumed to be https://cedar.ahrqdev.org/api/ by default) while 
+   * FhirJsonParser from the FHIR SDK parses incoming FHIR+JSON responses from
+   * the CEDAR API into locally usable objects.
    */
   class APIClient {
-    private static readonly HttpClient client = new HttpClient();
-    private static readonly string apiHost = "http://localhost:4567";
+    private static readonly string apiHost = "https://cedar.ahrqdev.org/api";
+    private static HttpClient client = new HttpClient();
+
+    // Setup common HttpClient Authentication method
+    private static readonly string? username = Environment.GetEnvironmentVariable("CEDAR_USER");
+    private static readonly string? password = Environment.GetEnvironmentVariable("CEDAR_PASS");
+    private static string authToken = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+
 
     /**
-     * CEDAR API responses seem to contain some members that don't exactly match
-     * up to SDK definitions (maybe because SDK version is currently listed as 
-     * experimental). Accept them to avoid error, but they won't be available on
-     * the parsed object.
-     */ 
+     * CEDAR API responses don't exactly match SDK definitions because the SDK 
+     * release is still listed experimental but required to support the latest
+     * version of the FHIR standard. Accept these mismatches to avoid throwing
+     * errors, but they won't be available on the parsed object.
+     */
     private static FhirJsonParser fhirParser = new FhirJsonParser(
       new ParserSettings { AcceptUnknownMembers = true }
     );
@@ -37,11 +37,14 @@ namespace CEDARClient
      * Demo CEDAR API resource retrieval via Artifact Types
      * - API Request: GET /fhir/Citation/$get-artifact-types
      * - Response: Parameter FHIR model in application/fhir+json format
+     * - Docs: https://cedar.ahrqdev.org/swagger/#/Citation/get_Citation__get_artifact_types
      */
     public static async Task<Parameters> GetArtifactTypes() {
+      // Handle CEDAR API specific header info
       client.DefaultRequestHeaders.Accept.Clear();
       client.DefaultRequestHeaders.Accept.Add(
         new MediaTypeWithQualityHeaderValue("application/fhir+json"));
+      client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authToken);
 
       try {
         var request = client.GetStreamAsync(apiHost + "/fhir/Citation/$get-artifact-types");
@@ -57,7 +60,6 @@ namespace CEDARClient
 
     /**
      * Demo CEDAR API search functionality with some basic query params/filters
-     * (more available, see CEDAR API docs)
      * - API Request: GET /fhir/Citation?<query params>
      * - Response: Bundle FHIR model in application/fhir+json format
      * + Supported Params:
@@ -68,14 +70,17 @@ namespace CEDARClient
      *   - keywordString: populated for searches of citations by keyword, otherwise null
      *   - artifactTypeString: filter for searches of citations by an available
      *                         artifact type as indicated by GetArtifactTypes(), otherwise null
+     * - Docs: https://cedar.ahrqdev.org/swagger/#/Citation/get_Citation
      */
     private static async Task<Bundle> Search(
       string? searchString, string? keywordString, string? artifactTypeString,
       int count = 10, int page = 1, string artifactState = "active")
     {
+      // Handle CEDAR API specific header info
       client.DefaultRequestHeaders.Accept.Clear();
       client.DefaultRequestHeaders.Accept.Add(
         new MediaTypeWithQualityHeaderValue("application/fhir+json"));
+      client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authToken);
 
       UriBuilder queryBuilder = new UriBuilder(apiHost + "/fhir/Citation");
       queryBuilder.Query = String.Format(
@@ -120,10 +125,9 @@ namespace CEDARClient
   }
 
   /**
-   * ConsoleApp is a toy example allowing for APIClient to be called via
-   * `dotnet run` (which also handles building the project). It presents four
-   * options corresponding to APIClient methods and uses
-   * ControlFlow(methodSelection) to handle the bulk of console app I/O.
+   * ConsoleApp is a toy example allowing for APIClient to be called from the
+   * commandline. It presents four options corresponding to APIClient methods
+   * and uses ControlFlow(methodSelection) to handle the bulk of console app I/O.
    */
   class ConsoleApp {
     private static FhirJsonSerializer fhirSerializer = new FhirJsonSerializer(
@@ -131,6 +135,11 @@ namespace CEDARClient
     );
 
     static async Task Main(string[] args) {
+      if (!File.Exists(".env")) {
+        Console.WriteLine("ERROR: Unable to authenticate requests; missing .env");
+        Environment.Exit(126);  // Command invoked cannot execute
+      }
+      DotNetEnv.Env.Load();
       Console.WriteLine("CEDAR API C# Client Demo:");
       Console.WriteLine("  1. Get Artifact Types");
       Console.WriteLine("  2. Text Search");
@@ -154,10 +163,10 @@ namespace CEDARClient
     /**
      * Uses selection from Main() to run a demo method. Depending on method,
      * further console input is piped to method as parameters. Output for each
-     * method simply utilizes FhirSerializer from the FHIR SDK to print the
-     * parsed FHIR model (received as a response from CEDAR API) back to the
-     * console as a prettified JSON string. Also demos use of parsed model to 
-     * report number of results returned from search methods.
+     * method just utilizes FhirSerializer from the FHIR SDK to print the parsed
+     * FHIR model (received as a response from CEDAR API) back to the console as
+     * a prettified JSON string. It also demos use of a parsed model for the
+     * case of reporting number of results returned.
      */
     private static async Task ControlFlow(int methodSelection) {
       switch (methodSelection) {
