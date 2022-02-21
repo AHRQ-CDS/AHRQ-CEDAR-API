@@ -17,3 +17,11 @@ You can also explore it standalone via docker:
 docker run -p 80:8080 -e SWAGGER_JSON=/tmp/swagger.json -v `pwd`:/tmp swaggerapi/swagger-ui
 ```
 where `pwd` is this directory. Then view by navigating to localhost in browser.
+
+Steps to generate FHIR Swagger Models
+1. Clone https://github.com/microsoft/fhir-codegen
+2. Run `dotnet build` to build fhir-codegen-cli
+3. Run `dotnet run -p src/fhir-codegen-cli --load-r5 latest --language openapi` 
+4. Open generated file at generated/OpenApi-R5.json
+5. Copy necessary data type, classes to "definitions" section in swagger.json. 
+6. Convert swagger.json to swagger.yaml

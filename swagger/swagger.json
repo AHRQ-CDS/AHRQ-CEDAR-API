@@ -84,8 +84,8 @@
           {
             "name": "article-date:missing",
             "description": "cited artifact without publishing date",
-            "in": "boolean",
-            "type": "string"
+            "in": "query",
+            "type": "boolean"
           },          
           {
             "name": "classification",
@@ -3173,6 +3173,13 @@
           "description": "Bibliographic citation for the artifact",
           "type": "string"
         },
+        "classifier": {
+          "description": "Additional classifiers",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CodeableConcept"
+          }
+        },
         "display": {
           "description": "Brief description of the related artifact",
           "type": "string"
@@ -3196,15 +3203,14 @@
           "type": "string"
         },
         "resource": {
-          "description": "What resource is being referenced",
+          "description": "What artifact is being referenced",
           "type": "string"
+        },
+        "resourceReference": {
+          "$ref": "#/definitions/Reference"
         },
         "type": {
-          "description": "documentation | justification | citation | predecessor | successor | derived-from | depends-on | composed-of",
-          "type": "string"
-        },
-        "url": {
-          "description": "Where the artifact can be accessed",
+          "description": "documentation | justification | citation | predecessor | successor | derived-from | depends-on | composed-of | part-of | amends | amended-with | appends | appended-with | cites | cited-by | comments-on | comment-in | contains | contained-in | corrects | correction-in | replaces | replaced-with | retracts | retracted-by | signs | similar-to | supports | supported-with | transforms | transformed-into | transformed-with",
           "type": "string"
         }
       }
@@ -5062,7 +5068,7 @@
           "type": "string"
         },
         "identifier": {
-          "description": "Author identifier, eg ORCID",
+          "description": "Author identifier, e.g., ORCID",
           "type": "array",
           "items": {
             "$ref": "#/definitions/Identifier"
@@ -5071,11 +5077,6 @@
         "initials": {
           "description": "Initials for forename",
           "type": "string"
-        },
-        "listOrder": {
-          "format": "int32",
-          "description": "Used to code order of authors",
-          "type": "integer"
         },
         "modifierExtension": {
           "description": "Extensions that cannot be ignored even if unrecognized",
@@ -5086,6 +5087,11 @@
         },
         "name": {
           "$ref": "#/definitions/HumanName"
+        },
+        "rankingOrder": {
+          "format": "int32",
+          "description": "Ranked order of contribution",
+          "type": "integer"
         },
         "role": {
           "$ref": "#/definitions/CodeableConcept"
@@ -5447,58 +5453,6 @@
         }
       }
     },
-    "CitationRelatesToComponent": {
-      "description": "The artifact related to the cited artifact",
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/BackboneElement"
-        }
-      ],
-      "properties": {
-        "extension": {
-          "description": "Additional content defined by implementations",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Extension"
-          }
-        },
-        "id": {
-          "description": "Unique id for inter-element referencing",
-          "type": "string"
-        },
-        "modifierExtension": {
-          "description": "Extensions that cannot be ignored even if unrecognized",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Extension"
-          }
-        },
-        "relationshipType": {
-          "$ref": "#/definitions/CodeableConcept"
-        },
-        "targetUri": {
-          "description": "The article or artifact that the cited artifact is related to",
-          "type": "string"
-        },
-        "targetIdentifier": {
-          "$ref": "#/definitions/Identifier"
-        },
-        "targetReference": {
-          "$ref": "#/definitions/Reference"
-        },
-        "targetAttachment": {
-          "$ref": "#/definitions/Attachment"
-        },
-        "targetClassifier": {
-          "description": "The clasification of the related artifact",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/CodeableConcept"
-          }
-        }
-      }
-    },
     "CitationStatusDateComponent": {
       "description": "An effective date or period for a status of the cited artifact",
       "type": "object",
@@ -5573,7 +5527,11 @@
           "type": "string"
         },
         "type": {
-          "$ref": "#/definitions/CodeableConcept"
+          "description": "The kind of title",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CodeableConcept"
+          }
         }
       }
     },
@@ -5622,6 +5580,13 @@
         }
       ],
       "properties": {
+        "classifier": {
+          "description": "Code the reason for different URLs, e.g. abstract and full-text",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CodeableConcept"
+          }
+        },
         "extension": {
           "description": "Additional content defined by implementations",
           "type": "array",
@@ -5639,9 +5604,6 @@
           "items": {
             "$ref": "#/definitions/Extension"
           }
-        },
-        "type": {
-          "$ref": "#/definitions/CodeableConcept"
         },
         "url": {
           "description": "The specific URL",
@@ -5739,7 +5701,7 @@
           "description": "The artifact related to the cited artifact",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/CitationRelatesToComponent"
+            "$ref": "#/definitions/RelatedArtifact"
           }
         },
         "statusDate": {
@@ -5919,11 +5881,11 @@
           "description": "Why this citation is defined",
           "type": "string"
         },
-        "relatesTo": {
+        "relatedArtifact": {
           "description": "Artifact related to the Citation Resource",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/CitationRelatesToComponent"
+            "$ref": "#/definitions/RelatedArtifact"
           }
         },
         "reviewer": {

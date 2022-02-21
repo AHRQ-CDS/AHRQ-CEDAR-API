@@ -49,11 +49,11 @@ paths:
         - name: article-date
           description: date when cited artifact was published
           in: query
-          type: string    
+          type: string
         - name: article-date:missing
           description: cited artifact without publishing date
           in: query
-          type: boolean                  
+          type: boolean
         - name: classification
           description: concept in keywords.
           in: query
@@ -75,16 +75,11 @@ paths:
           in: query
           type: string
         - name: _count
-          description: >-
-            number of results per page. if _count is 0, server returns the
-            number of results only. if _count is not provided or less than 0,
-            all results are returned
+          description: number of results per page. if _count is 0, server returns the number of results only. if _count is not provided or less than 0, all results are returned
           in: query
           type: integer
         - name: page
-          description: >-
-            page number of the result. default is 1 (the first page). if page is
-            less than 1, default value is used
+          description: page number of the result. default is 1 (the first page). if page is less than 1, default value is used
           in: query
           type: integer
       responses:
@@ -92,7 +87,7 @@ paths:
           description: successful operation
           schema:
             $ref: '#/definitions/Bundle'
-  /Citation/$get-artifact-types:  
+  /Citation/$get-artifact-types:
     get:
       tags:
         - Citation
@@ -104,7 +99,6 @@ paths:
           description: successful operation
           schema:
             $ref: '#/definitions/Parameters'
-          
   /Citation/{id}:
     get:
       tags:
@@ -142,7 +136,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Citation'            
+            $ref: '#/definitions/Citation'
   /CodeSystem/$get-mesh-children:
     get:
       tags:
@@ -293,9 +287,7 @@ paths:
             $ref: '#/definitions/StructureDefinition'
 definitions:
   Address:
-    description: >-
-      An address expressed using postal conventions (as opposed to GPS or other
-      location definition formats)
+    description: An address expressed using postal conventions (as opposed to GPS or other location definition formats)
     type: object
     allOf:
       - $ref: '#/definitions/DataType'
@@ -754,9 +746,7 @@ definitions:
         description: Number of results
         type: integer
       mustSupport:
-        description: >-
-          Indicates specific structure elements that are referenced by the
-          knowledge module
+        description: Indicates specific structure elements that are referenced by the knowledge module
         type: array
         items:
           type: string
@@ -854,9 +844,7 @@ definitions:
       - $ref: '#/definitions/BackboneType'
     properties:
       additionalInstruction:
-        description: >-
-          Supplemental instruction or warnings to the patient - e.g. "with
-          meals", "may cause drowsiness"
+        description: Supplemental instruction or warnings to the patient - e.g. "with meals", "may cause drowsiness"
         type: array
         items:
           $ref: '#/definitions/CodeableConcept'
@@ -1278,9 +1266,7 @@ definitions:
         items:
           type: string
       targetProfile:
-        description: >-
-          Profile (StructureDefinition or IG) on the Reference/canonical target
-          - one must apply
+        description: Profile (StructureDefinition or IG) on the Reference/canonical target - one must apply
         type: array
         items:
           type: string
@@ -1848,9 +1834,7 @@ definitions:
         description: Concise definition for space-constrained presentation
         type: string
       sliceIsConstraining:
-        description: >-
-          If this slice definition constrains an inherited slice definition (or
-          not)
+        description: If this slice definition constrains an inherited slice definition (or not)
         type: boolean
       sliceName:
         description: Name for this particular element (in a set of slices)
@@ -2023,9 +2007,7 @@ definitions:
         description: Numerical value (with implicit precision)
         type: number
   Narrative:
-    description: >-
-      Human-readable summary of the resource (essential clinical and business
-      information)
+    description: Human-readable summary of the resource (essential clinical and business information)
     type: object
     allOf:
       - $ref: '#/definitions/DataType'
@@ -2201,6 +2183,11 @@ definitions:
       citation:
         description: Bibliographic citation for the artifact
         type: string
+      classifier:
+        description: Additional classifiers
+        type: array
+        items:
+          $ref: '#/definitions/CodeableConcept'
       display:
         description: Brief description of the related artifact
         type: string
@@ -2218,15 +2205,12 @@ definitions:
         description: Short label
         type: string
       resource:
-        description: What resource is being referenced
+        description: What artifact is being referenced
         type: string
+      resourceReference:
+        $ref: '#/definitions/Reference'
       type:
-        description: >-
-          documentation | justification | citation | predecessor | successor |
-          derived-from | depends-on | composed-of
-        type: string
-      url:
-        description: Where the artifact can be accessed
+        description: documentation | justification | citation | predecessor | successor | derived-from | depends-on | composed-of | part-of | amends | amended-with | appends | appended-with | cites | cited-by | comments-on | comment-in | contains | contained-in | corrects | correction-in | replaces | replaced-with | retracts | retracted-by | signs | similar-to | supports | supported-with | transforms | transformed-into | transformed-with
         type: string
   SampledData:
     description: A series of measurements taken by a device
@@ -2346,9 +2330,7 @@ definitions:
           $ref: '#/definitions/Extension'
       frequency:
         format: int32
-        description: >-
-          Indicates the number of repetitions that should occur within a period.
-          I.e. Event occurs frequency times per period
+        description: Indicates the number of repetitions that should occur within a period. I.e. Event occurs frequency times per period
         type: integer
       frequencyMax:
         format: int32
@@ -2363,9 +2345,7 @@ definitions:
         type: integer
       period:
         format: double
-        description: >-
-          The duration to which the frequency applies. I.e. Event occurs
-          frequency times per period
+        description: The duration to which the frequency applies. I.e. Event occurs frequency times per period
         type: number
       periodMax:
         format: double
@@ -2447,9 +2427,7 @@ definitions:
         description: Timing of the event
         type: string
       type:
-        description: >-
-          named-event | periodic | data-changed | data-added | data-modified |
-          data-removed | data-accessed | data-access-ended
+        description: named-event | periodic | data-changed | data-added | data-modified | data-removed | data-accessed | data-access-ended
         type: string
   UsageContext:
     description: Describes the context of use for a conformance or knowledge resource
@@ -2626,9 +2604,7 @@ definitions:
         items:
           $ref: '#/definitions/Extension'
       relation:
-        description: >-
-          See
-          http://www.iana.org/assignments/link-relations/link-relations.xhtml#link-relations-1
+        description: See http://www.iana.org/assignments/link-relations/link-relations.xhtml#link-relations-1
         type: string
       url:
         description: Reference details for the link
@@ -2673,10 +2649,7 @@ definitions:
         description: If search, the total number of matches
         type: integer
       type:
-        description: >-
-          document | message | transaction | transaction-response | batch |
-          batch-response | history | searchset | collection |
-          subscription-notification
+        description: document | message | transaction | transaction-response | batch | batch-response | history | searchset | collection | subscription-notification
         type: string
   CanonicalResource:
     description: Common Ancestor declaration for definitional resources
@@ -2756,9 +2729,7 @@ definitions:
         description: Name for this {{title}} (human friendly)
         type: string
       url:
-        description: >-
-          Canonical identifier for this {{title}}, represented as a URI
-          (globally unique)
+        description: Canonical identifier for this {{title}}, represented as a URI (globally unique)
         type: string
       useContext:
         description: The context that the content is intended to support
@@ -2940,9 +2911,7 @@ definitions:
       - $ref: '#/definitions/BackboneElement'
     properties:
       code:
-        description: >-
-          read | vread | update | patch | delete | history-instance |
-          history-type | create | search-type
+        description: read | vread | update | patch | delete | history-instance | history-type | create | search-type
         type: string
       documentation:
         description: Anything special about operation behavior
@@ -3017,9 +2986,7 @@ definitions:
         description: Name of search parameter
         type: string
       type:
-        description: >-
-          number | date | string | token | reference | composite | quantity |
-          uri | special
+        description: number | date | string | token | reference | composite | quantity | uri | special
         type: string
   CapabilityStatementResourceComponent:
     description: Resource served on the REST interface
@@ -3031,9 +2998,7 @@ definitions:
         description: If allows/uses conditional create
         type: boolean
       conditionalDelete:
-        description: >-
-          not-supported | single | multiple - how conditional delete is
-          supported
+        description: not-supported | single | multiple - how conditional delete is supported
         type: string
       conditionalRead:
         description: not-supported | modified-since | not-match | full-support
@@ -3340,9 +3305,7 @@ definitions:
         description: Name for this capability statement (human friendly)
         type: string
       url:
-        description: >-
-          Canonical identifier for this capability statement, represented as a
-          URI (globally unique)
+        description: Canonical identifier for this capability statement, represented as a URI (globally unique)
         type: string
       useContext:
         description: The context that the content is intended to support
@@ -3524,9 +3487,7 @@ definitions:
         items:
           $ref: '#/definitions/CodeableConcept'
       correspondingContact:
-        description: >-
-          Indication of which contributor is the corresponding contributor for
-          the role
+        description: Indication of which contributor is the corresponding contributor for the role
         type: boolean
       extension:
         description: Additional content defined by implementations
@@ -3537,17 +3498,13 @@ definitions:
         description: Unique id for inter-element referencing
         type: string
       identifier:
-        description: Author identifier, eg ORCID
+        description: Author identifier, e.g., ORCID
         type: array
         items:
           $ref: '#/definitions/Identifier'
       initials:
         description: Initials for forename
         type: string
-      listOrder:
-        format: int32
-        description: Used to code order of authors
-        type: integer
       modifierExtension:
         description: Extensions that cannot be ignored even if unrecognized
         type: array
@@ -3555,6 +3512,10 @@ definitions:
           $ref: '#/definitions/Extension'
       name:
         $ref: '#/definitions/HumanName'
+      rankingOrder:
+        format: int32
+        description: Ranked order of contribution
+        type: integer
       role:
         $ref: '#/definitions/CodeableConcept'
       telecom:
@@ -3563,9 +3524,7 @@ definitions:
         items:
           $ref: '#/definitions/ContactPoint'
   CitationSummaryComponent:
-    description: >-
-      Used to record a display of the author/contributor list without separate
-      coding for each list member
+    description: Used to record a display of the author/contributor list without separate coding for each list member
     type: object
     allOf:
       - $ref: '#/definitions/BackboneElement'
@@ -3590,9 +3549,7 @@ definitions:
       type:
         $ref: '#/definitions/CodeableConcept'
       value:
-        description: >-
-          The display string for the author list, contributor list, or
-          contributorship statement
+        description: The display string for the author list, contributor list, or contributorship statement
         type: string
   CitationContributorshipComponent:
     description: Attribution of authors and other contributors
@@ -3622,9 +3579,7 @@ definitions:
         items:
           $ref: '#/definitions/Extension'
       summary:
-        description: >-
-          Used to record a display of the author/contributor list without
-          separate coding for each list member
+        description: Used to record a display of the author/contributor list without separate coding for each list member
         type: array
         items:
           $ref: '#/definitions/CitationSummaryComponent'
@@ -3686,9 +3641,7 @@ definitions:
         description: Season on which the issue of the journal was published
         type: string
       text:
-        description: >-
-          Text representation of the date of which the issue of the journal was
-          published
+        description: Text representation of the date of which the issue of the journal was published
         type: string
       year:
         description: Year on which the issue of the journal was published
@@ -3737,9 +3690,7 @@ definitions:
         description: Unique id for inter-element referencing
         type: string
       identifier:
-        description: >-
-          Journal identifiers include ISSN, ISO Abbreviation and NLMuniqueID;
-          Book identifiers include ISBN
+        description: Journal identifiers include ISSN, ISO Abbreviation and NLMuniqueID; Book identifiers include ISBN
         type: array
         items:
           $ref: '#/definitions/Identifier'
@@ -3759,9 +3710,7 @@ definitions:
       type:
         $ref: '#/definitions/CodeableConcept'
   CitationPublicationFormComponent:
-    description: >-
-      If multiple, used to represent alternative forms of the article that are
-      not separate citations
+    description: If multiple, used to represent alternative forms of the article that are not separate citations
     type: object
     allOf:
       - $ref: '#/definitions/BackboneElement'
@@ -3770,9 +3719,7 @@ definitions:
         description: Entry number or identifier for inclusion in a database
         type: string
       articleDate:
-        description: >-
-          The date the article was added to the database, or the date the
-          article was released
+        description: The date the article was added to the database, or the date the article was released
         type: string
       copyright:
         description: Copyright notice for the full article or artifact
@@ -3814,41 +3761,6 @@ definitions:
         $ref: '#/definitions/CitationPeriodicReleaseComponent'
       publishedIn:
         $ref: '#/definitions/CitationPublishedInComponent'
-  CitationRelatesToComponent:
-    description: The artifact related to the cited artifact
-    type: object
-    allOf:
-      - $ref: '#/definitions/BackboneElement'
-    properties:
-      extension:
-        description: Additional content defined by implementations
-        type: array
-        items:
-          $ref: '#/definitions/Extension'
-      id:
-        description: Unique id for inter-element referencing
-        type: string
-      modifierExtension:
-        description: Extensions that cannot be ignored even if unrecognized
-        type: array
-        items:
-          $ref: '#/definitions/Extension'
-      relationshipType:
-        $ref: '#/definitions/CodeableConcept'
-      targetUri:
-        description: The article or artifact that the cited artifact is related to
-        type: string
-      targetIdentifier:
-        $ref: '#/definitions/Identifier'
-      targetReference:
-        $ref: '#/definitions/Reference'
-      targetAttachment:
-        $ref: '#/definitions/Attachment'
-      targetClassifier:
-        description: The clasification of the related artifact
-        type: array
-        items:
-          $ref: '#/definitions/CodeableConcept'
   CitationStatusDateComponent:
     description: An effective date or period for a status of the cited artifact
     type: object
@@ -3900,7 +3812,10 @@ definitions:
         description: The title of the article or artifact
         type: string
       type:
-        $ref: '#/definitions/CodeableConcept'
+        description: The kind of title
+        type: array
+        items:
+          $ref: '#/definitions/CodeableConcept'
   CitationVersionComponent:
     description: The defined version of the cited artifact
     type: object
@@ -3931,6 +3846,11 @@ definitions:
     allOf:
       - $ref: '#/definitions/BackboneElement'
     properties:
+      classifier:
+        description: Code the reason for different URLs, e.g. abstract and full-text
+        type: array
+        items:
+          $ref: '#/definitions/CodeableConcept'
       extension:
         description: Additional content defined by implementations
         type: array
@@ -3944,8 +3864,6 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Extension'
-      type:
-        $ref: '#/definitions/CodeableConcept'
       url:
         description: The specific URL
         type: string
@@ -4001,9 +3919,7 @@ definitions:
       part:
         $ref: '#/definitions/CitationPartComponent'
       publicationForm:
-        description: >-
-          If multiple, used to represent alternative forms of the article that
-          are not separate citations
+        description: If multiple, used to represent alternative forms of the article that are not separate citations
         type: array
         items:
           $ref: '#/definitions/CitationPublicationFormComponent'
@@ -4016,7 +3932,7 @@ definitions:
         description: The artifact related to the cited artifact
         type: array
         items:
-          $ref: '#/definitions/CitationRelatesToComponent'
+          $ref: '#/definitions/RelatedArtifact'
       statusDate:
         description: An effective date or period for a status of the cited artifact
         type: array
@@ -4035,9 +3951,7 @@ definitions:
         items:
           $ref: '#/definitions/CitationWebLocationComponent'
   Citation:
-    description: >-
-      A description of identification, location, or contributorship of a
-      publication (article or artifact)
+    description: A description of identification, location, or contributorship of a publication (article or artifact)
     pattern: Citation
     type: object
     allOf:
@@ -4069,9 +3983,7 @@ definitions:
         items:
           $ref: '#/definitions/Resource'
       copyright:
-        description: >-
-          Use and/or publishing restrictions for the Citation, not for the cited
-          artifact
+        description: Use and/or publishing restrictions for the Citation, not for the cited artifact
         type: string
       currentState:
         description: The status of the citation
@@ -4142,18 +4054,16 @@ definitions:
         items:
           $ref: '#/definitions/Annotation'
       publisher:
-        description: >-
-          The publisher of the Citation, not the publisher of the article or
-          artifact being cited
+        description: The publisher of the Citation, not the publisher of the article or artifact being cited
         type: string
       purpose:
         description: Why this citation is defined
         type: string
-      relatesTo:
+      relatedArtifact:
         description: Artifact related to the Citation Resource
         type: array
         items:
-          $ref: '#/definitions/CitationRelatesToComponent'
+          $ref: '#/definitions/RelatedArtifact'
       reviewer:
         description: Who reviewed the Citation
         type: array
@@ -4178,9 +4088,7 @@ definitions:
         description: Name for this citation (human friendly)
         type: string
       url:
-        description: >-
-          Canonical identifier for this citation, represented as a globally
-          unique URI
+        description: Canonical identifier for this citation, represented as a globally unique URI
         type: string
       useContext:
         description: The context that the Citation Resource content is intended to support
@@ -4344,9 +4252,7 @@ definitions:
         items:
           $ref: '#/definitions/Address'
       alias:
-        description: >-
-          A list of alternate names that the organization is known as, or was
-          known as in the past
+        description: A list of alternate names that the organization is known as, or was known as in the past
         type: array
         items:
           type: string
@@ -4361,9 +4267,7 @@ definitions:
         items:
           $ref: '#/definitions/Resource'
       endpoint:
-        description: >-
-          Technical endpoints providing access to services operated for the
-          organization
+        description: Technical endpoints providing access to services operated for the organization
         type: array
         items:
           $ref: '#/definitions/Reference'
@@ -4532,9 +4436,7 @@ definitions:
         items:
           $ref: '#/definitions/OperationDefinitionReferencedFromComponent'
       searchType:
-        description: >-
-          number | date | string | token | reference | composite | quantity |
-          uri | special
+        description: number | date | string | token | reference | composite | quantity | uri | special
         type: string
       targetProfile:
         description: If type is Reference | canonical, allowed targets
@@ -4662,9 +4564,7 @@ definitions:
         description: Invoke at the type level?
         type: boolean
       url:
-        description: >-
-          Canonical identifier for this operation definition, represented as a
-          URI (globally unique)
+        description: Canonical identifier for this operation definition, represented as a URI (globally unique)
         type: string
       useContext:
         description: The context that the content is intended to support
@@ -4977,9 +4877,7 @@ definitions:
       meta:
         $ref: '#/definitions/Meta'
       modifier:
-        description: >-
-          missing | exact | contains | not | text | in | not-in | below | above
-          | type | identifier | ofType
+        description: missing | exact | contains | not | text | in | not-in | below | above | type | identifier | ofType
         type: array
         items:
           type: string
@@ -5014,14 +4912,10 @@ definitions:
       text:
         $ref: '#/definitions/Narrative'
       type:
-        description: >-
-          number | date | string | token | reference | composite | quantity |
-          uri | special
+        description: number | date | string | token | reference | composite | quantity | uri | special
         type: string
       url:
-        description: >-
-          Canonical identifier for this search parameter, represented as a URI
-          (globally unique)
+        description: Canonical identifier for this search parameter, represented as a URI (globally unique)
         type: string
       useContext:
         description: The context that the content is intended to support
@@ -5261,9 +5155,7 @@ definitions:
         description: Type defined or constrained by this structure
         type: string
       url:
-        description: >-
-          Canonical identifier for this structure definition, represented as a
-          URI (globally unique)
+        description: Canonical identifier for this structure definition, represented as a URI (globally unique)
         type: string
       useContext:
         description: The context that the content is intended to support
