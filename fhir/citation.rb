@@ -41,7 +41,7 @@ module FHIR
       'note' => {'type'=>'Annotation', 'path'=>'Citation.note', 'min'=>0, 'max'=>Float::INFINITY},
       'currentState' => {'type'=>'CodeableConcept', 'path'=>'Citation.currentState', 'min'=>0, 'max'=>Float::INFINITY, 'binding'=>{'strength'=>'example', 'uri'=>'http://hl7.org/fhir/ValueSet/citation-status-type'}},
       'statusDate' => {'type'=>'Citation::StatusDate', 'path'=>'Citation.statusDate', 'min'=>0, 'max'=>Float::INFINITY},
-      'relatesTo' => {'type'=>'Citation::RelatesTo', 'path'=>'Citation.relatesTo', 'min'=>0, 'max'=>Float::INFINITY},
+      'relatedArtifact' => {'type'=>'RelatedArtifact', 'path'=>'Citation.relatedArtifact', 'min'=>0, 'max'=>Float::INFINITY},
       'citedArtifact' => {'type'=>'Citation::CitedArtifact', 'path'=>'Citation.citedArtifact', 'min'=>0, 'max'=>1}
     }
 
@@ -107,37 +107,6 @@ module FHIR
       attr_accessor :period            # 1-1 Period
     end
 
-    class RelatesTo < FHIR::Model
-      include FHIR::Hashable
-      include FHIR::Json
-      include FHIR::Xml
-
-      MULTIPLE_TYPES = {
-        'target' => ['uri', 'Identifier', 'Reference', 'Attachment']
-      }
-      METADATA = {
-        'id' => {'type'=>'string', 'path'=>'RelatesTo.id', 'min'=>0, 'max'=>1},
-        'extension' => {'type'=>'Extension', 'path'=>'RelatesTo.extension', 'min'=>0, 'max'=>Float::INFINITY},
-        'modifierExtension' => {'type'=>'Extension', 'path'=>'RelatesTo.modifierExtension', 'min'=>0, 'max'=>Float::INFINITY},
-        'relationshipType' => {'type'=>'CodeableConcept', 'path'=>'RelatesTo.relationshipType', 'min'=>1, 'max'=>1, 'binding'=>{'strength'=>'extensible', 'uri'=>'http://hl7.org/fhir/ValueSet/artifact-relationship-type'}},
-        'targetClassifier' => {'type'=>'CodeableConcept', 'path'=>'RelatesTo.targetClassifier', 'min'=>0, 'max'=>Float::INFINITY, 'binding'=>{'strength'=>'example', 'uri'=>'http://hl7.org/fhir/ValueSet/citation-artifact-classifier'}},
-        'targetUri' => {'type'=>'uri', 'path'=>'RelatesTo.target[x]', 'min'=>1, 'max'=>1},
-        'targetIdentifier' => {'type'=>'Identifier', 'path'=>'RelatesTo.target[x]', 'min'=>1, 'max'=>1},
-        'targetReference' => {'type_profiles'=>['http://hl7.org/fhir/StructureDefinition/Resource'], 'type'=>'Reference', 'path'=>'RelatesTo.target[x]', 'min'=>1, 'max'=>1},
-        'targetAttachment' => {'type'=>'Attachment', 'path'=>'RelatesTo.target[x]', 'min'=>1, 'max'=>1}
-      }
-
-      attr_accessor :id                # 0-1 string
-      attr_accessor :extension         # 0-* [ Extension ]
-      attr_accessor :modifierExtension # 0-* [ Extension ]
-      attr_accessor :relationshipType  # 1-1 CodeableConcept
-      attr_accessor :targetClassifier  # 0-* [ CodeableConcept ]
-      attr_accessor :targetUri         # 1-1 uri
-      attr_accessor :targetIdentifier  # 1-1 Identifier
-      attr_accessor :targetReference   # 1-1 Reference(Resource)
-      attr_accessor :targetAttachment  # 1-1 Attachment
-    end
-
     class CitedArtifact < FHIR::Model
       include FHIR::Hashable
       include FHIR::Json
@@ -156,7 +125,7 @@ module FHIR
         'title' => {'type'=>'Citation::CitedArtifact::Title', 'path'=>'CitedArtifact.title', 'min'=>0, 'max'=>Float::INFINITY},
         'abstract' => {'type'=>'Citation::CitedArtifact::Abstract', 'path'=>'CitedArtifact.abstract', 'min'=>0, 'max'=>Float::INFINITY},
         'part' => {'type'=>'Citation::CitedArtifact::Part', 'path'=>'CitedArtifact.part', 'min'=>0, 'max'=>1},
-        'relatesTo' => {'type'=>'Citation::CitedArtifact::RelatesTo', 'path'=>'CitedArtifact.relatesTo', 'min'=>0, 'max'=>Float::INFINITY},
+        'relatesTo' => {'type'=>'RelatedArtifact', 'path'=>'CitedArtifact.relatesTo', 'min'=>0, 'max'=>Float::INFINITY},
         'publicationForm' => {'type'=>'Citation::CitedArtifact::PublicationForm', 'path'=>'CitedArtifact.publicationForm', 'min'=>0, 'max'=>Float::INFINITY},
         'webLocation' => {'type'=>'Citation::CitedArtifact::WebLocation', 'path'=>'CitedArtifact.webLocation', 'min'=>0, 'max'=>Float::INFINITY},
         'classification' => {'type'=>'Citation::CitedArtifact::Classification', 'path'=>'CitedArtifact.classification', 'min'=>0, 'max'=>Float::INFINITY},
@@ -215,7 +184,7 @@ module FHIR
           'id' => {'type'=>'string', 'path'=>'Title.id', 'min'=>0, 'max'=>1},
           'extension' => {'type'=>'Extension', 'path'=>'Title.extension', 'min'=>0, 'max'=>Float::INFINITY},
           'modifierExtension' => {'type'=>'Extension', 'path'=>'Title.modifierExtension', 'min'=>0, 'max'=>Float::INFINITY},
-          'type' => {'type'=>'CodeableConcept', 'path'=>'Title.type', 'min'=>0, 'max'=>1, 'binding'=>{'strength'=>'extensible', 'uri'=>'http://hl7.org/fhir/ValueSet/title-type'}},
+          'type' => {'type'=>'CodeableConcept', 'path'=>'Title.type', 'min'=>0, 'max'=>Float::INFINITY, 'binding'=>{'strength'=>'extensible', 'uri'=>'http://hl7.org/fhir/ValueSet/title-type'}},
           'language' => {'valid_codes'=>{'urn:ietf:bcp:47'=>['ar', 'bn', 'cs', 'da', 'de', 'de-AT', 'de-CH', 'de-DE', 'el', 'en', 'en-AU', 'en-CA', 'en-GB', 'en-IN', 'en-NZ', 'en-SG', 'en-US', 'es', 'es-AR', 'es-ES', 'es-UY', 'fi', 'fr', 'fr-BE', 'fr-CH', 'fr-FR', 'fy', 'fy-NL', 'hi', 'hr', 'it', 'it-CH', 'it-IT', 'ja', 'ko', 'nl', 'nl-BE', 'nl-NL', 'no', 'no-NO', 'pa', 'pl', 'pt', 'pt-BR', 'ru', 'ru-RU', 'sr', 'sr-RS', 'sv', 'sv-SE', 'te', 'zh', 'zh-CN', 'zh-HK', 'zh-SG', 'zh-TW']}, 'type'=>'CodeableConcept', 'path'=>'Title.language', 'min'=>0, 'max'=>1, 'binding'=>{'strength'=>'preferred', 'uri'=>'http://hl7.org/fhir/ValueSet/languages'}},
           'text' => {'type'=>'markdown', 'path'=>'Title.text', 'min'=>1, 'max'=>1}
         }
@@ -223,7 +192,7 @@ module FHIR
         attr_accessor :id                # 0-1 string
         attr_accessor :extension         # 0-* [ Extension ]
         attr_accessor :modifierExtension # 0-* [ Extension ]
-        attr_accessor :type              # 0-1 CodeableConcept
+        attr_accessor :type              # 0-* [ CodeableConcept ]
         attr_accessor :language          # 0-1 CodeableConcept
         attr_accessor :text              # 1-1 markdown
       end
@@ -272,37 +241,6 @@ module FHIR
         attr_accessor :type              # 0-1 CodeableConcept
         attr_accessor :value             # 0-1 string
         attr_accessor :baseCitation      # 0-1 Reference(Citation)
-      end
-
-      class RelatesTo < FHIR::Model
-        include FHIR::Hashable
-        include FHIR::Json
-        include FHIR::Xml
-
-        MULTIPLE_TYPES = {
-          'target' => ['uri', 'Identifier', 'Reference', 'Attachment']
-        }
-        METADATA = {
-          'id' => {'type'=>'string', 'path'=>'RelatesTo.id', 'min'=>0, 'max'=>1},
-          'extension' => {'type'=>'Extension', 'path'=>'RelatesTo.extension', 'min'=>0, 'max'=>Float::INFINITY},
-          'modifierExtension' => {'type'=>'Extension', 'path'=>'RelatesTo.modifierExtension', 'min'=>0, 'max'=>Float::INFINITY},
-          'relationshipType' => {'type'=>'CodeableConcept', 'path'=>'RelatesTo.relationshipType', 'min'=>1, 'max'=>1, 'binding'=>{'strength'=>'extensible', 'uri'=>'http://hl7.org/fhir/ValueSet/artifact-relationship-type'}},
-          'targetClassifier' => {'type'=>'CodeableConcept', 'path'=>'RelatesTo.targetClassifier', 'min'=>0, 'max'=>Float::INFINITY, 'binding'=>{'strength'=>'example', 'uri'=>'http://hl7.org/fhir/ValueSet/citation-artifact-classifier'}},
-          'targetUri' => {'type'=>'uri', 'path'=>'RelatesTo.target[x]', 'min'=>1, 'max'=>1},
-          'targetIdentifier' => {'type'=>'Identifier', 'path'=>'RelatesTo.target[x]', 'min'=>1, 'max'=>1},
-          'targetReference' => {'type_profiles'=>['http://hl7.org/fhir/StructureDefinition/Resource'], 'type'=>'Reference', 'path'=>'RelatesTo.target[x]', 'min'=>1, 'max'=>1},
-          'targetAttachment' => {'type'=>'Attachment', 'path'=>'RelatesTo.target[x]', 'min'=>1, 'max'=>1}
-        }
-
-        attr_accessor :id                # 0-1 string
-        attr_accessor :extension         # 0-* [ Extension ]
-        attr_accessor :modifierExtension # 0-* [ Extension ]
-        attr_accessor :relationshipType  # 1-1 CodeableConcept
-        attr_accessor :targetClassifier  # 0-* [ CodeableConcept ]
-        attr_accessor :targetUri         # 1-1 uri
-        attr_accessor :targetIdentifier  # 1-1 Identifier
-        attr_accessor :targetReference   # 1-1 Reference(Resource)
-        attr_accessor :targetAttachment  # 1-1 Attachment
       end
 
       class PublicationForm < FHIR::Model
@@ -362,7 +300,7 @@ module FHIR
             'id' => {'type'=>'string', 'path'=>'PeriodicRelease.id', 'min'=>0, 'max'=>1},
             'extension' => {'type'=>'Extension', 'path'=>'PeriodicRelease.extension', 'min'=>0, 'max'=>Float::INFINITY},
             'modifierExtension' => {'type'=>'Extension', 'path'=>'PeriodicRelease.modifierExtension', 'min'=>0, 'max'=>Float::INFINITY},
-            'citedMedium' => {'type'=>'CodeableConcept', 'path'=>'PeriodicRelease.citedMedium', 'min'=>0, 'max'=>1, 'binding'=>{'strength'=>'extensible', 'uri'=>'http://hl7.org/fhir/ValueSet/journal-issue-medium'}},
+            'citedMedium' => {'type'=>'CodeableConcept', 'path'=>'PeriodicRelease.citedMedium', 'min'=>0, 'max'=>1, 'binding'=>{'strength'=>'extensible', 'uri'=>'http://hl7.org/fhir/ValueSet/cited-medium'}},
             'volume' => {'type'=>'string', 'path'=>'PeriodicRelease.volume', 'min'=>0, 'max'=>1},
             'issue' => {'type'=>'string', 'path'=>'PeriodicRelease.issue', 'min'=>0, 'max'=>1},
             'dateOfPublication' => {'type'=>'Citation::CitedArtifact::PublicationForm::PeriodicRelease::DateOfPublication', 'path'=>'PeriodicRelease.dateOfPublication', 'min'=>0, 'max'=>1}
@@ -430,14 +368,14 @@ module FHIR
           'id' => {'type'=>'string', 'path'=>'WebLocation.id', 'min'=>0, 'max'=>1},
           'extension' => {'type'=>'Extension', 'path'=>'WebLocation.extension', 'min'=>0, 'max'=>Float::INFINITY},
           'modifierExtension' => {'type'=>'Extension', 'path'=>'WebLocation.modifierExtension', 'min'=>0, 'max'=>Float::INFINITY},
-          'type' => {'type'=>'CodeableConcept', 'path'=>'WebLocation.type', 'min'=>0, 'max'=>1, 'binding'=>{'strength'=>'extensible', 'uri'=>'http://hl7.org/fhir/ValueSet/article-url-type'}},
+          'classifier' => {'type'=>'CodeableConcept', 'path'=>'WebLocation.classifier', 'min'=>0, 'max'=>Float::INFINITY, 'binding'=>{'strength'=>'extensible', 'uri'=>'http://hl7.org/fhir/ValueSet/artifact-url-classifier'}},
           'url' => {'type'=>'uri', 'path'=>'WebLocation.url', 'min'=>0, 'max'=>1}
         }
 
         attr_accessor :id                # 0-1 string
         attr_accessor :extension         # 0-* [ Extension ]
         attr_accessor :modifierExtension # 0-* [ Extension ]
-        attr_accessor :type              # 0-1 CodeableConcept
+        attr_accessor :classifier        # 0-* [ CodeableConcept ]
         attr_accessor :url               # 0-1 uri
       end
 
@@ -523,7 +461,7 @@ module FHIR
             'role' => {'type'=>'CodeableConcept', 'path'=>'Entry.role', 'min'=>0, 'max'=>1, 'binding'=>{'strength'=>'extensible', 'uri'=>'http://hl7.org/fhir/ValueSet/contributor-role'}},
             'contributionInstance' => {'type'=>'Citation::CitedArtifact::Contributorship::Entry::ContributionInstance', 'path'=>'Entry.contributionInstance', 'min'=>0, 'max'=>Float::INFINITY},
             'correspondingContact' => {'type'=>'boolean', 'path'=>'Entry.correspondingContact', 'min'=>0, 'max'=>1},
-            'listOrder' => {'type'=>'positiveInt', 'path'=>'Entry.listOrder', 'min'=>0, 'max'=>1}
+            'rankingOrder' => {'type'=>'positiveInt', 'path'=>'Entry.rankingOrder', 'min'=>0, 'max'=>1}
           }
 
           class AffiliationInfo < FHIR::Model
@@ -582,7 +520,7 @@ module FHIR
           attr_accessor :role                 # 0-1 CodeableConcept
           attr_accessor :contributionInstance # 0-* [ Citation::CitedArtifact::Contributorship::Entry::ContributionInstance ]
           attr_accessor :correspondingContact # 0-1 boolean
-          attr_accessor :listOrder            # 0-1 positiveInt
+          attr_accessor :rankingOrder         # 0-1 positiveInt
         end
 
         class Summary < FHIR::Model
@@ -629,7 +567,7 @@ module FHIR
       attr_accessor :title             # 0-* [ Citation::CitedArtifact::Title ]
       attr_accessor :abstract          # 0-* [ Citation::CitedArtifact::Abstract ]
       attr_accessor :part              # 0-1 Citation::CitedArtifact::Part
-      attr_accessor :relatesTo         # 0-* [ Citation::CitedArtifact::RelatesTo ]
+      attr_accessor :relatesTo         # 0-* [ RelatedArtifact ]
       attr_accessor :publicationForm   # 0-* [ Citation::CitedArtifact::PublicationForm ]
       attr_accessor :webLocation       # 0-* [ Citation::CitedArtifact::WebLocation ]
       attr_accessor :classification    # 0-* [ Citation::CitedArtifact::Classification ]
@@ -672,7 +610,7 @@ module FHIR
     attr_accessor :note              # 0-* [ Annotation ]
     attr_accessor :currentState      # 0-* [ CodeableConcept ]
     attr_accessor :statusDate        # 0-* [ Citation::StatusDate ]
-    attr_accessor :relatesTo         # 0-* [ Citation::RelatesTo ]
+    attr_accessor :relatedArtifact   # 0-* [ RelatedArtifact ]
     attr_accessor :citedArtifact     # 0-1 Citation::CitedArtifact
 
     def resourceType
