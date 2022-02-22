@@ -380,7 +380,7 @@ describe CitationFilter do
     end
 
     it 'supports search by multiple artifact-current-state' do
-      expected = %w[active retired]
+      expected = %w[active retired retracted]
       params = {
         'artifact-current-state' => expected.join(',')
       }

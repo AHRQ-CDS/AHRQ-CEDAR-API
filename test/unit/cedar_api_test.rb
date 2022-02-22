@@ -57,6 +57,8 @@ describe 'cedar_api' do
 
       assert_equal 'abc-1', resource.id
       assert_equal 'active', resource.status
+      assert_equal 'active', resource.citedArtifact.currentState[0].coding[0].code
+      refute resource.url.nil?
       assert_equal 2, resource.citedArtifact.classification.size
       assert_equal 2, resource.citedArtifact.classification[1].classifier.size
       assert_equal 'CUI1 desc', resource.citedArtifact.classification[1].classifier[0].text
@@ -70,6 +72,17 @@ describe 'cedar_api' do
                    resource.citedArtifact.classification[1].classifier[0].coding[1].system
       assert_equal 2, resource.citedArtifact.classification[1].classifier[1].coding.size
       assert_equal artifact.versions.count + 1, resource.meta.versionId
+    end
+
+    it 'supports deleted artifacts' do
+      get '/fhir/Citation/abc-4'
+
+      resource = assert_fhir_response(FHIR::Citation)
+
+      assert_equal 'abc-4', resource.id
+      assert_equal 'retired', resource.status
+      assert_equal 'retracted', resource.citedArtifact.currentState[0].coding[0].code
+      assert_nil resource.url
     end
 
     it 'returns not found when read with invalid id' do
