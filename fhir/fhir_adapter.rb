@@ -64,7 +64,7 @@ class FHIRAdapter
         }
       ],
       title: artifact.title,
-      status: 'active', # Will a CEDAR citation be retired in the future?
+      status: ['retracted'].include?(artifact.artifact_status) ? 'retired' : 'active',
       date: to_fhir_date(artifact.updated_at),
       publisher: 'CEDAR',
       contact: [
@@ -102,8 +102,8 @@ class FHIRAdapter
               coding: [
                 {
                   system: 'http://terminology.hl7.org/CodeSystem/title-type',
-                  code: 'primary-human-use',
-                  display: 'Primary human use'
+                  code: 'primary',
+                  display: 'Primary title'
                 }
               ]
             },
@@ -174,10 +174,10 @@ class FHIRAdapter
         ],
         webLocation: [
           {
-            type: {
+            classifier: {
               coding: [
                 {
-                  system: 'http://terminology.hl7.org/CodeSystem/article-url-type',
+                  system: 'http://terminology.hl7.org/CodeSystem/artifact-url-classifier',
                   code: artifact.url&.end_with?('.pdf') ? 'pdf' : 'full-text'
                 }
               ]
@@ -205,13 +205,7 @@ class FHIRAdapter
             }
           ]
         },
-        classifier: keyword_list,
-        whoClassified: {
-          publisher: {
-            reference: "Organization/#{artifact.repository.fhir_id}",
-            display: artifact.repository.name
-          }
-        }
+        classifier: keyword_list
       )
     end
 
