@@ -90,7 +90,7 @@ class FHIRAdapter
         currentState: [
           {
             coding: {
-              system: 'http://hl7.org/fhir/publication-status',
+              system: 'http://terminology.hl7.org/CodeSystem/cited-artifact-status-type',
               code: artifact.artifact_status
             }
           }
