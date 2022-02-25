@@ -64,7 +64,7 @@ class FHIRAdapter
         }
       ],
       title: artifact.title,
-      status: ['retracted'].include?(artifact.artifact_status) ? 'retired' : 'active',
+      status: 'active', # Will a CEDAR citation be retired in the future?
       date: to_fhir_date(artifact.updated_at),
       publisher: 'CEDAR',
       contact: [
