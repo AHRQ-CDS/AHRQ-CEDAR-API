@@ -22,15 +22,14 @@ class CitationFilter
     @request_url = request_url
     @client_ip = client_ip
     @log_to_db = log_to_db
-
-    @search_log = SearchLog.new
-    @search_log.search_params = params
-    @search_log.client_ip = client_ip
+    @search_params = params
+    @search_parameter_logs = []
+    @client_ip = client_ip
   end
 
   def build_link_url(page_no, page_size)
     uri = Addressable::URI.parse(@request_url)
-    new_params = @search_log.search_params.reject { |key, _value| %w[_count page].include?(key) }
+    new_params = @search_params.reject { |key, _value| %w[_count page].include?(key) }
 
     if page_size.positive?
       new_params[:_count] = page_size
@@ -59,7 +58,7 @@ class CitationFilter
   end
 
   def citations
-    @search_log.start_time = Time.now.utc
+    search_log = SearchLog.new(search_params: @search_params, client_ip: @client_ip, start_time: Time.now.utc)
 
     # Create the filter then add the default ordering after whatever primary ordering (e.g. rank for free text)
     # is present
@@ -88,15 +87,14 @@ class CitationFilter
     add_bundle_links(bundle, artifacts)
 
     if @log_to_db
-      @search_log.count = artifacts.count unless @page_size.zero?
-      @search_log.total = total
-      @search_log.end_time = Time.now.utc
+      search_log.count = artifacts.count unless @page_size.zero?
+      search_log.total = total
+      search_log.end_time = Time.now.utc
 
       begin
-        @search_log.save_changes
-        @search_log.search_parameter_logs.each do |p|
-          p.search_log = @search_log
-          p.save_changes
+        search_log.save_changes
+        @search_parameter_logs.each do |search_parameter_log|
+          search_log.add_search_parameter_log(search_parameter_log)
         end
       rescue StandardError => e
         CedarLogger.error "Failed to log search: #{e.full_message}"
@@ -114,13 +112,13 @@ class CitationFilter
     # 2. The many-to-many relationship with concepts results in multiple rows per artifact
     filter = Artifact.dataset
 
-    @search_log.search_params&.each do |key, value|
+    @search_params&.each do |key, value|
       search_terms = value.split(',').map { |v| v.strip.downcase.to_s } if value.is_a?(String)
 
       begin
         case key
         when '_content'
-          @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
+          @search_parameter_logs << SearchParameterLog.new(name: key, value: value)
 
           cols = SearchParser.parse(value)
           opt = {
@@ -139,7 +137,7 @@ class CitationFilter
         when 'article-date:missing'
           filter = filter.where(published_on: nil) if value
         when 'classification'
-          @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
+          @search_parameter_logs << SearchParameterLog.new(name: key, value: value)
 
           # All matching artifacts for each concept, structure is three level nested array.
           # E.g. classification=A,B&classification=C would yield the following
@@ -169,7 +167,7 @@ class CitationFilter
           filter = filter.where(Sequel[:artifacts][:id] => distinct_ids)
                          .order_append(Sequel.desc(Sequel.case(id_frequency_counts, 0, :id)))
         when 'classification:text'
-          @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
+          @search_parameter_logs << SearchParameterLog.new(name: key, value: value)
           cols = SearchParser.parse(value)
           opt = {
             language: 'english',
@@ -179,11 +177,11 @@ class CitationFilter
           # Need to decide if we need use ts_vector to get better performance
           filter = filter.full_text_search(:keyword_text, cols, opt)
         when 'title'
-          @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
+          @search_parameter_logs << SearchParameterLog.new(name: key, value: value)
           search_terms.map! { |t| "#{t}%" }
           filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
         when 'title:contains'
-          @search_log.search_parameter_logs << SearchParameterLog.new(name: key, value: value)
+          @search_parameter_logs << SearchParameterLog.new(name: key, value: value)
           search_terms.map! { |t| "%#{t}%" }
           filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
         when 'artifact-current-state'
@@ -204,8 +202,8 @@ class CitationFilter
   end
 
   def add_pagination(filter)
-    @page_size = (@search_log.search_params['_count'] || -1).to_i
-    @page_no = [(@search_log.search_params['page'] || 1).to_i, 1].max # the minimum value of page number is 1
+    @page_size = (@search_params['_count'] || -1).to_i
+    @page_no = [(@search_params['page'] || 1).to_i, 1].max # the minimum value of page number is 1
 
     if @page_size.positive?
       # if page size is greater than 0, return paginated results.

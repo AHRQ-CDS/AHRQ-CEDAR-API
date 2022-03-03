@@ -236,7 +236,7 @@ namespace '/fhir' do
   end
 
   def read_resource_from_file(path, params)
-    # We do not return files based on file names build from user-supplied parameters to prevent users from
+    # We do not return files based on file names built from user-supplied parameters to prevent users from
     # reading arbitrary files; instead, we 1) get a listing of valid files 2) see if there's a file that
     # matches the requested file, and 3) return the matching file if present
     id = params[:id] || params[:url].split('/').last
