@@ -7,7 +7,7 @@ To generate Citation class from FHIR StructureDefinition
      * Unzip zip file
      * Copy site\profiles-resources.json to fhir_models/lib/fhir_models/definitions/structures/profile-resources.json
    * If FHIR spec download is not available (possible for latest CI build)
-     * Dwonload NPM package from http://hl7.org/fhir/5.0.0-snapshot1/hl7.fhir.r5.core.tgz
+     * Download NPM package from http://hl7.org/fhir/5.0.0-snapshot1/hl7.fhir.r5.core.tgz
      * Unzip tgz file
      * Find StructureDefinition-Citation.json
      * Copy content to the Bundle entry for Citation in fhir_models/lib/fhir_models/definitions/structures/profile-resources.json
