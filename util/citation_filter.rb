@@ -15,7 +15,7 @@ require_relative 'cedar_logger'
 class CitationFilter
   UMLS_CODE_SYSTEM_IDS = FHIRAdapter::FHIR_CODE_SYSTEM_URLS.invert.freeze
   MULTIPLE_AND_PARAMETERS = ['classification'].freeze
-  STATUS_SORT_ORDER = { 'active' => 1, 'draft' => 2, 'unknown' => 3, 'retired' => 4 }.freeze
+  STATUS_SORT_ORDER = { 'active' => 1, 'draft' => 2, 'unknown' => 3, 'archived' => 4, 'retracted' => 5 }.freeze
 
   def initialize(params:, base_url:, request_url:, client_ip: nil, log_to_db: false)
     @artifact_base_url = base_url
@@ -62,7 +62,7 @@ class CitationFilter
 
     # Create the filter then add the default ordering after whatever primary ordering (e.g. rank for free text)
     # is present
-    filter = build_filter.order_append(Sequel.case(STATUS_SORT_ORDER, 4, :artifact_status))
+    filter = build_filter.order_append(Sequel.case(STATUS_SORT_ORDER, 5, :artifact_status))
                          .order_append(Sequel.desc(:published_on))
                          .order_append(Sequel.desc(:strength_of_recommendation_sort))
                          .order_append(Sequel.desc(:quality_of_evidence_sort))
