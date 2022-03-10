@@ -64,6 +64,20 @@ DB[:artifacts].insert(
   created_at: timestamp,
   updated_at: timestamp
 )
+DB[:artifacts].insert(
+  id: 204,
+  cedar_identifier: 'abc-4',
+  remote_identifier: '204',
+  artifact_status: 'retracted',
+  title: 'Type 2 Diabetes (retracted)',
+  keywords: '["diabetes"]',
+  keyword_text: 'diabetes',
+  repository_id: 101,
+  strength_of_recommendation_score: 0,
+  quality_of_evidence_score: 0,
+  created_at: timestamp,
+  updated_at: timestamp
+)
 DB[:artifacts].update(content_search: Sequel.lit(
   "setweight(to_tsvector('english', coalesce(title, '')), 'A') ||
   setweight(to_tsvector('english', coalesce(keyword_text, '')), 'B') ||

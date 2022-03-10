@@ -56,7 +56,7 @@ class FHIRAdapter
       meta: {
         versionId: version_id
       },
-      url: "#{artifact_base_url}/#{cedar_identifier}",
+      url: artifact.artifact_status == 'retracted' ? nil : "#{artifact_base_url}/#{cedar_identifier}",
       identifier: [
         {
           system: HOSTNAME,
@@ -64,7 +64,7 @@ class FHIRAdapter
         }
       ],
       title: artifact.title,
-      status: 'active', # Will a CEDAR citation be retired in the future?
+      status: artifact.artifact_status == 'retracted' ? 'retired' : 'active',
       date: to_fhir_date(artifact.updated_at),
       publisher: 'CEDAR',
       contact: [
