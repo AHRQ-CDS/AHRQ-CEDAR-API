@@ -82,7 +82,7 @@ describe 'cedar_api' do
       assert_equal 'abc-4', resource.id
       assert_equal 'retired', resource.status
       assert_equal 'retracted', resource.citedArtifact.currentState[0].coding[0].code
-      assert_nil resource.url
+      assert_nil resource.citedArtifact.webLocation[0].url
     end
 
     it 'returns not found when read with invalid id' do

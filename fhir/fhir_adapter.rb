@@ -56,7 +56,7 @@ class FHIRAdapter
       meta: {
         versionId: version_id
       },
-      url: artifact.artifact_status == 'retracted' ? nil : "#{artifact_base_url}/#{cedar_identifier}",
+      url: "#{artifact_base_url}/#{cedar_identifier}",
       identifier: [
         {
           system: HOSTNAME,
@@ -182,7 +182,7 @@ class FHIRAdapter
                 }
               ]
             },
-            url: artifact.url
+            url: artifact.artifact_status == 'retracted' ? nil : artifact.url
           }
         ]
       }
