@@ -23,6 +23,23 @@ pipelines:
           name: Lint code
           script:
             - ruby -wc **/*.rb
+      - step:
+          name: Build .NET example
+          image: mcr.microsoft.com/dotnet/sdk:6.0
+          caches:
+            - bundler
+          script:
+            # If we'd like to run the API in this container there's a fair amount of setup involved, e.g.
+            # - apt-get update
+            # - apt-get install -y ruby2.7 ruby-dev ubuntu-dev-tools
+            # - gem install bundler
+            # - bundle config set without 'development test'
+            # - bundle install
+            # - ruby cedar_api.rb &
+            # - sleep 5
+            # For now, just be sure we can build the C# code
+            - cd example/csharp-client/
+            - dotnet build
 
 definitions:
   caches:
