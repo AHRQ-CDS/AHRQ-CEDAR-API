@@ -513,7 +513,6 @@ describe CitationFilter do
       refute log.client_ip.nil?
       refute log.start_time.nil?
       refute log.end_time.nil?
-      refute log.search_parameter_logs.nil?
     end
   end
 end
