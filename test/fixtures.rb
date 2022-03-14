@@ -7,12 +7,14 @@ timestamp = Date.today
 old_artifact_timestamp = Date.new(2010, 6, 1)
 DB[:repositories].insert(id: 101,
                          name: 'USPSTF',
+                         alias: 'USPSTF',
                          fhir_id: 'uspstf',
                          home_page: 'https://www.uspreventiveservicestaskforce.org/uspstf/',
                          created_at: timestamp,
                          updated_at: timestamp)
 DB[:repositories].insert(id: 102,
                          name: 'CDS Connect',
+                         alias: 'CDS Connect',
                          fhir_id: 'cds-connect',
                          home_page: 'https://cds.ahrq.gov/cdsconnect',
                          created_at: timestamp,
