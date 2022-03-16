@@ -497,23 +497,31 @@ describe CitationFilter do
         '_content' => expected
       }
 
-      CitationFilter.new(params: params,
-                         base_url: @artifact_base_url,
-                         request_url: @request_url,
-                         client_ip: '::1',
-                         log_to_db: true)
-                    .citations
+      citations = CitationFilter.new(params: params,
+                                     base_url: @artifact_base_url,
+                                     request_url: @request_url,
+                                     client_ip: '::1',
+                                     log_to_db: true)
+                                .citations
 
       log = SearchLog.order(Sequel.desc(:id)).first
 
       refute log.nil?
       refute log.search_params.nil?
+      refute log.search_params['_content'].nil?
+      assert_equal log.search_params['_content'], expected
       refute log.count.nil?
       refute log.total.nil?
       refute log.client_ip.nil?
       refute log.start_time.nil?
       refute log.end_time.nil?
-      refute log.search_parameter_logs.nil?
+      refute log.repository_results.nil?
+      refute log.repository_results['101'].nil?
+      assert_equal 'USPSTF', log.repository_results['101']['alias']
+      refute log.repository_results['102'].nil?
+      assert_equal 'CDS Connect', log.repository_results['102']['alias']
+      logged_result_count = log.repository_results.values.inject(0) { |total, repo_entry| total + repo_entry['count'] }
+      assert_equal citations.entry.size, logged_result_count
     end
   end
 end

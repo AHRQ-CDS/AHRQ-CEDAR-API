@@ -23,7 +23,6 @@ class CitationFilter
     @client_ip = client_ip
     @log_to_db = log_to_db
     @search_params = params
-    @search_parameter_logs = []
     @client_ip = client_ip
   end
 
@@ -67,7 +66,9 @@ class CitationFilter
                          .order_append(Sequel.desc(:strength_of_recommendation_sort))
                          .order_append(Sequel.desc(:quality_of_evidence_sort))
 
+    repository_result_counts = {}
     begin
+      count_results_by_repository(repository_result_counts, :total, filter.all)
       paged_result = add_pagination(filter)
     rescue StandardError => e
       CedarLogger.error "Failed to add search pagination: #{e.full_message}"
@@ -75,6 +76,10 @@ class CitationFilter
     end
 
     artifacts = paged_result[:artifacts]
+    count_results_by_repository(repository_result_counts, :count, artifacts) if artifacts
+    repository_result_counts.each_pair do |repository_id, result_counts|
+      result_counts[:alias] = Repository[repository_id].alias
+    end
     total = paged_result[:total]
 
     bundle = if @page_size.zero?
@@ -90,12 +95,10 @@ class CitationFilter
       search_log.count = artifacts.count unless @page_size.zero?
       search_log.total = total
       search_log.end_time = Time.now.utc
+      search_log.repository_results = repository_result_counts
 
       begin
         search_log.save_changes
-        @search_parameter_logs.each do |search_parameter_log|
-          search_log.add_search_parameter_log(search_parameter_log)
-        end
       rescue StandardError => e
         CedarLogger.error "Failed to log search: #{e.full_message}"
         # We should continue the workflow if logging failed.
@@ -103,6 +106,14 @@ class CitationFilter
     end
 
     bundle
+  end
+
+  def count_results_by_repository(result, prop, artifacts)
+    artifacts.each do |artifact|
+      result[artifact.repository_id] ||= {}
+      result[artifact.repository_id][prop] ||= 0
+      result[artifact.repository_id][prop] += 1
+    end
   end
 
   def build_filter
@@ -118,8 +129,6 @@ class CitationFilter
       begin
         case key
         when '_content'
-          @search_parameter_logs << SearchParameterLog.new(name: key, value: value)
-
           cols = SearchParser.parse(value)
           opt = {
             language: 'english',
@@ -137,8 +146,6 @@ class CitationFilter
         when 'article-date:missing'
           filter = filter.where(published_on: nil) if value
         when 'classification'
-          @search_parameter_logs << SearchParameterLog.new(name: key, value: value)
-
           # All matching artifacts for each concept, structure is three level nested array.
           # E.g. classification=A,B&classification=C would yield the following
           # [
@@ -167,7 +174,6 @@ class CitationFilter
           filter = filter.where(Sequel[:artifacts][:id] => distinct_ids)
                          .order_append(Sequel.desc(Sequel.case(id_frequency_counts, 0, :id)))
         when 'classification:text'
-          @search_parameter_logs << SearchParameterLog.new(name: key, value: value)
           cols = SearchParser.parse(value)
           opt = {
             language: 'english',
@@ -177,11 +183,9 @@ class CitationFilter
           # Need to decide if we need use ts_vector to get better performance
           filter = filter.full_text_search(:keyword_text, cols, opt)
         when 'title'
-          @search_parameter_logs << SearchParameterLog.new(name: key, value: value)
           search_terms.map! { |t| "#{t}%" }
           filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
         when 'title:contains'
-          @search_parameter_logs << SearchParameterLog.new(name: key, value: value)
           search_terms.map! { |t| "%#{t}%" }
           filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
         when 'artifact-current-state'
