@@ -12,7 +12,16 @@ in action include:
 
 ## Prerequisites
 
-- [dotnet](https://docs.microsoft.com/en-us/dotnet/core/install/) 6.0 or later
+- [.NET](https://docs.microsoft.com/en-us/dotnet/core/install/) 6.0 or later
+
+## Dependencies
+
+This example was built using the following libraries and versions:
+
+- [DotNetEnv Version 2.3.0](https://www.nuget.org/packages/DotNetEnv/2.3.0)
+- [Hl7.Fhir.R5 Version 3.8.0](https://www.nuget.org/packages/Hl7.Fhir.R5/3.8.0)
+
+Note that the FHIR library is currently for the R5 experimental version of FHIR because the Citation resource is not yet part of normative FHIR.
 
 ## Getting Started
 The CEDAR API requires Basic Authentication in order to complete requests. To obtain
