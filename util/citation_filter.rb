@@ -16,6 +16,7 @@ class CitationFilter
   UMLS_CODE_SYSTEM_IDS = FHIRAdapter::FHIR_CODE_SYSTEM_URLS.invert.freeze
   MULTIPLE_AND_PARAMETERS = ['classification'].freeze
   STATUS_SORT_ORDER = { 'active' => 1, 'draft' => 2, 'unknown' => 3, 'archived' => 4, 'retracted' => 5 }.freeze
+  DEFAULT_PAGE_SIZE = 10
 
   def initialize(params:, base_url:, request_url:, client_ip: nil, log_to_db: false)
     @artifact_base_url = base_url
@@ -206,21 +207,17 @@ class CitationFilter
   end
 
   def add_pagination(filter)
-    @page_size = (@search_params['_count'] || -1).to_i
+    @page_size = (@search_params['_count'] || DEFAULT_PAGE_SIZE).to_i
     @page_no = [(@search_params['page'] || 1).to_i, 1].max # the minimum value of page number is 1
 
     if @page_size.positive?
       # if page size is greater than 0, return paginated results.
       artifacts = filter.paginate(@page_no, @page_size)
       total = artifacts.pagination_record_count
-    elsif @page_size.zero?
+    else
       # if page size is 0, return the count only
       artifacts = nil
       total = filter.count
-    else
-      # otherwise (page size is less than 0), return all results
-      artifacts = filter.all
-      total = artifacts.size
     end
 
     {
