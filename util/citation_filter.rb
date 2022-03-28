@@ -57,6 +57,41 @@ class CitationFilter
     concepts.map { |c| c.artifacts.collect(&:id) }.flatten.uniq
   end
 
+  def all_artifacts
+    search_log = SearchLog.new(search_params: @search_params, client_ip: @client_ip, start_time: Time.now.utc)
+
+    # Create the filter then add the default ordering after whatever primary ordering (e.g. rank for free text)
+    # is present
+    filter = build_filter.order_append(Sequel.case(STATUS_SORT_ORDER, 5, :artifact_status))
+                         .order_append(Sequel.desc(:published_on))
+                         .order_append(Sequel.desc(:strength_of_recommendation_sort))
+                         .order_append(Sequel.desc(:quality_of_evidence_sort))
+
+    artifacts = filter.all
+    repository_result_counts = {}
+    count_results_by_repository(repository_result_counts, :total, artifacts)
+    count_results_by_repository(repository_result_counts, :count, artifacts)
+    repository_result_counts.each_pair do |repository_id, result_counts|
+      result_counts[:alias] = Repository[repository_id].alias
+    end
+
+    if @log_to_db
+      search_log.count = artifacts.count unless @page_size&.zero?
+      search_log.total = artifacts.count
+      search_log.end_time = Time.now.utc
+      search_log.repository_results = repository_result_counts
+
+      begin
+        search_log.save_changes
+      rescue StandardError => e
+        CedarLogger.error "Failed to log search: #{e.full_message}"
+        # We should continue the workflow if logging failed.
+      end
+    end
+
+    artifacts
+  end
+
   def citations
     search_log = SearchLog.new(search_params: @search_params, client_ip: @client_ip, start_time: Time.now.utc)
 

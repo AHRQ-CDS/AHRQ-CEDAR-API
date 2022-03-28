@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'cgi'
+require 'csv'
 require 'fhir_models'
 require 'json'
 require 'sinatra'
@@ -59,6 +60,69 @@ get '/demo' do
   DEMO_FORM
 end
 
+get '/csv' do
+  multiple_and_parameters = CGI.parse(request.query_string).select do |k, _v|
+    CitationFilter::MULTIPLE_AND_PARAMETERS.include?(k)
+  end
+
+  request_url = "#{request.scheme}://#{request.host}:#{request.port}#{request.path}"
+  filter = CitationFilter.new(params: params.merge(multiple_and_parameters),
+                              base_url: uri('fhir/Citation').to_s,
+                              request_url: request_url,
+                              client_ip: request.ip,
+                              log_to_db: true)
+  begin
+    artifacts = filter.all_artifacts
+  rescue StandardError => e
+    logger.error "Search error: #{e.full_message}"
+    content_type 'text/plain'
+    status 500
+    return 'Error executing query.'
+  end
+
+  content_type 'text/csv'
+  attachment "cedar_#{Time.now.strftime('%Y%m%d-%H%M%S')}.csv"
+  stream do |out|
+    out << CSV.generate_line(
+      %w[Repository Title Description Keywords UMLS MeSH SNOMED-CT ICD10CM RXNORM Status Published Link]
+    )
+    artifacts.each do |artifact|
+      truncated_description = artifact.description
+      if truncated_description && truncated_description.size > 300
+        truncated_description = "#{truncated_description[..300]}..."
+      end
+      out << CSV.generate_line([artifact.repository.alias,
+                                artifact.title,
+                                truncated_description,
+                                artifact.keywords.join('; '),
+                                stringify(artifact.concepts, 'UMLS'),
+                                stringify(artifact.concepts, 'MSH'),
+                                stringify(artifact.concepts, 'SNOMEDCT_US'),
+                                stringify(artifact.concepts, 'ICD10CM'),
+                                stringify(artifact.concepts, 'RXNORM'),
+                                artifact.artifact_status,
+                                artifact.published_on,
+                                artifact.url])
+    end
+  end
+end
+
+def stringify(concepts, code_system)
+  if code_system == 'UMLS'
+    concepts.map { |concept| "#{concept.umls_cui} (#{concept.umls_description})" }.join('; ')
+  else
+    concept_codes = concepts.map do |concept|
+      codes = concept.codes.select do |code|
+        code['system'] == code_system
+      end
+      codes.map do |code|
+        "#{code['code']} (#{code['description']})"
+      end.join('; ')
+    end
+    concept_codes.select { |str| str&.size&.positive? }.join('; ')
+  end
+end
+
 not_found do
   logger.info "Request for unknown URL (#{request.url})"
   'Not found'
@@ -73,7 +137,7 @@ namespace '/fhir' do
   get '/metadata' do
     json = File.read('resources/capabilitystatement.json')
     cs = FHIR.from_contents(json)
-    return cs.to_json
+    cs.to_json
   end
 
   get '/SearchParameter/?:id?' do
