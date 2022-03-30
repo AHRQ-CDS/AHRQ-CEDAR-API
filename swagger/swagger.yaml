@@ -29,6 +29,16 @@ paths:
       tags:
         - Citation
       summary: Search Citations
+      description: |
+        Search parameter __artifact-current-state__ is required.
+
+        Search results are sorted by:
+          1. __Keyword|Concept Match Count__: if searching for more than one keyword|concept, favor those with more matches
+          2. __Artifact Status__: current > draft > unknown > archived > retired
+          3. __Published Date__: most recent first
+          4. __Strength of Evidence__: artifacts with strongest evidence first
+
+        Multi-value search and full-text are supported from some search parameters. Please check FHIR Search Specification (http://hl7.org/fhir/search.html) for syntax details.
       produces:
         - application/fhir+json
       parameters:
