@@ -4,32 +4,35 @@
     "version": "1.0.0",
     "title": "CEDAR API"
   },
-  "basePath": "/api/fhir",
+  "basePath": "/api",
   "tags": [
     {
-      "name": "CapabilityStatement"
+      "name": "FHIR CapabilityStatement"
     },
     {
-      "name": "Citation"
+      "name": "FHIR Citation"
     },
     {
-      "name": "CodeSystem"
+      "name": "FHIR CodeSystem"
     },
     {
-      "name": "Organization"
+      "name": "FHIR Organization"
     },
     {
-      "name": "Profiles"
+      "name": "FHIR Profiles"
+    },
+    {
+      "name": "CSV"
     }
   ],
   "schemes": [
     "https"
   ],
   "paths": {
-    "/metadata": {
+    "/fhir/metadata": {
       "get": {
         "tags": [
-          "CapabilityStatement"
+          "FHIR CapabilityStatement"
         ],
         "summary": "Get Server CapabilityStatement",
         "produces": [
@@ -45,13 +48,13 @@
         }
       }
     },
-    "/Citation": {
+    "/fhir/Citation": {
       "get": {
         "tags": [
-          "Citation"
+          "FHIR Citation"
         ],
         "summary": "Search Citations",
-        "description": "Search parameter __artifact-current-state__ is required.  \n\nSearch results are sorted by:\n  1. __Keyword|Concept Match Count__: if searching for more than one keyword|concept, favor those with more matches\n  2. __Artifact Status__: current > draft > unknown > archived > retired\n  3. __Published Date__: most recent first\n  4. __Strength of Evidence__: artifacts with strongest evidence first\n\nMulti-value search and full-text are supported from some search parameters. Please check FHIR Search Specification (http://hl7.org/fhir/search.html) for syntax details.",
+        "description": "Search parameter __artifact-current-state__ is required.  \n\nSearch results are sorted by:\n  1. __Keyword|Concept Match Count__: if searching for more than one keyword|concept, favor those with more matches\n  2. __Artifact Status__: current > draft > unknown > archived > retired\n  3. __Published Date__: most recent first\n  4. __Strength of Evidence__: artifacts with strongest evidence first\n\nMulti-value search and full-text are supported for some search parameters. Please check FHIR Search Specification (http://hl7.org/fhir/search.html) for syntax details.",
         "produces": [
           "application/fhir+json"
         ],
@@ -141,10 +144,10 @@
         }
       }
     },
-    "/Citation/$get-artifact-types": {
+    "/fhir/Citation/$get-artifact-types": {
       "get": {
         "tags": [
-          "Citation"
+          "FHIR Citation"
         ],
         "summary": "Get all knowledge artifact types for Citation",
         "produces": [
@@ -160,10 +163,10 @@
         }
       }
     },
-    "/Citation/{id}": {
+    "/fhir/Citation/{id}": {
       "get": {
         "tags": [
-          "Citation"
+          "FHIR Citation"
         ],
         "summary": "Get Citation by id",
         "produces": [
@@ -187,10 +190,10 @@
         }
       }
     },
-    "/Citation/{id}/_history/{version_id}": {
+    "/fhir/Citation/{id}/_history/{version_id}": {
       "get": {
         "tags": [
-          "Citation"
+          "FHIR Citation"
         ],
         "summary": "Get Citation by id and version id",
         "produces": [
@@ -220,10 +223,10 @@
         }
       }
     },
-    "/CodeSystem/$get-mesh-children": {
+    "/fhir/CodeSystem/$get-mesh-children": {
       "get": {
         "tags": [
-          "CodeSystem"
+          "FHIR CodeSystem"
         ],
         "summary": "Get MeSH child concepts from MeSH Tree Number",
         "produces": [
@@ -247,10 +250,10 @@
         }
       }
     },
-    "/Organization": {
+    "/fhir/Organization": {
       "get": {
         "tags": [
-          "Organization"
+          "FHIR Organization"
         ],
         "summary": "Get all publishers",
         "produces": [
@@ -266,10 +269,10 @@
         }
       }
     },
-    "/Organization/{id}": {
+    "/fhir/Organization/{id}": {
       "get": {
         "tags": [
-          "Organization"
+          "FHIR Organization"
         ],
         "summary": "Get Organization by id",
         "produces": [
@@ -293,10 +296,10 @@
         }
       }
     },
-    "/OperationDefinition": {
+    "/fhir/OperationDefinition": {
       "get": {
         "tags": [
-          "Profiles"
+          "FHIR Profiles"
         ],
         "summary": "Search OperationDefinition by url",
         "produces": [
@@ -320,10 +323,10 @@
         }
       }
     },
-    "/OperationDefinition/{id}": {
+    "/fhir/OperationDefinition/{id}": {
       "get": {
         "tags": [
-          "Profiles"
+          "FHIR Profiles"
         ],
         "summary": "Get OperationDefinition by id",
         "produces": [
@@ -347,10 +350,10 @@
         }
       }
     },
-    "/SearchParameter": {
+    "/fhir/SearchParameter": {
       "get": {
         "tags": [
-          "Profiles"
+          "FHIR Profiles"
         ],
         "summary": "Search SearchParameter by url",
         "produces": [
@@ -374,10 +377,10 @@
         }
       }
     },
-    "/SearchParameter/{id}": {
+    "/fhir/SearchParameter/{id}": {
       "get": {
         "tags": [
-          "Profiles"
+          "FHIR Profiles"
         ],
         "summary": "Get SearchParameter by id",
         "produces": [
@@ -401,10 +404,10 @@
         }
       }
     },
-    "/StructureDefinition": {
+    "/fhir/StructureDefinition": {
       "get": {
         "tags": [
-          "Profiles"
+          "FHIR Profiles"
         ],
         "summary": "Search StructureDefinition by url",
         "produces": [
@@ -428,10 +431,10 @@
         }
       }
     },
-    "/StructureDefinition/{id}": {
+    "/fhir/StructureDefinition/{id}": {
       "get": {
         "tags": [
-          "Profiles"
+          "FHIR Profiles"
         ],
         "summary": "Get StructureDefinition by id",
         "produces": [
@@ -450,6 +453,88 @@
             "description": "successful operation",
             "schema": {
               "$ref": "#/definitions/StructureDefinition"
+            }
+          }
+        }
+      }
+    },
+    "/csv": {
+      "get": {
+        "tags": [
+          "CSV"
+        ],
+        "summary": "Search Citations",
+        "description": "Search results are sorted by:\n  1. __Keyword|Concept Match Count__: if searching for more than one keyword|concept, favor those with more matches\n  2. __Artifact Status__: current > draft > unknown > archived > retired\n  3. __Published Date__: most recent first\n  4. __Strength of Evidence__: artifacts with strongest evidence first\n\nMulti-value search and full-text are supported for some search parameters.",
+        "produces": [
+          "text/csv"
+        ],
+        "parameters": [
+          {
+            "name": "artifact-current-state",
+            "description": "current status for cited artifact",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "_content",
+            "description": "term in description, title, and keywords. support full text search",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "_lastUpdated",
+            "description": "date when citation was updated / imported",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "article-date",
+            "description": "date when cited artifact was published",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "article-date:missing",
+            "description": "cited artifact without publishing date",
+            "in": "query",
+            "type": "boolean"
+          },
+          {
+            "name": "classification",
+            "description": "concept in keywords.",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "artifact-publisher",
+            "description": "publisher for cited artifact",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "artifact-type",
+            "description": "artifact-type for cited artifact",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "title",
+            "description": "title starts with the term",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "title:contains",
+            "description": "title contains the term",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "string"
             }
           }
         }
