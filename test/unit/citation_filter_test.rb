@@ -310,6 +310,21 @@ describe CitationFilter do
       end
     end
 
+    it 'handles zero search results when searching by classification code' do
+      expected_code = 'D002318'
+      expected_bundle_total = 0
+      params = {
+        'classification' => expected_code
+      }
+
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+
+      assert bundle.is_a?(FHIR::Bundle)
+      assert_equal 'searchset', bundle.type
+      assert_equal bundle.total, bundle.entry.size
+      assert_equal bundle.total, expected_bundle_total
+    end
+
     it 'supports search by multiple ORed classification codes' do
       expected_codes = %w[D0001 D0002]
       params = {

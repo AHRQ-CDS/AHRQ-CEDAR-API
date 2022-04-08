@@ -167,13 +167,13 @@ class CitationFilter
             ored_terms.inject(:|) # OR for comma separated terms
           end.inject(:&) # AND for terms from separate arguments
 
-          # Count how often each artifact id is present, a higher count means that artifact matched more concepts
-          id_frequency_counts = artifact_id_list.flatten.each_with_object({}) do |item, hsh|
-            hsh[item] = hsh[item].to_i + 1 # to_i since initial value will be nil
-          end
-
           filter = filter.where(Sequel[:artifacts][:id] => distinct_ids)
-                         .order_append(Sequel.desc(Sequel.case(id_frequency_counts, 0, :id)))
+          # Count how often each artifact id is present, a higher count means that artifact matched more concepts
+          unless artifact_id_list.nil? || artifact_id_list.flatten.blank?
+            id_frequency_counts = artifact_id_list.flatten.tally
+
+            filter = filter.order_append(Sequel.desc(Sequel.case(id_frequency_counts, 0, :id)))
+          end
         when 'classification:text'
           cols = SearchParser.parse(value)
           opt = {
