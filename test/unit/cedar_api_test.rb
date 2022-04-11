@@ -34,6 +34,26 @@ describe 'cedar_api' do
     end
   end
 
+  describe '/csv endpoint' do
+    it 'returns a valid CSV file' do
+      get '/csv?_content=cancer&artifact-current-state=active'
+
+      assert last_response.ok?
+      data = CSV.parse(last_response.body, headers: true)
+      row = data.first.to_h
+      assert_includes row.keys, 'Repository'
+      refute row['Repository'].nil?
+      assert_includes row.keys, 'Title'
+      refute row['Title'].nil?
+    end
+
+    it 'validates search parameter values' do
+      get 'csv?_content=cancer&artifact-current-state=active&_lastUpdated=et1990-01-01'
+
+      assert last_response.server_error?
+    end
+  end
+
   describe '/fhir endpoint' do
     it 'returns CapabilityStatement from /metadata endpoint' do
       get '/fhir/metadata'

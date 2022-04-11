@@ -57,44 +57,21 @@ class CitationFilter
     concepts.map { |c| c.artifacts.collect(&:id) }.flatten.uniq
   end
 
-  def citations
-    search_log = SearchLog.new(search_params: @search_params, client_ip: @client_ip, start_time: Time.now.utc)
+  def init_search_log
+    SearchLog.new(search_params: @search_params, client_ip: @client_ip, start_time: Time.now.utc) if @log_to_db
+  end
 
-    # Create the filter then add the default ordering after whatever primary ordering (e.g. rank for free text)
-    # is present
-    filter = build_filter.order_append(Sequel.case(STATUS_SORT_ORDER, 5, :artifact_status))
-                         .order_append(Sequel.desc(:published_on))
-                         .order_append(Sequel.desc(:strength_of_recommendation_sort))
-                         .order_append(Sequel.desc(:quality_of_evidence_sort))
-
-    repository_result_counts = {}
-    begin
-      count_results_by_repository(repository_result_counts, :total, filter.all)
-      paged_result = add_pagination(filter)
-    rescue StandardError => e
-      CedarLogger.error "Failed to add search pagination: #{e.full_message}"
-      raise DatabaseError.new(message: e.message)
-    end
-
-    artifacts = paged_result[:artifacts]
-    count_results_by_repository(repository_result_counts, :count, artifacts) if artifacts
-    repository_result_counts.each_pair do |repository_id, result_counts|
-      result_counts[:alias] = Repository[repository_id].alias
-    end
-    total = paged_result[:total]
-
-    bundle = if @page_size.zero?
-               # if _count=0, return count only
-               FHIRAdapter.create_citation_bundle(total: total)
-             else
-               FHIRAdapter.create_citation_bundle(total: total, artifacts: artifacts, base_url: @artifact_base_url)
-             end
-
-    add_bundle_links(bundle, artifacts)
-
+  def finalize_search_log(search_log, all_results, paged_results)
     if @log_to_db
-      search_log.count = artifacts.count unless @page_size.zero?
-      search_log.total = total
+      repository_result_counts = {}
+      count_results_by_repository(repository_result_counts, :total, all_results)
+      count_results_by_repository(repository_result_counts, :count, paged_results) unless paged_results.nil?
+      repository_result_counts.each_pair do |repository_id, result_counts|
+        result_counts[:alias] = Repository[repository_id].alias
+      end
+
+      search_log.total = all_results.count
+      search_log.count = paged_results.count unless paged_results.nil?
       search_log.end_time = Time.now.utc
       search_log.repository_results = repository_result_counts
 
@@ -105,7 +82,39 @@ class CitationFilter
         # We should continue the workflow if logging failed.
       end
     end
+  end
 
+  def all_artifacts
+    search_log = init_search_log
+    filter = build_filter
+    artifacts = filter.all
+    finalize_search_log(search_log, artifacts, artifacts)
+    artifacts
+  end
+
+  def citations
+    search_log = init_search_log
+    filter = build_filter
+    artifacts = filter.all
+
+    begin
+      paged_result = add_pagination(filter)
+    rescue StandardError => e
+      CedarLogger.error "Failed to add search pagination: #{e.full_message}"
+      raise DatabaseError.new(message: e.message)
+    end
+
+    bundle = if @page_size.zero?
+               # if _count=0, return count only
+               FHIRAdapter.create_citation_bundle(total: paged_result[:total])
+             else
+               FHIRAdapter.create_citation_bundle(total: paged_result[:total],
+                                                  artifacts: paged_result[:artifacts],
+                                                  base_url: @artifact_base_url)
+             end
+
+    add_bundle_links(bundle, paged_result[:artifacts])
+    finalize_search_log(search_log, artifacts, paged_result[:artifacts])
     bundle
   end
 
@@ -210,7 +219,12 @@ class CitationFilter
       end
     end
 
-    filter
+    # Add the default ordering after whatever primary ordering (e.g. rank for free text)
+    # is present
+    filter.order_append(Sequel.case(STATUS_SORT_ORDER, 5, :artifact_status))
+          .order_append(Sequel.desc(:published_on))
+          .order_append(Sequel.desc(:strength_of_recommendation_sort))
+          .order_append(Sequel.desc(:quality_of_evidence_sort))
   end
 
   def add_pagination(filter)

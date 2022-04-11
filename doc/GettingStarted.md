@@ -42,7 +42,7 @@ Your browser will display several pages of JSON formatted data but, before we ex
     - `artifact-current-state` with a value of `active` ensures that only artifacts that are currently active (i.e. not archived or superseded) will be included in the returned results
     - `title:contains` with a value of `hypertension` will search for artifacts whose title contains "hypertension" or a synonym of hypertension
     - `_count` with a value of `10` limits the search to include only the first 10 matching results
-    
+
 ### Swagger / Open API
 
 While learning the API, an alternative to manually creating the above URL (or writing code to do so) is to use the [interactive CEDAR Swagger](https://cedar.ahrqdev.org/swagger/#/) API description:
@@ -289,7 +289,7 @@ The API also makes available a number of FHIR resources that describe its capabi
     - [`SearchParameter/cedar-citation-artifact-publisher`](http://cedar.ahrqdev.org/api/fhir/SearchParameter/cedar-citation-artifact-publisher): search by artifact
     - [`SearchParameter/cedar-citation-title`](http://cedar.ahrqdev.org/api/fhir/SearchParameter/cedar-citation-title): search by artifact title
     - [`OperationDefinition/CodeSystem-get-mesh-children`](http://cedar.ahrqdev.org/api/fhir/OperationDefinition/CodeSystem-get-mesh-children): for browsing the MeSH concept hierarchy
-    
+
 As illustrated earlier, the [`CodeSystem/$get-mesh-children`](http://cedar.ahrqdev.org/api/fhir/OperationDefinition/CodeSystem-get-mesh-children) operation utilizes four extensions to capture additional metadata about each MeSH concept. The formal definition of these extensions are as follows:
 
 - [`StructureDefinition/extension-mesh-direct-artifact-count`](http://cedar.ahrqdev.org/api/fhir/StructureDefinition/extension-mesh-direct-artifact-count): an extension to hold the count of artifact directly associated with a concept
@@ -298,3 +298,12 @@ As illustrated earlier, the [`CodeSystem/$get-mesh-children`](http://cedar.ahrqd
 
 - [`StructureDefinition/extension-mesh-tree-number`](http://cedar.ahrqdev.org/api/fhir/StructureDefinition/extension-mesh-tree-number): an extension to hold the MeSH tree number
 
+## Comma-Separated Values (CSV) Download
+
+In addition to the FHIR API operation, the CEDAR API also offers the ability to download search results as a comma-separated values (CSV) file. The CSV download operation offers all of the same search parameters that are supported for the FHIR `Citation` search operation, only the URL path differs. Below is a sample request to the CSV endpoint:
+
+```text
+https://cedar.ahrqdev.org/api/csv?artifact-current-state=active&title:contains=hypertension
+```
+
+Note that paging of results via the `page` and `_count` parameters is not supported for CSV.
