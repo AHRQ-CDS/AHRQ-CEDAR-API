@@ -222,6 +222,21 @@ describe CitationFilter do
       end
     end
 
+    it 'supports search by title:contains with multiple AND' do
+      expected = %w[bladder cancer]
+      params = {
+        'title:contains' => expected
+      }
+
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+
+      assert_bundle(bundle)
+
+      assert bundle.entry.all? do |entry|
+        expected.all? { |word| entry.resource.title.downcase.include?(word) }
+      end
+    end
+
     it 'supports search by classification text' do
       expected = 'diabetes'
       params = {

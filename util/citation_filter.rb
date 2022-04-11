@@ -14,7 +14,7 @@ require_relative 'cedar_logger'
 # Helper methods for CEDAR API
 class CitationFilter
   UMLS_CODE_SYSTEM_IDS = FHIRAdapter::FHIR_CODE_SYSTEM_URLS.invert.freeze
-  MULTIPLE_AND_PARAMETERS = ['classification'].freeze
+  MULTIPLE_AND_PARAMETERS = ['classification', 'title:contains'].freeze
   STATUS_SORT_ORDER = { 'active' => 1, 'draft' => 2, 'unknown' => 3, 'archived' => 4, 'retracted' => 5 }.freeze
   DEFAULT_PAGE_SIZE = 10
 
@@ -187,8 +187,15 @@ class CitationFilter
           search_terms.map! { |t| "#{t}%" }
           filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
         when 'title:contains'
-          search_terms.map! { |t| "%#{t}%" }
-          filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
+          search_terms = [value].flatten.map { |s| s.split(',').map { |v| "%#{v.strip}%" } }
+          # search_terms is an array of arrays. Top level items are ANDed together and second level
+          # items are ORed
+          # e.g. a query string containing title:contains=foo,bar&title:contains=baz would result in:
+          # [["%foo%", "%bar%"], ["%baz%"]] which in SQL would be
+          # WHERE (title ILIKE '%foo%' OR title ILIKE '%bar%') AND (title ILIKE '%baz%')
+          search_terms.each do |ored_terms|
+            filter = append_boolean_expression(:ILIKE, :title, ored_terms, filter)
+          end
         when 'artifact-current-state'
           filter = filter.where(artifact_status: search_terms)
         when 'artifact-publisher'
