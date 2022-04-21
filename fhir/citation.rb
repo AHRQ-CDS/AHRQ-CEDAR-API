@@ -390,41 +390,15 @@ module FHIR
           'modifierExtension' => {'type'=>'Extension', 'path'=>'Classification.modifierExtension', 'min'=>0, 'max'=>Float::INFINITY},
           'type' => {'type'=>'CodeableConcept', 'path'=>'Classification.type', 'min'=>0, 'max'=>1, 'binding'=>{'strength'=>'extensible', 'uri'=>'http://hl7.org/fhir/ValueSet/cited-artifact-classification-type'}},
           'classifier' => {'type'=>'CodeableConcept', 'path'=>'Classification.classifier', 'min'=>0, 'max'=>Float::INFINITY, 'binding'=>{'strength'=>'example', 'uri'=>'http://hl7.org/fhir/ValueSet/citation-artifact-classifier'}},
-          'whoClassified' => {'type'=>'Citation::CitedArtifact::Classification::WhoClassified', 'path'=>'Classification.whoClassified', 'min'=>0, 'max'=>1}
+          'artifactAssessment' => {'type_profiles'=>['http://hl7.org/fhir/StructureDefinition/ArtifactAssessment'], 'type'=>'Reference', 'path'=>'Classification.artifactAssessment', 'min'=>0, 'max'=>1}
         }
 
-        class WhoClassified < FHIR::Model
-          include FHIR::Hashable
-          include FHIR::Json
-          include FHIR::Xml
-
-          METADATA = {
-            'id' => {'type'=>'string', 'path'=>'WhoClassified.id', 'min'=>0, 'max'=>1},
-            'extension' => {'type'=>'Extension', 'path'=>'WhoClassified.extension', 'min'=>0, 'max'=>Float::INFINITY},
-            'modifierExtension' => {'type'=>'Extension', 'path'=>'WhoClassified.modifierExtension', 'min'=>0, 'max'=>Float::INFINITY},
-            'person' => {'type_profiles'=>['http://hl7.org/fhir/StructureDefinition/Person', 'http://hl7.org/fhir/StructureDefinition/Practitioner'], 'type'=>'Reference', 'path'=>'WhoClassified.person', 'min'=>0, 'max'=>1},
-            'organization' => {'type_profiles'=>['http://hl7.org/fhir/StructureDefinition/Organization'], 'type'=>'Reference', 'path'=>'WhoClassified.organization', 'min'=>0, 'max'=>1},
-            'publisher' => {'type_profiles'=>['http://hl7.org/fhir/StructureDefinition/Organization'], 'type'=>'Reference', 'path'=>'WhoClassified.publisher', 'min'=>0, 'max'=>1},
-            'classifierCopyright' => {'type'=>'string', 'path'=>'WhoClassified.classifierCopyright', 'min'=>0, 'max'=>1},
-            'freeToShare' => {'type'=>'boolean', 'path'=>'WhoClassified.freeToShare', 'min'=>0, 'max'=>1}
-          }
-
-          attr_accessor :id                  # 0-1 string
-          attr_accessor :extension           # 0-* [ Extension ]
-          attr_accessor :modifierExtension   # 0-* [ Extension ]
-          attr_accessor :person              # 0-1 Reference(Person|Practitioner)
-          attr_accessor :organization        # 0-1 Reference(Organization)
-          attr_accessor :publisher           # 0-1 Reference(Organization)
-          attr_accessor :classifierCopyright # 0-1 string
-          attr_accessor :freeToShare         # 0-1 boolean
-        end
-
-        attr_accessor :id                # 0-1 string
-        attr_accessor :extension         # 0-* [ Extension ]
-        attr_accessor :modifierExtension # 0-* [ Extension ]
-        attr_accessor :type              # 0-1 CodeableConcept
-        attr_accessor :classifier        # 0-* [ CodeableConcept ]
-        attr_accessor :whoClassified     # 0-1 Citation::CitedArtifact::Classification::WhoClassified
+        attr_accessor :id                     # 0-1 string
+        attr_accessor :extension              # 0-* [ Extension ]
+        attr_accessor :modifierExtension      # 0-* [ Extension ]
+        attr_accessor :type                   # 0-1 CodeableConcept
+        attr_accessor :classifier             # 0-* [ CodeableConcept ]
+        attr_accessor :artifactAssessment     # 0-1 Reference(ArtifactAssessment)
       end
 
       class Contributorship < FHIR::Model
