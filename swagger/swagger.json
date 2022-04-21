@@ -4938,6 +4938,13 @@
         }
       ],
       "properties": {
+        "artifactAssessment": {
+          "description": "Complex or externally created classification",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Reference"
+          }
+        },
         "classifier": {
           "description": "The specific classification value",
           "type": "array",
@@ -4965,9 +4972,6 @@
         },
         "type": {
           "$ref": "#/definitions/CodeableConcept"
-        },
-        "artifactAssessment": {
-          "$ref": "#/definitions/Reference"
         }
       }
     },

@@ -390,15 +390,15 @@ module FHIR
           'modifierExtension' => {'type'=>'Extension', 'path'=>'Classification.modifierExtension', 'min'=>0, 'max'=>Float::INFINITY},
           'type' => {'type'=>'CodeableConcept', 'path'=>'Classification.type', 'min'=>0, 'max'=>1, 'binding'=>{'strength'=>'extensible', 'uri'=>'http://hl7.org/fhir/ValueSet/cited-artifact-classification-type'}},
           'classifier' => {'type'=>'CodeableConcept', 'path'=>'Classification.classifier', 'min'=>0, 'max'=>Float::INFINITY, 'binding'=>{'strength'=>'example', 'uri'=>'http://hl7.org/fhir/ValueSet/citation-artifact-classifier'}},
-          'artifactAssessment' => {'type_profiles'=>['http://hl7.org/fhir/StructureDefinition/ArtifactAssessment'], 'type'=>'Reference', 'path'=>'Classification.artifactAssessment', 'min'=>0, 'max'=>1}
+          'artifactAssessment' => {'type_profiles'=>['http://hl7.org/fhir/StructureDefinition/ArtifactAssessment'], 'type'=>'Reference', 'path'=>'Classification.artifactAssessment', 'min'=>0, 'max'=>Float::INFINITY}
         }
 
-        attr_accessor :id                     # 0-1 string
-        attr_accessor :extension              # 0-* [ Extension ]
-        attr_accessor :modifierExtension      # 0-* [ Extension ]
-        attr_accessor :type                   # 0-1 CodeableConcept
-        attr_accessor :classifier             # 0-* [ CodeableConcept ]
-        attr_accessor :artifactAssessment     # 0-1 Reference(ArtifactAssessment)
+        attr_accessor :id                 # 0-1 string
+        attr_accessor :extension          # 0-* [ Extension ]
+        attr_accessor :modifierExtension  # 0-* [ Extension ]
+        attr_accessor :type               # 0-1 CodeableConcept
+        attr_accessor :classifier         # 0-* [ CodeableConcept ]
+        attr_accessor :artifactAssessment # 0-* [ Reference(ArtifactAssessment) ]
       end
 
       class Contributorship < FHIR::Model
