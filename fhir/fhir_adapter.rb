@@ -221,7 +221,7 @@ class FHIRAdapter
         },
         classifier: umls_concept_list,
         artifactAssessment: {
-          display: 'AHRQ CEDAR'
+          display: 'Classified by AHRQ CEDAR'
         }
       )
     end
