@@ -172,7 +172,7 @@ class FHIRAdapter
             }
           }
         ],
-        webLocation: [
+        webLocation: artifact.artifact_status == 'retracted' ? nil : [
           {
             classifier: {
               coding: [
@@ -182,7 +182,7 @@ class FHIRAdapter
                 }
               ]
             },
-            url: artifact.artifact_status == 'retracted' ? nil : artifact.url
+            url: artifact.url
           }
         ]
       }
