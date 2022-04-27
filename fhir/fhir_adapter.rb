@@ -82,7 +82,7 @@ class FHIRAdapter
       citedArtifact: {
         identifier: [
           {
-            system: artifact.repository.home_page,
+            system: artifact.remote_identifier.match(/^https?:\/\/.+/) ? 'urn:ietf:rfc:3986' : artifact.repository.home_page,
             value: artifact.remote_identifier
           }
         ],
