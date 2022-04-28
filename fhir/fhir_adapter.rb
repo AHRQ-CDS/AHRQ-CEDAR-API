@@ -82,7 +82,11 @@ class FHIRAdapter
       citedArtifact: {
         identifier: [
           {
-            system: artifact.repository.home_page,
+            system: if artifact.remote_identifier&.match(%r{^https?://.+})
+                      'urn:ietf:rfc:3986'
+                    else
+                      artifact.repository.home_page
+                    end,
             value: artifact.remote_identifier
           }
         ],
@@ -172,19 +176,23 @@ class FHIRAdapter
             }
           }
         ],
-        webLocation: [
-          {
-            classifier: {
-              coding: [
-                {
-                  system: 'http://terminology.hl7.org/CodeSystem/artifact-url-classifier',
-                  code: artifact.url&.end_with?('.pdf') ? 'pdf' : 'full-text'
-                }
-              ]
-            },
-            url: artifact.artifact_status == 'retracted' ? nil : artifact.url
-          }
-        ]
+        webLocation: if artifact.artifact_status == 'retracted'
+                       nil
+                     else
+                       [
+                         {
+                           classifier: {
+                             coding: [
+                               {
+                                 system: 'http://terminology.hl7.org/CodeSystem/artifact-url-classifier',
+                                 code: artifact.url&.end_with?('.pdf') ? 'pdf' : 'full-text'
+                               }
+                             ]
+                           },
+                           url: artifact.url
+                         }
+                       ]
+                     end
       }
     )
 
@@ -220,10 +228,8 @@ class FHIRAdapter
           ]
         },
         classifier: umls_concept_list,
-        whoClassified: {
-          publisher: {
-            display: 'AHRQ CEDAR'
-          }
+        artifactAssessment: {
+          display: 'Classified by AHRQ CEDAR'
         }
       )
     end
