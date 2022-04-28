@@ -7,7 +7,7 @@ found here:
 The Swagger UI specific files were taken from the dist directory of
 this Swagger UI release:
 
-  swagger-ui-3.51.0
+  swagger-ui-4.10.3
 
 During deployment this directory is copied into the nginx container
 and served statically.
