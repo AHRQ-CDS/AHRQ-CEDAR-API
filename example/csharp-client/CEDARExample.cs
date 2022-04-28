@@ -153,7 +153,7 @@ namespace CEDARExample
         int methodSelection = Int32.Parse(input);
         await ControlFlow(methodSelection);
       } catch (Exception error) {
-        Console.WriteLine(error.ToString());
+        Console.WriteLine(error.Message);
       }
 
       Console.WriteLine("\nDemo Operation Complete. Exiting.");
