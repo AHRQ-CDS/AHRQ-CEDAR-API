@@ -53,7 +53,7 @@ namespace CEDARExample
           return fhirParameters;
         }
       } catch (Exception error) {
-        Console.WriteLine("ERROR: Unable to complete client request.\n{0}", error.StackTrace);
+        Console.WriteLine("ERROR: Unable to complete client request.\n{0}", error.Message);
         throw;
       }
     }
@@ -103,7 +103,7 @@ namespace CEDARExample
           return fhirBundle;
         }
       } catch (Exception error) {
-        Console.WriteLine("ERROR: Unable to complete client request.\n{0}", error.StackTrace);
+        Console.WriteLine("ERROR: Unable to complete client request.\n{0}", error.Message);
         throw;
       }
     }
