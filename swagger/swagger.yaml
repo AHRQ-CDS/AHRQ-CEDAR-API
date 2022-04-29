@@ -3461,43 +3461,17 @@ definitions:
         type: string
       type:
         $ref: '#/definitions/CodeableConcept'
-  CitationWhoClassifiedComponent:
-    description: Provenance and copyright of classification
-    type: object
-    allOf:
-      - $ref: '#/definitions/BackboneElement'
-    properties:
-      classifierCopyright:
-        description: Rights management statement for the classification
-        type: string
-      extension:
-        description: Additional content defined by implementations
-        type: array
-        items:
-          $ref: '#/definitions/Extension'
-      freeToShare:
-        description: Acceptable to re-use the classification
-        type: boolean
-      id:
-        description: Unique id for inter-element referencing
-        type: string
-      modifierExtension:
-        description: Extensions that cannot be ignored even if unrecognized
-        type: array
-        items:
-          $ref: '#/definitions/Extension'
-      organization:
-        $ref: '#/definitions/Reference'
-      person:
-        $ref: '#/definitions/Reference'
-      publisher:
-        $ref: '#/definitions/Reference'
   CitationClassificationComponent:
     description: The assignment to an organizing scheme
     type: object
     allOf:
       - $ref: '#/definitions/BackboneElement'
     properties:
+      artifactAssessment:
+        description: Complex or externally created classification
+        type: array
+        items:
+          $ref: '#/definitions/Reference'
       classifier:
         description: The specific classification value
         type: array
@@ -3518,8 +3492,6 @@ definitions:
           $ref: '#/definitions/Extension'
       type:
         $ref: '#/definitions/CodeableConcept'
-      whoClassified:
-        $ref: '#/definitions/CitationWhoClassifiedComponent'
   CitationAffiliationInfoComponent:
     description: Organizational affiliation
     type: object
