@@ -53,7 +53,7 @@ namespace CEDARExample
           return fhirParameters;
         }
       } catch (Exception error) {
-        Console.WriteLine("ERROR: Unable to complete client request.\n{0}", error.StackTrace);
+        Console.WriteLine("ERROR: Unable to complete client request.\n{0}", error.Message);
         throw;
       }
     }
@@ -103,7 +103,7 @@ namespace CEDARExample
           return fhirBundle;
         }
       } catch (Exception error) {
-        Console.WriteLine("ERROR: Unable to complete client request.\n{0}", error.StackTrace);
+        Console.WriteLine("ERROR: Unable to complete client request.\n{0}", error.Message);
         throw;
       }
     }
@@ -153,7 +153,7 @@ namespace CEDARExample
         int methodSelection = Int32.Parse(input);
         await ControlFlow(methodSelection);
       } catch (Exception error) {
-        Console.WriteLine(error.ToString());
+        Console.WriteLine(error.Message);
       }
 
       Console.WriteLine("\nDemo Operation Complete. Exiting.");
