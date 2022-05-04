@@ -159,7 +159,7 @@ describe CitationFilter do
       end
     end
 
-    it 'supports search for article-date:missing' do
+    it 'supports search by presence/absence of article-date' do
       params = {
         'article-date:missing' => true
       }
@@ -171,6 +171,18 @@ describe CitationFilter do
       assert bundle.entry.all? do |entry|
         entry.resource.citedArtifact.publicationForm.any? do |publication|
           publication.articleDate.nil?
+        end
+      end
+
+      params['article-date:missing'] = false
+
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+
+      assert_bundle(bundle)
+
+      assert bundle.entry.all? do |entry|
+        entry.resource.citedArtifact.publicationForm.all? do |publication|
+          !publication.articleDate.nil?
         end
       end
     end
@@ -306,6 +318,96 @@ describe CitationFilter do
           classification.classifier.any? do |classifier|
             classifier.coding.any? { |coding| coding.code == expected_code }
           end
+        end
+      end
+    end
+
+    it 'supports search by strength of recommendation' do
+      expected_code = 'moderate'
+      params = {
+        'strength-of-recommendation' => expected_code
+      }
+
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+
+      assert_bundle(bundle)
+
+      assert bundle.entry.all? do |entry|
+        entry.resource.citedArtifact.extension.any? do |ext|
+          ext.url == 'http://cedar.arhq.gov/StructureDefinition/extension-strength-of-recommendation' &&
+            ext.valueCodeableConcept.coding.any? { |coding| coding.code == expected_code }
+        end
+      end
+    end
+
+    it 'supports search by absence/presence of strength of recommendation' do
+      params = {
+        'strength-of-recommendation:missing' => true
+      }
+
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+
+      assert_bundle(bundle)
+
+      assert bundle.entry.all? do |entry|
+        entry.resource.citedArtifact.extension.none? do |ext|
+          ext.url == 'http://cedar.arhq.gov/StructureDefinition/extension-strength-of-recommendation'
+        end
+      end
+
+      params['strength-of-recommendation:missing'] = false
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+
+      assert_bundle(bundle)
+
+      assert bundle.entry.all? do |entry|
+        entry.resource.citedArtifact.extension.all? do |ext|
+          ext.url == 'http://cedar.arhq.gov/StructureDefinition/extension-strength-of-recommendation'
+        end
+      end
+    end
+
+    it 'supports search by quality of evidence' do
+      expected_code = 'high'
+      params = {
+        'quality-of-evidence' => expected_code
+      }
+
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+
+      assert_bundle(bundle)
+
+      assert bundle.entry.all? do |entry|
+        entry.resource.citedArtifact.extension.any? do |ext|
+          ext.url == 'http://cedar.arhq.gov/StructureDefinition/extension-quality-of-evidence' &&
+            ext.valueCodeableConcept.coding.any? { |coding| coding.code == expected_code }
+        end
+      end
+    end
+
+    it 'supports search by absence/presence of quality of evidence' do
+      params = {
+        'quality-of-evidence:missing' => true
+      }
+
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+
+      assert_bundle(bundle)
+
+      assert bundle.entry.all? do |entry|
+        entry.resource.citedArtifact.extension.none? do |ext|
+          ext.url == 'http://cedar.arhq.gov/StructureDefinition/extension-quality-of-evidence'
+        end
+      end
+
+      params['quality-of-evidence:missing'] = false
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+
+      assert_bundle(bundle)
+
+      assert bundle.entry.all? do |entry|
+        entry.resource.citedArtifact.extension.all? do |ext|
+          ext.url == 'http://cedar.arhq.gov/StructureDefinition/extension-quality-of-evidence'
         end
       end
     end
@@ -457,6 +559,30 @@ describe CitationFilter do
         entry.resource.citedArtifact.classification.any? do |state|
           state.classifier.any? { |classifier| classifier.text == expected }
         end
+      end
+    end
+
+    it 'supports _sort parameter for search result ordering' do
+      search_codes = %w[D0002]
+      params = {
+        'classification' => search_codes.join(','),
+        '_sort' => 'article-date' # ascending date order
+      }
+
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+
+      assert_bundle(bundle)
+      assert_equal('Bladder cancer', bundle.entry[0].resource.title)
+
+      params['_sort'] = '-article-date' # descending date order
+      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+
+      assert_bundle(bundle)
+      assert_equal('Diabetes', bundle.entry[0].resource.title)
+
+      params['_sort'] = 'foo' # invalid sort field
+      assert_raises InvalidParameterError do
+        bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
       end
     end
 

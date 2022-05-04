@@ -54,7 +54,7 @@
           "FHIR Citation"
         ],
         "summary": "Search Citations",
-        "description": "Search parameter __artifact-current-state__ is required.  \n\nSearch results are sorted by:\n  1. __Keyword|Concept Match Count__: if searching for more than one keyword|concept, favor those with more matches\n  2. __Artifact Status__: current > draft > unknown > archived > retired\n  3. __Published Date__: most recent first\n  4. __Strength of Evidence__: artifacts with strongest evidence first\n\nMulti-value search and full-text are supported for some search parameters. Please check FHIR Search Specification (http://hl7.org/fhir/search.html) for syntax details.",
+        "description": "Search parameter __artifact-current-state__ is required.  \n\nBy default, search results are sorted by:\n  1. __Keyword|Concept Match Count__: if searching for more than one keyword|concept, favor those with more matches\n  2. __Artifact Status__: current > draft > unknown > archived > retired\n  3. __Published Date__: most recent first\n  4. __Strength of Evidence__: artifacts with strongest evidence first\n\nThe default ordering can be overridden using the _sort parameter.\n\nMulti-value search and full-text are supported for some search parameters. Please check FHIR Search Specification (http://hl7.org/fhir/search.html) for syntax details.",
         "produces": [
           "application/fhir+json"
         ],
@@ -87,7 +87,7 @@
           },
           {
             "name": "article-date:missing",
-            "description": "cited artifact without publishing date",
+            "description": "cited artifact without (true) or with (false) publishing date",
             "in": "query",
             "type": "boolean"
           },
@@ -118,6 +118,36 @@
           {
             "name": "title:contains",
             "description": "title contains the term",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "strength-of-recommendation",
+            "description": "comma-separated list of recommendation strength (low, moderate, high)",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "strength-of-recommendation:missing",
+            "description": "cited artifact without (true) or with (false) a stated strength of recommendation",
+            "in": "query",
+            "type": "boolean"
+          },
+          {
+            "name": "quality-of-evidence",
+            "description": "comma-separated list of quality of evidence (low, moderate, high)",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "quality-evidence:missing",
+            "description": "cited artifact without (true) or with (false) a stated quality of evidence",
+            "in": "query",
+            "type": "boolean"
+          },
+          {
+            "name": "_sort",
+            "description": "result sort order specified as a comma separated list of fields, most significant to least significant. Supported fields are _score, artifact-current-state, article-date, strength-of-recommendation and quality-of-evidence. See the FHIR Search Specification (http://hl7.org/fhir/search.html) for additional details.",
             "in": "query",
             "type": "string"
           },
@@ -464,7 +494,7 @@
           "CSV"
         ],
         "summary": "Search Citations",
-        "description": "Search results are sorted by:\n  1. __Keyword|Concept Match Count__: if searching for more than one keyword|concept, favor those with more matches\n  2. __Artifact Status__: current > draft > unknown > archived > retired\n  3. __Published Date__: most recent first\n  4. __Strength of Evidence__: artifacts with strongest evidence first\n\nMulti-value search and full-text are supported for some search parameters.",
+        "description": "By default, search results are sorted by:\n  1. __Keyword|Concept Match Count__: if searching for more than one keyword|concept, favor those with more matches\n  2. __Artifact Status__: current > draft > unknown > archived > retired\n  3. __Published Date__: most recent first\n  4. __Strength of Evidence__: artifacts with strongest evidence first\n\nThe default ordering can be overridden using the _sort parameter.\n\nMulti-value search and full-text are supported for some search parameters.",
         "produces": [
           "text/csv"
         ],
@@ -526,6 +556,12 @@
           {
             "name": "title:contains",
             "description": "title contains the term",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "_sort",
+            "description": "result sort order specified as a comma separated list of fields, most significant to least significant. Supported fields are _score, artifact-current-state, article-date, strength-of-recommendation and quality-of-evidence.",
             "in": "query",
             "type": "string"
           }

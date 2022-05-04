@@ -1,0 +1,34 @@
+{
+  "resourceType": "SearchParameter",
+  "id": "cedar-citation-quality-of-evidence",
+  "url": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-quality-of-evidence",
+  "version": "0.1.0",
+  "name": "CedarCitationQualityOfEvidence",
+  "status": "active",
+  "experimental": false,
+  "date": "2022-05-04",
+  "publisher": "ARHQ CEDAR",
+  "contact": [
+    {
+      "telecom": [
+        {
+          "system": "url",
+          "value": "http://cedar.arhq.gov"
+        }
+      ]
+    }
+  ],
+  "code": "quality-of-evidence",
+  "base": [
+    "Citation"
+  ],
+  "description": "Quality of evidence included in the citation",
+  "type": "token",
+  "expression": "Citation.citedArtifact.extension.where(url='http://cedar.arhq.gov/StructureDefinition/extension-quality-of-evidence')",
+  "xpath": "f:Citation/f:citedArtifact/f:extension[@url='http://cedar.arhq.gov/StructureDefinition/extension-quality-of-evidence']",
+  "xpathUsage": "normal",
+  "multipleOr": "true",
+  "modifier": [
+    "missing"
+  ]
+}

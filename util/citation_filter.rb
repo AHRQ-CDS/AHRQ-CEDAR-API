@@ -16,15 +16,31 @@ class CitationFilter
   UMLS_CODE_SYSTEM_IDS = FHIRAdapter::FHIR_CODE_SYSTEM_URLS.invert.freeze
   MULTIPLE_AND_PARAMETERS = ['classification', 'title:contains'].freeze
   STATUS_SORT_ORDER = { 'active' => 1, 'draft' => 2, 'unknown' => 3, 'archived' => 4, 'retracted' => 5 }.freeze
+  FHIR_DB_FIELD = {
+    '_score' => :id,
+    'artifact-current-state' => :artifact_status,
+    'article-date' => :published_on,
+    'strength-of-recommendation' => :strength_of_recommendation_sort,
+    'quality-of-evidence' => :quality_of_evidence_sort
+  }.freeze
+  DEFAULT_SORT_ORDER = [
+    { field: '_score', order: :desc },
+    { field: 'artifact-current-state', order: :asc },
+    { field: 'article-date', order: :desc },
+    { field: 'strength-of-recommendation', order: :desc },
+    { field: 'quality-of-evidence', order: :desc }
+  ].freeze
+  CERTAINTY_VALUES = FHIRAdapter::QUALITY_OF_EVIDENCE_CODES.to_h { |entry| [entry[:code], entry[:sort_value]] }.freeze
   DEFAULT_PAGE_SIZE = 10
 
   def initialize(params:, base_url:, request_url:, client_ip: nil, log_to_db: false)
+    @search_params = params
     @artifact_base_url = base_url
     @request_url = request_url
     @client_ip = client_ip
     @log_to_db = log_to_db
-    @search_params = params
-    @client_ip = client_ip
+    @sort_order = DEFAULT_SORT_ORDER
+    @id_frequency_counts = nil
   end
 
   def build_link_url(page_no, page_size)
@@ -154,7 +170,11 @@ class CitationFilter
           postgres_search_terms = self.class.fhir_datetime_to_postgres_search(value, 'published_on')
           filter = filter.where(Sequel.lit(*postgres_search_terms))
         when 'article-date:missing'
-          filter = filter.where(published_on: nil) if value
+          filter = if value.to_s.downcase == 'true'
+                     filter.where(published_on: nil) if value
+                   else
+                     filter.where(Sequel.lit('published_on IS NOT NULL'))
+                   end
         when 'classification'
           # All matching artifacts for each concept, structure is three level nested array.
           # E.g. classification=A,B&classification=C would yield the following
@@ -177,11 +197,11 @@ class CitationFilter
           end.inject(:&) # AND for terms from separate arguments
 
           filter = filter.where(Sequel[:artifacts][:id] => distinct_ids)
-          # Count how often each artifact id is present, a higher count means that artifact matched more concepts
-          unless artifact_id_list.nil? || artifact_id_list.flatten.blank?
-            id_frequency_counts = artifact_id_list.flatten.tally
 
-            filter = filter.order_append(Sequel.desc(Sequel.case(id_frequency_counts, 0, :id)))
+          unless artifact_id_list.nil? || artifact_id_list.flatten.blank?
+            # Count how often each artifact id is present, a higher count means that artifact matched more concepts
+            # May be used later if sorting by _score is specified
+            @id_frequency_counts = artifact_id_list.flatten.tally
           end
         when 'classification:text'
           cols = SearchParser.parse(value)
@@ -212,19 +232,72 @@ class CitationFilter
           filter = filter.where(repository_id: repository_ids)
         when 'artifact-type'
           filter = filter.where(Sequel.lit('LOWER(artifact_type) IN ?', search_terms))
+        when 'strength-of-recommendation'
+          certainty_values = search_terms.map { |code| CERTAINTY_VALUES[code] }.compact
+          filter = filter.where(strength_of_recommendation_sort: certainty_values)
+        when 'strength-of-recommendation:missing'
+          filter = if value.to_s.downcase == 'true'
+                     filter.where(strength_of_recommendation_score: nil)
+                           .where(strength_of_recommendation_statement: nil)
+                   else
+                     filter.where do
+                       (Sequel.lit('strength_of_recommendation_score IS NOT NULL')) |
+                         (Sequel.lit('strength_of_recommendation_statement IS NOT NULL'))
+                     end
+                   end
+        when 'quality-of-evidence'
+          certainty_values = search_terms.map { |code| CERTAINTY_VALUES[code] }.compact
+          filter = filter.where(quality_of_evidence_sort: certainty_values)
+        when 'quality-of-evidence:missing'
+          filter = if value.to_s.downcase == 'true'
+                     filter.where(quality_of_evidence_score: nil)
+                           .where(quality_of_evidence_statement: nil)
+                   else
+                     filter.where do
+                       (Sequel.lit('quality_of_evidence_score IS NOT NULL')) |
+                         (Sequel.lit('quality_of_evidence_statement IS NOT NULL'))
+                     end
+                   end
+        when '_sort'
+          @sort_order = search_terms.map do |term|
+            if term.start_with?('-')
+              order = :desc
+              term = term[1..]
+            else
+              order = :asc
+            end
+            raise "Unsupported sort field #{term}" if FHIR_DB_FIELD[term].nil?
+
+            { field: term, order: order }
+          end
         end
       rescue StandardError => e
-        CedarLogger.error "Failed to add filter: #{e.full_message}"
+        CedarLogger.error "Failed to process search parameter: #{e.full_message}"
         raise InvalidParameterError.new(parameter: key, value: value)
       end
     end
 
-    # Add the default ordering after whatever primary ordering (e.g. rank for free text)
-    # is present
-    filter.order_append(Sequel.case(STATUS_SORT_ORDER, 5, :artifact_status))
-          .order_append(Sequel.desc(:published_on))
-          .order_append(Sequel.desc(:strength_of_recommendation_sort))
-          .order_append(Sequel.desc(:quality_of_evidence_sort))
+    # Add the sort ordering
+    @sort_order.map { |e| to_sort_order(e) }.each do |sort_entry|
+      filter = filter.order_append(sort_entry) unless sort_entry.nil?
+    end
+
+    filter
+  end
+
+  def to_sort_order(sort_entry)
+    case sort_entry[:field]
+    when '_score'
+      if @id_frequency_counts.nil?
+        nil
+      else
+        Sequel.send(sort_entry[:order], Sequel.case(@id_frequency_counts, 0, FHIR_DB_FIELD[sort_entry[:field]]))
+      end
+    when 'artifact-current-state'
+      Sequel.send(sort_entry[:order], Sequel.case(STATUS_SORT_ORDER, 5, FHIR_DB_FIELD[sort_entry[:field]]))
+    else
+      Sequel.send(sort_entry[:order], FHIR_DB_FIELD[sort_entry[:field]])
+    end
   end
 
   def add_pagination(filter)
