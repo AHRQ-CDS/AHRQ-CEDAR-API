@@ -171,7 +171,7 @@ class CitationFilter
           filter = filter.where(Sequel.lit(*postgres_search_terms))
         when 'article-date:missing'
           filter = if value.to_s.downcase == 'true'
-                     filter.where(published_on: nil) if value
+                     filter.where(published_on: nil)
                    else
                      filter.where(Sequel.lit('published_on IS NOT NULL'))
                    end
