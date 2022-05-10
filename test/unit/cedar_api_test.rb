@@ -34,6 +34,19 @@ describe 'cedar_api' do
     end
   end
 
+  describe '/redirect endpoint' do
+    it 'returns 404 for unknown artifacts' do
+      get '/redirect/foo'
+      assert last_response.not_found?
+    end
+
+    it 'returns a redirect for know artifacts' do
+      get '/redirect/abc-1'
+      assert last_response.redirect?
+      assert_equal 'http://example.org/abc-1', last_response.location
+    end
+  end
+
   describe '/csv endpoint' do
     it 'returns a valid CSV file' do
       get '/csv?_content=cancer&artifact-current-state=active'

@@ -60,6 +60,18 @@ get '/demo' do
   DEMO_FORM
 end
 
+get '/redirect/:id' do
+  id = params[:id]
+  artifact = Artifact.first(cedar_identifier: id)
+  if artifact.nil?
+    logger.info "Redirect for unknown artifact (#{id})"
+    halt(404)
+  end
+
+  logger.info "Redirect for artifact (#{id})"
+  redirect artifact.url
+end
+
 get '/csv' do
   multiple_and_parameters = CGI.parse(request.query_string).select do |k, _v|
     CitationFilter::MULTIPLE_AND_PARAMETERS.include?(k)
@@ -67,7 +79,8 @@ get '/csv' do
 
   request_url = "#{request.scheme}://#{request.host}:#{request.port}#{request.path}"
   filter = CitationFilter.new(params: params.merge(multiple_and_parameters),
-                              base_url: uri('fhir/Citation').to_s,
+                              artifact_base_url: uri('fhir/Citation').to_s,
+                              redirect_base_url: uri('redirect').to_s,
                               request_url: request_url,
                               client_ip: request.ip,
                               log_to_db: true)
@@ -195,7 +208,7 @@ namespace '/fhir' do
       halt(404)
     end
 
-    citation = FHIRAdapter.create_citation(artifact, uri('fhir/Citation'), artifact.versions.count + 1)
+    citation = FHIRAdapter.create_citation(artifact, uri('fhir/Citation'), uri('redirect'), artifact.versions.count + 1)
     citation.to_json
   end
 
@@ -224,9 +237,10 @@ namespace '/fhir' do
 
     if version_id <= base_artifact.versions.count
       versioned_artifact = base_artifact.versions[version_id - 1].build_artifact
-      citation = FHIRAdapter.create_citation(versioned_artifact, uri('fhir/Citation'), version_id, skip_concept: true)
+      citation = FHIRAdapter.create_citation(versioned_artifact, uri('fhir/Citation'), uri('redirect'),
+                                             version_id, skip_concept: true)
     else
-      citation = FHIRAdapter.create_citation(base_artifact, uri('fhir/Citation'), version_id)
+      citation = FHIRAdapter.create_citation(base_artifact, uri('fhir/Citation'), uri('redirect'), version_id)
     end
 
     citation.to_json
@@ -257,7 +271,8 @@ namespace '/fhir' do
 
     request_url = "#{request.scheme}://#{request.host}:#{request.port}#{request.path}"
     filter = CitationFilter.new(params: params.merge(multiple_and_parameters),
-                                base_url: uri('fhir/Citation').to_s,
+                                artifact_base_url: uri('fhir/Citation').to_s,
+                                redirect_base_url: uri('redirect').to_s,
                                 request_url: request_url,
                                 client_ip: request.ip,
                                 log_to_db: true)
