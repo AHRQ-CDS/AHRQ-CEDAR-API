@@ -40,7 +40,7 @@ describe 'cedar_api' do
       assert last_response.not_found?
     end
 
-    it 'returns a redirect for know artifacts' do
+    it 'returns a redirect for known artifacts' do
       get '/redirect/abc-1'
       assert last_response.redirect?
       assert_equal 'http://example.org/abc-1', last_response.location
