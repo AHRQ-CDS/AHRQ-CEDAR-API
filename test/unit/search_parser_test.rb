@@ -16,10 +16,34 @@ describe SearchParser do
       assert_equal('aa&bb+&cc', result)
     end
 
+    it 'handles hyphenated words' do
+      source = 'aa-cc'
+      result = SearchParser.parse(source)
+      assert_equal('aa-cc', result)
+    end
+
     it 'handles synonyms in simple text searches' do
       source = 'aa foo cc'
       result = SearchParser.parse(source)
       assert_equal('aa&(foo|bar|baz)&cc', result)
+    end
+
+    it 'ignores case for synonym lookup' do
+      source = 'aa FOO cc'
+      result = SearchParser.parse(source)
+      assert_equal('aa&(foo|bar|baz)&cc', result)
+    end
+
+    it 'handles synonyms when the search word is hyphenated' do
+      source = 'aa f-oo cc'
+      result = SearchParser.parse(source)
+      assert_equal('aa&(foo|bar|baz)&cc', result)
+    end
+
+    it 'handles hyphenated synonyms' do
+      source = 'aa foo-bar cc'
+      result = SearchParser.parse(source)
+      assert_equal('aa&(foo-bar|baz)&cc', result)
     end
 
     it 'handles multi-word synonyms in simple text searches' do

@@ -28,8 +28,10 @@ class SearchParser
   # Returns a Concept for which the supplied term is a synonym or nil if none found
   def get_concepts(term)
     synonyms_op = Sequel.pg_jsonb_op(:synonyms_psql)
+    term = term.downcase
+    term_no_dashes = term.gsub('-', '')
     # Concept.where(...).empty? is very slow (20X) compared to Concept.where(...).all.empty?
-    Concept.where(synonyms_op.contains([term])).all
+    Concept.where(synonyms_op.contains([term])).or(synonyms_op.contains([term_no_dashes])).all
   end
 
   # Returns the supplied term if no synonyms are found or a bracketed set of synonyms
@@ -45,14 +47,14 @@ class SearchParser
     "(#{synonyms.join('|')})"
   end
 
-  # Parse any search term, matching alphanumerics plus a few additional characters: +, * and '
+  # Parse any search term, matching alphanumerics plus a few additional characters: -, +, * and '
   def parse_term
-    parse_regexp(/^(['+*\w]+)/)
+    parse_regexp(/^(['\-+*\w]+)/)
   end
 
-  # Parse any search term, matching alphanumerics plus a few additional characters: +, *, (, ) and '
+  # Parse any search term, matching alphanumerics plus a few additional characters: -, +, *, (, ) and '
   def parse_term_with_brackets
-    parse_regexp(/^(['+*()\w]+)/)
+    parse_regexp(/^(['\-+*()\w]+)/)
   end
 
   # The operators supported by the API and the conversion to PostgreSQL full text search
