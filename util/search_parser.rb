@@ -42,7 +42,7 @@ class SearchParser
     concepts = get_concepts(term)
     return term if concepts.nil? || concepts.empty?
 
-    synonyms = concepts.map(&:synonyms_psql).flatten.uniq
+    synonyms = concepts.map(&:synonyms_psql).flatten.map { |s| s.gsub(/<->[&|!]<->/, '<->') }.uniq
 
     "(#{synonyms.join('|')})"
   end
