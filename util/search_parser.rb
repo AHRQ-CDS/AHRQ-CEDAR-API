@@ -26,12 +26,11 @@ class SearchParser
   end
 
   # Returns a Concept for which the supplied term is a synonym or nil if none found
-  def get_concepts(term)
+  def get_concepts(term, normalized_term)
     synonyms_op = Sequel.pg_jsonb_op(:synonyms_psql)
-    term = term.downcase
-    term_no_dashes = term.gsub('-', '')
+
     # Concept.where(...).empty? is very slow (20X) compared to Concept.where(...).all.empty?
-    Concept.where(synonyms_op.contains([term])).or(synonyms_op.contains([term_no_dashes])).all
+    Concept.where(synonyms_op.contains([term])).or(synonyms_op.contains([normalized_term])).all
   end
 
   # Returns the supplied term if no synonyms are found or a bracketed set of synonyms
@@ -39,12 +38,16 @@ class SearchParser
   def synonyms(term)
     return nil if term.nil?
 
-    concepts = get_concepts(term)
-    return term if concepts.nil? || concepts.empty?
+    term = term.downcase
+    term_no_hyphens = term.gsub(/(\w)-(\w)/, '\1\2') # ignores <-> word separators
+    concepts = get_concepts(term, term_no_hyphens)
+    synonyms = if concepts.nil? || concepts.empty?
+                 [term, term_no_hyphens].uniq
+               else
+                 concepts.map(&:synonyms_psql).flatten.map { |s| s.gsub(/<->[&|!]<->/, '<->') }.uniq
+               end
 
-    synonyms = concepts.map(&:synonyms_psql).flatten.map { |s| s.gsub(/<->[&|!]<->/, '<->') }.uniq
-
-    "(#{synonyms.join('|')})"
+    synonyms.length > 1 ? "(#{synonyms.join('|')})" : synonyms[0]
   end
 
   # Parse any search term, matching alphanumerics plus a few additional characters: -, +, * and '

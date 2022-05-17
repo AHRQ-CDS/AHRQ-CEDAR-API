@@ -19,7 +19,7 @@ describe SearchParser do
     it 'handles hyphenated words' do
       source = 'aa-cc'
       result = SearchParser.parse(source)
-      assert_equal('aa-cc', result)
+      assert_equal('(aa-cc|aacc)', result)
     end
 
     it 'handles synonyms in simple text searches' do
@@ -151,7 +151,7 @@ describe SearchParser do
     it 'handles search terms that start with a keyword' do
       text = 'aa OR ORGAN'
       result = SearchParser.parse(text)
-      assert_equal('aa|ORGAN', result)
+      assert_equal('aa|organ', result)
     end
 
     it 'handles two phrases next to each other' do
