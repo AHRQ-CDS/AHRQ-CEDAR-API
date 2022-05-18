@@ -40,7 +40,6 @@ class CitationFilter
     @client_ip = client_ip
     @log_to_db = log_to_db
     @sort_order = DEFAULT_SORT_ORDER
-    @id_frequency_counts = nil
   end
 
   def build_link_url(page_no, page_size)
@@ -148,6 +147,7 @@ class CitationFilter
     #    that rely on id joins
     # 2. The many-to-many relationship with concepts results in multiple rows per artifact
     filter = Artifact.dataset
+    id_frequency_counts = nil
 
     @search_params&.each do |key, value|
       search_terms = value.split(',').map { |v| v.strip.downcase.to_s } if value.is_a?(String)
@@ -173,7 +173,7 @@ class CitationFilter
           filter = if value.to_s.downcase == 'true'
                      filter.where(published_on: nil)
                    else
-                     filter.where(Sequel.lit('published_on IS NOT NULL'))
+                     filter.exclude(published_on: nil)
                    end
         when 'classification'
           # All matching artifacts for each concept, structure is three level nested array.
@@ -201,7 +201,7 @@ class CitationFilter
           unless artifact_id_list.nil? || artifact_id_list.flatten.blank?
             # Count how often each artifact id is present, a higher count means that artifact matched more concepts
             # May be used later if sorting by _score is specified
-            @id_frequency_counts = artifact_id_list.flatten.tally
+            id_frequency_counts = artifact_id_list.flatten.tally
           end
         when 'classification:text'
           cols = SearchParser.parse(value)
@@ -241,8 +241,8 @@ class CitationFilter
                            .where(strength_of_recommendation_statement: nil)
                    else
                      filter.where do
-                       (Sequel.lit('strength_of_recommendation_score IS NOT NULL')) |
-                         (Sequel.lit('strength_of_recommendation_statement IS NOT NULL'))
+                       (Sequel.~(strength_of_recommendation_score: nil)) |
+                         (Sequel.~(strength_of_recommendation_statement: nil))
                      end
                    end
         when 'quality-of-evidence'
@@ -254,8 +254,8 @@ class CitationFilter
                            .where(quality_of_evidence_statement: nil)
                    else
                      filter.where do
-                       (Sequel.lit('quality_of_evidence_score IS NOT NULL')) |
-                         (Sequel.lit('quality_of_evidence_statement IS NOT NULL'))
+                       (Sequel.~(quality_of_evidence_score: nil)) |
+                         (Sequel.~(quality_of_evidence_statement: nil))
                      end
                    end
         when '_sort'
@@ -278,20 +278,18 @@ class CitationFilter
     end
 
     # Add the sort ordering
-    @sort_order.map { |e| to_sort_order(e) }.each do |sort_entry|
+    @sort_order.map { |e| to_sort_order(e, id_frequency_counts) }.each do |sort_entry|
       filter = filter.order_append(sort_entry) unless sort_entry.nil?
     end
 
     filter
   end
 
-  def to_sort_order(sort_entry)
+  def to_sort_order(sort_entry, id_frequency_counts)
     case sort_entry[:field]
     when '_score'
-      if @id_frequency_counts.nil?
-        nil
-      else
-        Sequel.send(sort_entry[:order], Sequel.case(@id_frequency_counts, 0, FHIR_DB_FIELD[sort_entry[:field]]))
+      if id_frequency_counts
+        Sequel.send(sort_entry[:order], Sequel.case(id_frequency_counts, 0, FHIR_DB_FIELD[sort_entry[:field]]))
       end
     when 'artifact-current-state'
       Sequel.send(sort_entry[:order], Sequel.case(STATUS_SORT_ORDER, 5, FHIR_DB_FIELD[sort_entry[:field]]))
