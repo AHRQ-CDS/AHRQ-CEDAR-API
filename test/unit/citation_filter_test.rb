@@ -187,7 +187,9 @@ describe CitationFilter do
 
       params['article-date:missing'] = false
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -355,8 +357,9 @@ describe CitationFilter do
         'strength-of-recommendation' => expected_code
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
-
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
       assert_bundle(bundle)
 
       assert bundle.entry.all? do |entry|
@@ -372,7 +375,9 @@ describe CitationFilter do
         'strength-of-recommendation:missing' => true
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -383,7 +388,9 @@ describe CitationFilter do
       end
 
       params['strength-of-recommendation:missing'] = false
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -400,7 +407,9 @@ describe CitationFilter do
         'quality-of-evidence' => expected_code
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -417,7 +426,9 @@ describe CitationFilter do
         'quality-of-evidence:missing' => true
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -428,7 +439,9 @@ describe CitationFilter do
       end
 
       params['quality-of-evidence:missing'] = false
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -614,20 +627,26 @@ describe CitationFilter do
         '_sort' => 'article-date' # ascending date order
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
       assert_equal('Bladder cancer', bundle.entry[0].resource.title)
 
       params['_sort'] = '-article-date' # descending date order
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
       assert_equal('Diabetes', bundle.entry[0].resource.title)
 
       params['_sort'] = 'foo' # invalid sort field
       assert_raises InvalidParameterError do
-        bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+        bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                    redirect_base_url: @redirect_base_url,
+                                    request_url: @request_url).citations
       end
     end
 

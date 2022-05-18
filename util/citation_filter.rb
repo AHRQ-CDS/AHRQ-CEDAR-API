@@ -34,6 +34,7 @@ class CitationFilter
   DEFAULT_PAGE_SIZE = 10
 
   def initialize(params:, artifact_base_url:, redirect_base_url:, request_url:, client_ip: nil, log_to_db: false)
+    @search_params = params
     @artifact_base_url = artifact_base_url
     @redirect_base_url = redirect_base_url
     @request_url = request_url

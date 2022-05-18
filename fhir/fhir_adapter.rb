@@ -12,15 +12,18 @@ class FHIRAdapter
   QUALITY_OF_EVIDENCE_CODES = [
     {
       code: 'low',
-      display: 'Low quality'
+      display: 'Low quality',
+      sort_value: 0
     },
     {
       code: 'moderate',
-      display: 'Moderate quality'
+      display: 'Moderate quality',
+      sort_value: 1
     },
     {
       code: 'high',
-      display: 'High quality'
+      display: 'High quality',
+      sort_value: 2
     }
   ].freeze
 
