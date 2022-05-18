@@ -33,9 +33,10 @@ class CitationFilter
   CERTAINTY_VALUES = FHIRAdapter::QUALITY_OF_EVIDENCE_CODES.to_h { |entry| [entry[:code], entry[:sort_value]] }.freeze
   DEFAULT_PAGE_SIZE = 10
 
-  def initialize(params:, base_url:, request_url:, client_ip: nil, log_to_db: false)
+  def initialize(params:, artifact_base_url:, redirect_base_url:, request_url:, client_ip: nil, log_to_db: false)
     @search_params = params
-    @artifact_base_url = base_url
+    @artifact_base_url = artifact_base_url
+    @redirect_base_url = redirect_base_url
     @request_url = request_url
     @client_ip = client_ip
     @log_to_db = log_to_db
@@ -125,7 +126,8 @@ class CitationFilter
              else
                FHIRAdapter.create_citation_bundle(total: paged_result[:total],
                                                   artifacts: paged_result[:artifacts],
-                                                  base_url: @artifact_base_url)
+                                                  artifact_base_url: @artifact_base_url,
+                                                  redirect_base_url: @redirect_base_url)
              end
 
     add_bundle_links(bundle, paged_result[:artifacts])

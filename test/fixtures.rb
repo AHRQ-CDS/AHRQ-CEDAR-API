@@ -22,6 +22,7 @@ DB[:repositories].insert(id: 102,
 DB[:artifacts].insert(
   id: 201,
   cedar_identifier: 'abc-1',
+  url: 'http://example.org/abc-1',
   remote_identifier: '201',
   artifact_status: 'active',
   title: 'Bladder cancer',

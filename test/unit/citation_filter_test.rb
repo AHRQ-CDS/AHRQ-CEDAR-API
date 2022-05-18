@@ -90,6 +90,7 @@ describe CitationFilter do
   describe 'find citation' do
     before do
       @artifact_base_url = 'http://localhost/fhir/Citation'
+      @redirect_base_url = 'http://localhost/redirect'
       @request_url = 'http://example.com/fhir/Citation'
     end
 
@@ -99,7 +100,9 @@ describe CitationFilter do
         '_content' => expected
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -116,7 +119,9 @@ describe CitationFilter do
         '_lastUpdated' => "lt#{cutoff_date.strftime('%F')}"
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -132,7 +137,9 @@ describe CitationFilter do
         '_lastUpdated' => "gt#{cutoff_date.strftime('%F')}"
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -148,7 +155,9 @@ describe CitationFilter do
         'article-date' => "gt#{cutoff_date.strftime('%F')}"
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -164,7 +173,9 @@ describe CitationFilter do
         'article-date:missing' => true
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -176,7 +187,9 @@ describe CitationFilter do
 
       params['article-date:missing'] = false
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -193,7 +206,9 @@ describe CitationFilter do
         'title' => expected
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -209,7 +224,9 @@ describe CitationFilter do
         'title' => "#{title_a},#{title_b}"
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -225,7 +242,9 @@ describe CitationFilter do
         'title:contains' => expected
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -240,7 +259,9 @@ describe CitationFilter do
         'title:contains' => expected
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -255,7 +276,9 @@ describe CitationFilter do
         'classification:text' => expected
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -272,7 +295,9 @@ describe CitationFilter do
         'classification:text' => expected.join(',')
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -290,7 +315,9 @@ describe CitationFilter do
         'classification' => "#{expected_system}|#{expected_code}"
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -309,7 +336,9 @@ describe CitationFilter do
         'classification' => expected_code
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -328,8 +357,9 @@ describe CitationFilter do
         'strength-of-recommendation' => expected_code
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
-
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
       assert_bundle(bundle)
 
       assert bundle.entry.all? do |entry|
@@ -345,7 +375,9 @@ describe CitationFilter do
         'strength-of-recommendation:missing' => true
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -356,7 +388,9 @@ describe CitationFilter do
       end
 
       params['strength-of-recommendation:missing'] = false
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -373,7 +407,9 @@ describe CitationFilter do
         'quality-of-evidence' => expected_code
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -390,7 +426,9 @@ describe CitationFilter do
         'quality-of-evidence:missing' => true
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -401,7 +439,9 @@ describe CitationFilter do
       end
 
       params['quality-of-evidence:missing'] = false
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -419,7 +459,9 @@ describe CitationFilter do
         'classification' => expected_code
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert bundle.is_a?(FHIR::Bundle)
       assert_equal 'searchset', bundle.type
@@ -433,7 +475,9 @@ describe CitationFilter do
         'classification' => expected_codes.join(',')
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -454,7 +498,9 @@ describe CitationFilter do
         'classification' => search_codes.join(',')
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
       assert_equal('Bladder cancer', bundle.entry[0].resource.title)
@@ -466,7 +512,9 @@ describe CitationFilter do
         'classification' => search_codes.join(',')
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
       assert_equal('Diabetes', bundle.entry[0].resource.title)
@@ -478,7 +526,9 @@ describe CitationFilter do
         'classification' => expected_codes
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
       assert_bundle(bundle)
 
       result = expected_codes.all? do |expected_code|
@@ -500,7 +550,9 @@ describe CitationFilter do
         'artifact-current-state' => expected
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -517,7 +569,9 @@ describe CitationFilter do
         'artifact-current-state' => expected.join(',')
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -534,7 +588,9 @@ describe CitationFilter do
         'artifact-type': expected
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -551,7 +607,9 @@ describe CitationFilter do
         'artifact-type': expected.join(',')
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
 
@@ -569,20 +627,26 @@ describe CitationFilter do
         '_sort' => 'article-date' # ascending date order
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
       assert_equal('Bladder cancer', bundle.entry[0].resource.title)
 
       params['_sort'] = '-article-date' # descending date order
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
       assert_equal('Diabetes', bundle.entry[0].resource.title)
 
       params['_sort'] = 'foo' # invalid sort field
       assert_raises InvalidParameterError do
-        bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+        bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                    redirect_base_url: @redirect_base_url,
+                                    request_url: @request_url).citations
       end
     end
 
@@ -592,7 +656,9 @@ describe CitationFilter do
         '_count' => expected.to_s
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle, assert_total: false)
       assert_paging(bundle, expected, 1)
@@ -606,7 +672,9 @@ describe CitationFilter do
         'page' => page.to_s
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle, assert_total: false)
       assert_paging(bundle, count, page)
@@ -620,7 +688,9 @@ describe CitationFilter do
         'page' => page.to_s
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle, assert_total: false)
       assert_paging(bundle, count, page)
@@ -632,7 +702,9 @@ describe CitationFilter do
         'artifact-publisher' => expected
       }
 
-      bundle = CitationFilter.new(params: params, base_url: @artifact_base_url, request_url: @request_url).citations
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
 
       assert_bundle(bundle)
       assert bundle.entry.all? do |entry|
@@ -654,7 +726,8 @@ describe CitationFilter do
       }
 
       citations = CitationFilter.new(params: params,
-                                     base_url: @artifact_base_url,
+                                     artifact_base_url: @artifact_base_url,
+                                     redirect_base_url: @redirect_base_url,
                                      request_url: @request_url,
                                      client_ip: '::1',
                                      log_to_db: true)
