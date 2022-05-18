@@ -8,20 +8,6 @@ class FHIRAdapter
   include FHIRCodeSystems
 
   HOSTNAME = ENV['HOSTNAME'] || 'http://cedar.arhq.gov'
-  QUALITY_OF_EVIDENCE_CODES = [
-    {
-      code: 'low',
-      display: 'Low quality'
-    },
-    {
-      code: 'moderate',
-      display: 'Moderate quality'
-    },
-    {
-      code: 'high',
-      display: 'High quality'
-    }
-  ].freeze
 
   def self.create_citation(artifact, artifact_base_url, version_id, skip_concept: false)
     cedar_identifier = artifact[:cedar_identifier]

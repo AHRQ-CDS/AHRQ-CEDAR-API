@@ -52,6 +52,10 @@
               "type": "number"
             },
             {
+              "name": "_sort",
+              "type": "string"
+            },
+            {
               "name": "classification",
               "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-classification",
               "type": "string"
@@ -90,6 +94,16 @@
               "name": "artifact-type",
               "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-artifact-type",
               "type": "string"
+            },
+            {
+              "name": "strength-of-recommendation",
+              "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-strength-of-recommendation",
+              "type": "token"
+            },
+            {
+              "name": "quality-of-evidence",
+              "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-quality-of-evidence",
+              "type": "token"
             }
           ],
           "operation": [

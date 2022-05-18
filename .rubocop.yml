@@ -26,15 +26,15 @@ Metrics/ClassLength:
 
 Metrics/CyclomaticComplexity:
   Enabled: false
-  
+
 Metrics/MethodLength:
   Enabled: false
 
 Metrics/PerceivedComplexity:
   Enabled: false
-  
+
 Style/SymbolArray:
   Enabled: false
-  
+
 Minitest/MultipleAssertions:
   Max: 10
