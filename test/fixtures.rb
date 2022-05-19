@@ -111,6 +111,15 @@ DB[:concepts].insert(
   created_at: timestamp,
   updated_at: timestamp
 )
+DB[:concepts].insert(
+  id: 304,
+  umls_cui: 'CUI4',
+  umls_description: 'CUI4 desc',
+  synonyms_text: '["foo-bar", "baz"]',
+  synonyms_psql: '["foo-bar", "baz"]',
+  created_at: timestamp,
+  updated_at: timestamp
+)
 DB[:artifacts_concepts].insert(
   artifact_id: 201,
   concept_id: 301

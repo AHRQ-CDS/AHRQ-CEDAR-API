@@ -12,6 +12,7 @@ database_config = config[env]
 
 # Connect to the specified database
 Sequel.extension(:pg_json_ops)
+Sequel.extension(:pg_array)
 DB = Sequel.connect(database_config)
 DB.extension(:pagination)
 DB.extension(:pg_json)
