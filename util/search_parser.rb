@@ -30,7 +30,7 @@ class SearchParser
     synonyms_op = Sequel.pg_jsonb_op(:synonyms_psql)
 
     # Concept.where(...).empty? is very slow (20X) compared to Concept.where(...).all.empty?
-    Concept.where(synonyms_op.contains([term])).or(synonyms_op.contains([normalized_term])).all
+    Concept.where(synonyms_op.contain_any([term, normalized_term].uniq)).all
   end
 
   # Returns the supplied term if no synonyms are found or a bracketed set of synonyms
