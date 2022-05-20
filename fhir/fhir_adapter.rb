@@ -9,23 +9,6 @@ class FHIRAdapter
 
   HOSTNAME = ENV['HOSTNAME'] || 'http://cedar.arhq.gov'
   ARTIFACT_URL_CLICK_LOGGING = ENV['ARTIFACT_URL_CLICK_LOGGING'].to_s.downcase == 'true'
-  QUALITY_OF_EVIDENCE_CODES = [
-    {
-      code: 'low',
-      display: 'Low quality',
-      sort_value: 0
-    },
-    {
-      code: 'moderate',
-      display: 'Moderate quality',
-      sort_value: 1
-    },
-    {
-      code: 'high',
-      display: 'High quality',
-      sort_value: 2
-    }
-  ].freeze
 
   def self.create_citation(artifact, artifact_base_url, redirect_base_url, version_id, skip_concept: false)
     cedar_identifier = artifact[:cedar_identifier]
