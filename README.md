@@ -9,7 +9,13 @@ valuable, but the way they would like to use CEDAR may be very different. So sys
 accommodate to different user types like these could potentially benefit from a single API with
 access to, and handling for multiple data sources.
 
-For more information, please see [Introduction](doc/Introduction.md) & [Getting Started](doc/GettingStarted.md).
+For more information, please see:
+
+- [Introduction](doc/Introduction.md)
+- [Getting Started](doc/GettingStarted.md)
+- [Contribution Guide](CONTRIBUTING.md)
+- [Code of Conduct](CODE-OF-CONDUCT.md)
+- [Terms and Conditions](TERMS-AND-CONDITIONS.md)
 
 ## Prerequisites
 
