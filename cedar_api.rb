@@ -66,9 +66,12 @@ get '/redirect/:id' do
   if artifact.nil?
     logger.info "Redirect for unknown artifact (#{id})"
     halt(404)
+  elsif artifact.url.nil?
+    logger.info "Redirect for retracted artifact (#{id})"
+    halt(404)
   end
 
-  logger.info "Redirect for artifact (#{id})"
+  logger.info "Artifact redirect: #{{ id: id, result: params[:result], referrer: request.referrer }.to_json}"
   redirect artifact.url
 end
 
@@ -78,9 +81,10 @@ get '/csv' do
   end
 
   request_url = "#{request.scheme}://#{request.host}:#{request.port}#{request.path}"
+  redirect_base_url = uri('redirect').to_s
   filter = CitationFilter.new(params: params.merge(multiple_and_parameters),
                               artifact_base_url: uri('fhir/Citation').to_s,
-                              redirect_base_url: uri('redirect').to_s,
+                              redirect_base_url: redirect_base_url,
                               request_url: request_url,
                               client_ip: request.ip,
                               log_to_db: true)
@@ -99,7 +103,7 @@ get '/csv' do
     out << CSV.generate_line(
       %w[Repository Title Description Keywords UMLS MeSH SNOMED-CT ICD10CM RXNORM Status Published Link]
     )
-    artifacts.each do |artifact|
+    artifacts.each_with_index do |artifact, result_index|
       truncated_description = artifact.description
       if truncated_description && truncated_description.size > 300
         truncated_description = "#{truncated_description[..300]}..."
@@ -115,7 +119,11 @@ get '/csv' do
                                 stringify(artifact.concepts, 'RXNORM'),
                                 artifact.artifact_status,
                                 artifact.published_on,
-                                artifact.url])
+                                if FHIRAdapter::ARTIFACT_URL_CLICK_LOGGING
+                                  "#{redirect_base_url}/#{artifact.cedar_identifier}?result=#{result_index}"
+                                else
+                                  artifact.url
+                                end])
     end
   end
 end

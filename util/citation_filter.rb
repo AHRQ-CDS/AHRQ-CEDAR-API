@@ -127,7 +127,8 @@ class CitationFilter
                FHIRAdapter.create_citation_bundle(total: paged_result[:total],
                                                   artifacts: paged_result[:artifacts],
                                                   artifact_base_url: @artifact_base_url,
-                                                  redirect_base_url: @redirect_base_url)
+                                                  redirect_base_url: @redirect_base_url,
+                                                  offset: @page_size * (@page_no - 1))
              end
 
     add_bundle_links(bundle, paged_result[:artifacts])
