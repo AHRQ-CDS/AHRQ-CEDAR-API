@@ -74,7 +74,7 @@ class CitationFilter
   end
 
   def init_search_log
-    SearchLog.new(search_params: @search_params, client_ip: @client_ip, start_time: Time.now.utc) if @log_to_db
+    SearchLog.create(search_params: @search_params, client_ip: @client_ip, start_time: Time.now.utc) if @log_to_db
   end
 
   def finalize_search_log(search_log, all_results, paged_results)
@@ -128,7 +128,8 @@ class CitationFilter
                                                   artifacts: paged_result[:artifacts],
                                                   artifact_base_url: @artifact_base_url,
                                                   redirect_base_url: @redirect_base_url,
-                                                  offset: @page_size * (@page_no - 1))
+                                                  offset: @page_size * (@page_no - 1),
+                                                  search_id: search_log&.id.to_i)
              end
 
     add_bundle_links(bundle, paged_result[:artifacts])

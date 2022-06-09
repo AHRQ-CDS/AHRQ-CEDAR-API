@@ -71,7 +71,8 @@ get '/redirect/:id' do
     halt(404)
   end
 
-  logger.info "Artifact redirect: #{{ id: id, result: params[:result], referrer: request.referrer }.to_json}"
+  log_entry = { id: id, search: params[:search], result: params[:result], referrer: request.referrer }
+  logger.info "Artifact redirect: #{log_entry.to_json}"
   redirect artifact.url
 end
 
