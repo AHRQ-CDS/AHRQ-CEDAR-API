@@ -71,8 +71,24 @@ get '/redirect/:id' do
     halt(404)
   end
 
-  log_entry = { id: id, search: params[:search], result: params[:result], referrer: request.referrer }
-  logger.info "Artifact redirect: #{log_entry.to_json}"
+  search_log = SearchLog[params[:search]]
+  if search_log.nil?
+    logger.info "Redirect for artifact (#{id}) but search log #{params[:search]} not found"
+  else
+    search_log.link_clicks ||= []
+    search_log.link_clicks << { artifact_id: artifact.id, position: params[:result], referrer: request.referrer }
+    repo_result = search_log.repository_results[artifact.repository_id.to_s]
+    if repo_result.nil?
+      logger.info "Redirect for artifact (#{id}) but artifact repository not in search log #{params[:search]}"
+    else
+      repo_result[:clicked] ||= 0
+      repo_result[:clicked] += 1
+    end
+    search_log.save_changes
+  end
+
+  # log_entry = { id: id, search: params[:search], result: params[:result], referrer: request.referrer }
+  # logger.info "Artifact redirect: #{log_entry.to_json}"
   redirect artifact.url
 end
 
