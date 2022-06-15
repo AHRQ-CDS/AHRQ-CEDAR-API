@@ -76,7 +76,7 @@ get '/redirect/:id' do
     logger.info "Redirect for artifact (#{id}) but search log #{params[:search]} not found"
   else
     search_log.link_clicks ||= []
-    search_log.link_clicks << { artifact_id: artifact.id, position: params[:result], referrer: request.referrer }
+    search_log.link_clicks << { artifact_id: artifact.id, position: params[:result].to_i, referrer: request.referrer }
     repo_result = search_log.repository_results[artifact.repository_id.to_s]
     if repo_result.nil?
       logger.info "Redirect for artifact (#{id}) but artifact repository not in search log #{params[:search]}"
