@@ -87,8 +87,6 @@ get '/redirect/:id' do
     search_log.save_changes
   end
 
-  # log_entry = { id: id, search: params[:search], result: params[:result], referrer: request.referrer }
-  # logger.info "Artifact redirect: #{log_entry.to_json}"
   redirect artifact.url
 end
 
