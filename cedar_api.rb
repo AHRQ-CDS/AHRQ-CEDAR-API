@@ -81,10 +81,10 @@ get '/redirect/:id' do
     if repo_result.nil?
       logger.info "Redirect for artifact (#{id}) but artifact repository not in search log #{params[:search]}"
     else
-      repo_result[:clicked] ||= 0
-      repo_result[:clicked] += 1
+      repo_result['clicked'] ||= 0
+      repo_result['clicked'] += 1
     end
-    search_log.save_changes
+    search_log.save
   end
 
   redirect artifact.url
