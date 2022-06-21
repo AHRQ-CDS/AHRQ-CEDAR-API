@@ -36,6 +36,9 @@ Metrics/ParameterLists:
 Metrics/PerceivedComplexity:
   Enabled: false
 
+Sequel/SaveChanges:
+  Enabled: false
+
 Style/SymbolArray:
   Enabled: false
 

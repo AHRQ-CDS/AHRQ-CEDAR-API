@@ -10,7 +10,10 @@ class FHIRAdapter
   HOSTNAME = ENV['HOSTNAME'] || 'http://cedar.arhq.gov'
   ARTIFACT_URL_CLICK_LOGGING = ENV['ARTIFACT_URL_CLICK_LOGGING'].to_s.downcase == 'true'
 
-  def self.create_citation(artifact, artifact_base_url, redirect_base_url, version_id, skip_concept: false)
+  def self.create_citation(artifact, artifact_base_url, redirect_base_url, version_id,
+                           skip_concept: false,
+                           result_index: 0,
+                           search_id: 0)
     cedar_identifier = artifact[:cedar_identifier]
     # TODO: Put handling of JSONP array into model
     # TODO: Separate different types of keywords
@@ -177,7 +180,7 @@ class FHIRAdapter
                              ]
                            },
                            url: if ARTIFACT_URL_CLICK_LOGGING
-                                  "#{redirect_base_url}/#{cedar_identifier}"
+                                  "#{redirect_base_url}/#{cedar_identifier}?search=#{search_id}&result=#{result_index}"
                                 else
                                   artifact.url
                                 end
@@ -277,7 +280,8 @@ class FHIRAdapter
     timestamp&.strftime('%F')
   end
 
-  def self.create_citation_bundle(total:, artifacts: nil, artifact_base_url: nil, redirect_base_url: nil)
+  def self.create_citation_bundle(total:, artifacts: nil, artifact_base_url: nil,
+                                  redirect_base_url: nil, offset: 0, search_id: 0)
     bundle = FHIR::Bundle.new(
       type: 'searchset',
       total: total,
@@ -286,8 +290,9 @@ class FHIRAdapter
 
     return bundle if artifacts.nil?
 
-    artifacts.each do |artifact|
-      citation = create_citation(artifact, artifact_base_url, redirect_base_url, artifact.versions.count + 1)
+    artifacts.each_with_index do |artifact, result_index|
+      citation = create_citation(artifact, artifact_base_url, redirect_base_url, artifact.versions.count + 1,
+                                 result_index: offset + result_index, search_id: search_id)
       bundle.entry << FHIR::Bundle::Entry.new(
         resource: citation
       )

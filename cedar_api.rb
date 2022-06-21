@@ -66,9 +66,27 @@ get '/redirect/:id' do
   if artifact.nil?
     logger.info "Redirect for unknown artifact (#{id})"
     halt(404)
+  elsif artifact.url.nil?
+    logger.info "Redirect for retracted artifact (#{id})"
+    halt(404)
   end
 
-  logger.info "Redirect for artifact (#{id})"
+  search_log = SearchLog[params[:search]]
+  if search_log.nil?
+    logger.info "Redirect for artifact (#{id}) but search log #{params[:search]} not found"
+  else
+    search_log.link_clicks ||= []
+    search_log.link_clicks << { artifact_id: artifact.id, position: params[:result].to_i, referrer: request.referrer }
+    repo_result = search_log.repository_results[artifact.repository_id.to_s]
+    if repo_result.nil?
+      logger.info "Redirect for artifact (#{id}) but artifact repository not in search log #{params[:search]}"
+    else
+      repo_result['clicked'] ||= 0
+      repo_result['clicked'] += 1
+    end
+    search_log.save
+  end
+
   redirect artifact.url
 end
 
@@ -78,9 +96,10 @@ get '/csv' do
   end
 
   request_url = "#{request.scheme}://#{request.host}:#{request.port}#{request.path}"
+  redirect_base_url = uri('redirect').to_s
   filter = CitationFilter.new(params: params.merge(multiple_and_parameters),
                               artifact_base_url: uri('fhir/Citation').to_s,
-                              redirect_base_url: uri('redirect').to_s,
+                              redirect_base_url: redirect_base_url,
                               request_url: request_url,
                               client_ip: request.ip,
                               log_to_db: true)
@@ -99,7 +118,7 @@ get '/csv' do
     out << CSV.generate_line(
       %w[Repository Title Description Keywords UMLS MeSH SNOMED-CT ICD10CM RXNORM Status Published Link]
     )
-    artifacts.each do |artifact|
+    artifacts.each_with_index do |artifact, result_index|
       truncated_description = artifact.description
       if truncated_description && truncated_description.size > 300
         truncated_description = "#{truncated_description[..300]}..."
@@ -115,7 +134,11 @@ get '/csv' do
                                 stringify(artifact.concepts, 'RXNORM'),
                                 artifact.artifact_status,
                                 artifact.published_on,
-                                artifact.url])
+                                if FHIRAdapter::ARTIFACT_URL_CLICK_LOGGING
+                                  "#{redirect_base_url}/#{artifact.cedar_identifier}?result=#{result_index}"
+                                else
+                                  artifact.url
+                                end])
     end
   end
 end
