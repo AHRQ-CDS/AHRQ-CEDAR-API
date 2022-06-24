@@ -282,7 +282,15 @@ class CitationFilter
     end
 
     # Add the sort ordering
-    @sort_order.map { |e| to_sort_order(e, id_frequency_counts) }.each do |sort_entry|
+    # This is slightly complicated by the use of free_text_search above where the order by search rank
+    # is pre-appended. To address this, we loop from the position of the _score sort criteria
+    # (corresponding to search rank) down and prepend those orderings then append any sort criteria that follow.
+    score_position = @sort_order.index { |entry| entry[:field] == '_score' }
+    score_position = @sort_order.size if score_position.nil?
+    @sort_order[..score_position].reverse.map { |e| to_sort_order(e, id_frequency_counts) }.each do |sort_entry|
+      filter = filter.order_prepend(sort_entry) unless sort_entry.nil?
+    end
+    @sort_order[score_position + 1..]&.map { |e| to_sort_order(e, id_frequency_counts) }&.each do |sort_entry|
       filter = filter.order_append(sort_entry) unless sort_entry.nil?
     end
 
