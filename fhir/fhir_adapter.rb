@@ -288,6 +288,9 @@ class FHIRAdapter
       link: []
     )
 
+    # Use the search ID as the Bundle ID if there's meaningful data in it
+    bundle.id = search_id if search_id != 0
+
     return bundle if artifacts.nil?
 
     artifacts.each_with_index do |artifact, result_index|
