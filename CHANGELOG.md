@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5.1 - 2022-07-13
+
+* Updates API to return search results with a Bundle ID set to the search ID
+
 ## v0.5.0 - 2022-07-05
 
 * Updates FHIR Citation resource to continue aligning with standard
