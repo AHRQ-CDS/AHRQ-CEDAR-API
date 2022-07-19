@@ -204,6 +204,36 @@ describe 'cedar_api' do
 
       assert last_response.not_found?
     end
+
+    it 'shows the articleDate with the appropriate precision for year precision' do
+      cedar_identifier = 'abc-5'
+      artifact = Artifact.first(cedar_identifier: cedar_identifier)
+
+      get "fhir/Citation/#{cedar_identifier}"
+
+      resource = assert_fhir_response(FHIR::Citation)
+      assert_equal(artifact.published_on.strftime('%Y'), resource.citedArtifact.publicationForm[0].articleDate)
+    end
+
+    it 'shows the articleDate with the appropriate precision for year-month precision' do
+      cedar_identifier = 'abc-6'
+      artifact = Artifact.first(cedar_identifier: cedar_identifier)
+
+      get "fhir/Citation/#{cedar_identifier}"
+
+      resource = assert_fhir_response(FHIR::Citation)
+      assert_equal(artifact.published_on.strftime('%Y-%m'), resource.citedArtifact.publicationForm[0].articleDate)
+    end
+
+    it 'shows the articleDate with the appropriate precision for year-month-day precision' do
+      cedar_identifier = 'abc-2'
+      artifact = Artifact.first(cedar_identifier: cedar_identifier)
+
+      get "fhir/Citation/#{cedar_identifier}"
+
+      resource = assert_fhir_response(FHIR::Citation)
+      assert_equal(artifact.published_on.strftime('%F'), resource.citedArtifact.publicationForm[0].articleDate)
+    end
   end
 
   describe '/fhir/Citation/$get-artifact-types endpoint' do

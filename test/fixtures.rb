@@ -32,7 +32,8 @@ DB[:artifacts].insert(
   repository_id: 101,
   published_on: '2020-07-16',
   created_at: old_artifact_timestamp,
-  updated_at: old_artifact_timestamp
+  updated_at: old_artifact_timestamp,
+  published_on_precision: 3
 )
 DB[:artifacts].insert(
   id: 202,
@@ -47,7 +48,8 @@ DB[:artifacts].insert(
   repository_id: 102,
   published_on: '2021-07-16',
   created_at: timestamp,
-  updated_at: timestamp
+  updated_at: timestamp,
+  published_on_precision: 3
 )
 DB[:artifacts].insert(
   id: 203,
@@ -59,7 +61,8 @@ DB[:artifacts].insert(
   keyword_text: 'diabetes',
   repository_id: 101,
   created_at: timestamp,
-  updated_at: timestamp
+  updated_at: timestamp,
+  published_on_precision: 0
 )
 DB[:artifacts].insert(
   id: 204,
@@ -75,7 +78,36 @@ DB[:artifacts].insert(
   quality_of_evidence_score: 'high',
   quality_of_evidence_sort: 2,
   created_at: timestamp,
-  updated_at: timestamp
+  updated_at: timestamp,
+  published_on_precision: 0
+)
+DB[:artifacts].insert(
+  id: 205,
+  cedar_identifier: 'abc-5',
+  remote_identifier: '205',
+  artifact_status: 'active',
+  title: 'High Cholesterol',
+  keywords: '["cholesterol"]',
+  keyword_text: 'cholesterol',
+  repository_id: 101,
+  published_on: '2021-01-01',
+  created_at: timestamp,
+  updated_at: timestamp,
+  published_on_precision: 1
+)
+DB[:artifacts].insert(
+  id: 206,
+  cedar_identifier: 'abc-6',
+  remote_identifier: '206',
+  artifact_status: 'unknown',
+  title: 'High Cholesterol',
+  keywords: '["cholesterol"]',
+  keyword_text: 'cholesterol',
+  repository_id: 101,
+  published_on: '2021-01-01',
+  created_at: timestamp,
+  updated_at: timestamp,
+  published_on_precision: 2
 )
 DB[:artifacts].update(content_search: Sequel.lit(
   "setweight(to_tsvector('english', coalesce(title, '')), 'A') ||

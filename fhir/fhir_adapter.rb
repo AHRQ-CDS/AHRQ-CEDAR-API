@@ -154,7 +154,7 @@ class FHIRAdapter
                 ]
               }
             },
-            articleDate: to_fhir_date(artifact.published_on),
+            articleDate: to_fhir_date_with_precision(artifact.published_on, artifact.published_on_precision),
             language: {
               coding: [
                 {
@@ -278,6 +278,17 @@ class FHIRAdapter
 
   def self.to_fhir_date(timestamp)
     timestamp&.strftime('%F')
+  end
+
+  def self.to_fhir_date_with_precision(date, precision)
+    case precision
+    when 1
+      date&.strftime('%Y')
+    when 2
+      date&.strftime('%Y-%m')
+    when 3..7
+      date&.strftime('%F')
+    end
   end
 
   def self.create_citation_bundle(total:, artifacts: nil, artifact_base_url: nil,
