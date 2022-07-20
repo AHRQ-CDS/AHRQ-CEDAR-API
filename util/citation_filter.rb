@@ -111,6 +111,7 @@ class CitationFilter
   def citations
     search_log = init_search_log
     filter = build_filter
+    CedarLogger.debug filter.sql
     artifacts = filter.all
 
     begin
@@ -218,7 +219,9 @@ class CitationFilter
           filter = filter.full_text_search(:keyword_text, cols, opt)
         when 'title'
           search_terms.map! { |t| "#{t}%" }
-          filter = append_boolean_expression(:ILIKE, :title, search_terms, filter)
+          terms_no_hyphens = search_terms.map { |s| s.gsub(/(\w)-(\w)/, '\1\2') }
+          all_terms = search_terms.concat(terms_no_hyphens).uniq
+          filter = append_boolean_expression(:ILIKE, :title, all_terms, filter)
         when 'title:contains'
           search_terms = [value].flatten.map { |s| s.split(',').map { |v| "%#{v.strip}%" } }
           # search_terms is an array of arrays. Top level items are ANDed together and second level
@@ -227,7 +230,9 @@ class CitationFilter
           # [["%foo%", "%bar%"], ["%baz%"]] which in SQL would be
           # WHERE (title ILIKE '%foo%' OR title ILIKE '%bar%') AND (title ILIKE '%baz%')
           search_terms.each do |ored_terms|
-            filter = append_boolean_expression(:ILIKE, :title, ored_terms, filter)
+            terms_no_hyphens = ored_terms.map { |s| s.gsub(/(\w)-(\w)/, '\1\2') }
+            all_terms = ored_terms.concat(terms_no_hyphens).uniq
+            filter = append_boolean_expression(:ILIKE, :title, all_terms, filter)
           end
         when 'artifact-current-state'
           filter = filter.where(artifact_status: search_terms)
