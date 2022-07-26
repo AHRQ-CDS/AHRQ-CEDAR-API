@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'stop_words'
+
 # Parser that converts FHIR search strings into the format expected by PostgreSQL full text search
 class SearchParser
   def initialize(search_string)
@@ -39,6 +41,8 @@ class SearchParser
     return nil if term.nil?
 
     term = term.downcase
+    return term if StopWords.include? term
+
     term_no_hyphens = term.gsub(/(\w)-(\w)/, '\1\2') # ignores <-> word separators
     concepts = get_concepts(term, term_no_hyphens)
     synonyms = if concepts.nil? || concepts.empty?
