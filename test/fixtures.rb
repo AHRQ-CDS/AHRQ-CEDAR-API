@@ -33,7 +33,9 @@ DB[:artifacts].insert(
   published_on: '2020-07-16',
   created_at: old_artifact_timestamp,
   updated_at: old_artifact_timestamp,
-  published_on_precision: 3
+  published_on_precision: 3,
+  published_on_start: '2020-07-16 00:00:00',
+  published_on_end: '2020-07-16 23:59:59'
 )
 DB[:artifacts].insert(
   id: 202,
@@ -49,7 +51,9 @@ DB[:artifacts].insert(
   published_on: '2021-07-16',
   created_at: timestamp,
   updated_at: timestamp,
-  published_on_precision: 3
+  published_on_precision: 3,
+  published_on_start: '2021-07-16 00:00:00',
+  published_on_end: '2021-07-16 23:59:59'
 )
 DB[:artifacts].insert(
   id: 203,
@@ -93,7 +97,9 @@ DB[:artifacts].insert(
   published_on: '2021-01-01',
   created_at: timestamp,
   updated_at: timestamp,
-  published_on_precision: 1
+  published_on_precision: 1,
+  published_on_start: '2021-01-01 00:00:00',
+  published_on_end: '2021-12-31 23:59:59'
 )
 DB[:artifacts].insert(
   id: 206,
@@ -107,7 +113,9 @@ DB[:artifacts].insert(
   published_on: '2021-01-01',
   created_at: timestamp,
   updated_at: timestamp,
-  published_on_precision: 2
+  published_on_precision: 2,
+  published_on_start: '2021-01-01 00:00:00',
+  published_on_end: '2021-01-31 23:59:59'
 )
 DB[:artifacts].update(content_search: Sequel.lit(
   "setweight(to_tsvector('english', coalesce(title, '')), 'A') ||

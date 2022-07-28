@@ -171,7 +171,7 @@ class CitationFilter
           postgres_search_terms = self.class.fhir_datetime_to_postgres_search(value, 'updated_at')
           filter = filter.where(Sequel.lit(*postgres_search_terms))
         when 'article-date'
-          postgres_search_terms = self.class.fhir_datetime_to_postgres_search(value, 'published_on')
+          postgres_search_terms = self.class.fhir_datetime_to_postgres_range_search(value, 'published_on')
           filter = filter.where(Sequel.lit(*postgres_search_terms))
         when 'article-date:missing'
           filter = if value.to_s.downcase == 'true'
@@ -404,8 +404,8 @@ class CitationFilter
 
   def self.fhir_datetime_to_postgres_search(expression, column)
     # Because column is passed in and is used directly in a SQL statement in a way that could allow SQL
-    # injection if it were user specified we take extra care to ensure that it's one of two valid values
-    raise "Invalid datetime column name specified (#{column})" unless %w[updated_at published_on].include?(column)
+    # injection if it were user specified we take extra care to ensure that it's a valid value
+    raise "Invalid datetime column name specified (#{column})" unless %w[updated_at].include?(column)
 
     fhir_expr = parse_fhir_datetime_search(expression)
     case fhir_expr[:comparator]
@@ -421,6 +421,34 @@ class CitationFilter
       ["#{column} < ? OR #{column} > ?", fhir_expr[:start], fhir_expr[:end]]
     else # eq, ap
       ["#{column} >= ? AND #{column} <= ?", fhir_expr[:start], fhir_expr[:end]]
+    end
+  end
+
+  def self.fhir_datetime_to_postgres_range_search(expression, column)
+    # Because column is passed in and is used directly in a SQL statement in a way that could allow SQL
+    # injection if it were user specified we take extra care to ensure that it's a valid value
+    raise "Invalid datetime column name specified (#{column})" unless %w[published_on].include?(column)
+
+    fhir_expr = parse_fhir_datetime_search(expression)
+    case fhir_expr[:comparator]
+    when 'gt'
+      ["#{column}_end > ?", fhir_expr[:end]]
+    when 'sa'
+      ["#{column}_start > ?", fhir_expr[:end]]
+    when 'ge'
+      ["#{column}_start > ? OR #{column}_end >= ?", fhir_expr[:start], fhir_expr[:end]]
+    when 'lt'
+      ["#{column}_start < ?", fhir_expr[:start]]
+    when 'eb'
+      ["#{column}_end < ?", fhir_expr[:start]]
+    when 'le'
+      ["#{column}_start < ? OR #{column}_end <= ?", fhir_expr[:start], fhir_expr[:end]]
+    when 'ne'
+      ["(#{column}_start <= ? AND #{column}_end < ?) OR (#{column}_start > ? AND #{column}_end >= ?)",
+       fhir_expr[:start], fhir_expr[:end], fhir_expr[:start], fhir_expr[:end]]
+    when 'eq'
+      ["#{column}_start <= ? AND #{column}_end >= ?", fhir_expr[:start], fhir_expr[:end]]
+    else # ap
     end
   end
 

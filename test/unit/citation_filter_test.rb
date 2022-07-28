@@ -148,11 +148,13 @@ describe CitationFilter do
       end
     end
 
-    it 'supports search for article-date' do
-      cutoff_date = Date.new(2021, 1, 1)
+    it 'supports search for article-date range less than or equal to published date range' do
+      cutoff_date = Date.new(2021, 1, 2)
+      cutoff_date_start = cutoff_date.to_datetime
+      cutoff_date_end = cutoff_date.to_datetime.next_day - 1.second
 
       params = {
-        'article-date' => "gt#{cutoff_date.strftime('%F')}"
+        'article-date' => "le#{cutoff_date.strftime('%F')}"
       }
 
       bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
@@ -163,7 +165,8 @@ describe CitationFilter do
 
       assert bundle.entry.all? do |entry|
         entry.resource.citedArtifact.publicationForm.any? do |publication|
-          publication.articleDate.present? && Date.new(publication.articleDate) > cutoff_date
+          (publication.articleDate.present? && DateTime.new(publication.articleDate) < cutoff_date_start) ||
+            (DateTime.new(publication.articleDate) <= cutoff_date_end)
         end
       end
     end
