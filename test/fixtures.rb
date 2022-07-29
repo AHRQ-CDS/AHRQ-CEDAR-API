@@ -130,7 +130,7 @@ DB[:concepts].insert(
   umls_cui: 'CUI1',
   umls_description: 'CUI1 desc',
   synonyms_text: '["foo", "bar", "baz"]',
-  synonyms_psql: '["foo", "bar", "baz"]',
+  synonyms_psql: "[\"'foo'\", \"'bar'\", \"'baz'\"]",
   codes: '[{"system": "MSH", "code": "D0001"}, {"system": "SNOMEDCT_US", "code": "10001"}]',
   created_at: timestamp,
   updated_at: timestamp
@@ -140,7 +140,7 @@ DB[:concepts].insert(
   umls_cui: 'CUI2',
   umls_description: 'CUI2 desc',
   synonyms_text: '["abc", "foo, bar, baz"]',
-  synonyms_psql: '["abc", "foo<->bar<->baz"]',
+  synonyms_psql: "[\"'abc'\", \"'foo' <-> 'bar' <-> 'baz'\"]",
   codes: '[{"system": "MSH", "code": "D0002"}]',
   created_at: timestamp,
   updated_at: timestamp
@@ -150,7 +150,7 @@ DB[:concepts].insert(
   umls_cui: 'CUI3',
   umls_description: 'CUI3 desc',
   synonyms_text: '["foo bar", "baz"]',
-  synonyms_psql: '["foo<->bar", "baz"]',
+  synonyms_psql: "[\"'foo' <-> 'bar'\", \"'baz'\"]",
   created_at: timestamp,
   updated_at: timestamp
 )
@@ -159,7 +159,7 @@ DB[:concepts].insert(
   umls_cui: 'CUI4',
   umls_description: 'CUI4 desc',
   synonyms_text: '["foo-bar", "baz"]',
-  synonyms_psql: '["foo-bar", "baz"]',
+  synonyms_psql: "[\"'foo-bar' <-> 'foo' <-> 'bar'\", \"'baz'\"]",
   created_at: timestamp,
   updated_at: timestamp
 )
