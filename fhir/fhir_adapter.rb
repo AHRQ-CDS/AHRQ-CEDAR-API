@@ -286,7 +286,10 @@ class FHIRAdapter
       date&.strftime('%Y')
     when 2
       date&.strftime('%Y-%m')
-    when 3..7
+    # Default to day-level precision when nil. If the date is present but precision is nil, this likely indicates
+    # a situation in which the artifact has been retracted, but we still have a date stored in the database.
+    # Since we no longer have access to the original date string, we default to day-level precision.
+    when 3..7, nil
       date&.strftime('%F')
     end
   end
