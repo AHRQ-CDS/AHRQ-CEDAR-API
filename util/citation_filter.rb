@@ -436,7 +436,7 @@ class CitationFilter
     when 'sa'
       ["#{column}_start > ?", fhir_expr[:end]]
     when 'ge'
-      ["#{column}_start > ? OR #{column}_end >= ?", fhir_expr[:start], fhir_expr[:end]]
+      ["#{column}_end > ? OR #{column}_start >= ?", fhir_expr[:start], fhir_expr[:end]]
     when 'lt'
       ["#{column}_start < ?", fhir_expr[:start]]
     when 'eb'
@@ -444,11 +444,9 @@ class CitationFilter
     when 'le'
       ["#{column}_start < ? OR #{column}_end <= ?", fhir_expr[:start], fhir_expr[:end]]
     when 'ne'
-      ["(#{column}_start <= ? AND #{column}_end < ?) OR (#{column}_start > ? AND #{column}_end >= ?)",
-       fhir_expr[:start], fhir_expr[:end], fhir_expr[:start], fhir_expr[:end]]
-    when 'eq'
-      ["#{column}_start <= ? AND #{column}_end >= ?", fhir_expr[:start], fhir_expr[:end]]
-    else # ap
+      ["#{column}_start < ? OR #{column}_end > ?", fhir_expr[:start], fhir_expr[:end]]
+    else # eq, ap
+      ["#{column}_start >= ? AND #{column}_end <= ?", fhir_expr[:start], fhir_expr[:end]]
     end
   end
 

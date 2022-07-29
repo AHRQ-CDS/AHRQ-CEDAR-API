@@ -83,7 +83,10 @@ DB[:artifacts].insert(
   quality_of_evidence_sort: 2,
   created_at: timestamp,
   updated_at: timestamp,
-  published_on_precision: 0
+  published_on: '2021-01-02',
+  published_on_precision: 3,
+  published_on_start: '2021-01-02 00:00:00',
+  published_on_end: '2021-01-02 23:59:59'
 )
 DB[:artifacts].insert(
   id: 205,

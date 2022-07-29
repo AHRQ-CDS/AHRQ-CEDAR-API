@@ -148,7 +148,7 @@ describe CitationFilter do
       end
     end
 
-    it 'supports search for article-date range less than or equal to published date range' do
+    it 'supports search for article-date with correct implicit range' do
       cutoff_date = Date.new(2021, 1, 2)
       cutoff_date_start = cutoff_date.to_datetime
       cutoff_date_end = cutoff_date.to_datetime.next_day - 1.second
@@ -163,10 +163,50 @@ describe CitationFilter do
 
       assert_bundle(bundle)
 
-      assert bundle.entry.all? do |entry|
+      bundle.entry.each do |entry|
         entry.resource.citedArtifact.publicationForm.any? do |publication|
-          (publication.articleDate.present? && DateTime.new(publication.articleDate) < cutoff_date_start) ||
-            (DateTime.new(publication.articleDate) <= cutoff_date_end)
+          if publication.articleDate.present?
+            range = datestring_to_datetime_range(publication.articleDate)
+            assert(range[0] < cutoff_date_start || range[1] <= cutoff_date_end)
+          end
+        end
+      end
+
+      params = {
+        'article-date' => "gt#{cutoff_date.strftime('%F')}"
+      }
+
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
+
+      assert_bundle(bundle)
+
+      bundle.entry.each do |entry|
+        entry.resource.citedArtifact.publicationForm.any? do |publication|
+          if publication.articleDate.present?
+            range = datestring_to_datetime_range(publication.articleDate)
+            assert(range[1] > cutoff_date_end)
+          end
+        end
+      end
+
+      params = {
+        'article-date' => "eq#{cutoff_date.strftime('%F')}"
+      }
+
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
+
+      assert_bundle(bundle)
+
+      bundle.entry.each do |entry|
+        entry.resource.citedArtifact.publicationForm.any? do |publication|
+          if publication.articleDate.present?
+            range = datestring_to_datetime_range(publication.articleDate)
+            assert(range[0] >= cutoff_date_start && range[1] <= cutoff_date_end)
+          end
         end
       end
     end

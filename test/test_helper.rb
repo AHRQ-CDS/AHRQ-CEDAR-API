@@ -40,5 +40,24 @@ module CedarApi
     def app
       Sinatra::Application
     end
+
+    def datestring_to_datetime_range(datestring)
+      case datestring
+      when /^\d{4}$/ # YYYY
+        start_date = DateTime.new(datestring.to_i, 1, 1)
+        end_date = start_date.next_year - 1.seconds
+        [start_date, end_date]
+      when /^\d{4}-\d{2}$/ # YYYY-MM
+        date_parts = datestring.split('-').map(&:to_i)
+        start_date = DateTime.new(date_parts[0], date_parts[1], 1)
+        end_date = start_date.next_month - 1.seconds
+        [start_date, end_date]
+      when /^\d{4}-\d{2}-\d{2}$/ # YYYY-MM-DD
+        date_parts = datestring.split('-').map(&:to_i)
+        start_date = DateTime.new(date_parts[0], date_parts[1], date_parts[2])
+        end_date = start_date.next_day - 1.seconds
+        [start_date, end_date]
+      end
+    end
   end
 end
