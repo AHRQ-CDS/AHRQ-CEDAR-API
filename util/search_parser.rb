@@ -4,9 +4,13 @@ require_relative 'stop_words'
 
 # Parser that converts FHIR search strings into the format expected by PostgreSQL full text search
 class SearchParser
+  attr_reader :simple_query, :simple_query_terms
+
   def initialize(search_string)
     @search_string = search_string
     @offset = 0
+    @simple_query = true
+    @simple_query_terms = []
   end
 
   # Return the not-yet-processed characters in the search string
@@ -31,6 +35,9 @@ class SearchParser
   def get_concepts(term, normalized_term)
     synonyms_op = Sequel.pg_jsonb_op(:synonyms_psql)
     # Concept.where(...).empty? is very slow (20X) compared to Concept.where(...).all.empty?
+    search_terms = [stem(term), stem(normalized_term)].uniq.reject(&:blank?)
+    return [] if search_terms.empty?
+
     Concept.where(synonyms_op.contain_any([stem(term), stem(normalized_term)].uniq)).all
   end
 
@@ -47,28 +54,38 @@ class SearchParser
   def synonyms(term)
     return nil if term.nil?
 
+    synonyms_str(synonym_list(term))
+  end
+
+  def synonym_list(term)
     term = term.downcase
-    return term if StopWords.include? term
+    return [term] if StopWords.include? term
 
     term_no_hyphens = term.gsub(/(\w)-(\w)/, '\1\2') # ignores <-> word separators
     concepts = get_concepts(term, term_no_hyphens)
-    synonyms = if concepts.nil? || concepts.empty?
-                 [term, term_no_hyphens].uniq
-               else
-                 concepts.map(&:synonyms_psql).flatten.map { |s| s.gsub(/<->[&|!]<->/, '<->') }.uniq
-               end
+    if concepts.nil? || concepts.empty?
+      [term, term_no_hyphens].uniq
+    else
+      concepts.map(&:synonyms_psql).flatten.map { |s| s.gsub(/<->[&|!]<->/, '<->') }.uniq
+    end
+  end
 
-    synonyms.length > 1 ? "(#{synonyms.join('|')})" : synonyms[0]
+  def synonyms_str(list)
+    list.length > 1 ? "(#{list.join('|')})" : list[0]
   end
 
   # Parse any search term, matching alphanumerics plus a few additional characters: -, +, * and '
   def parse_term
-    parse_regexp(/^(['\-+*\w]+)/)
+    term = parse_regexp(/^(['\-+*\w]+)/)
+    @simple_query_terms << term unless term.nil?
+    term
   end
 
   # Parse any search term, matching alphanumerics plus a few additional characters: -, +, *, (, ) and '
   def parse_term_with_brackets
-    parse_regexp(/^(['\-+*()\w]+)/)
+    term = parse_regexp(/^(['\-+*()\w]+)/)
+    @simple_query = false unless term.nil?
+    term
   end
 
   # The operators supported by the API and the conversion to PostgreSQL full text search
@@ -82,7 +99,9 @@ class SearchParser
   # so that we don't interpret e.g. ORGAN incorrectly
   def parse_operator
     operator = parse_regexp(/^(#{OPERATORS.keys.join('|')})(\s|\(|"|$)/)
-    OPERATORS[operator]
+    term = OPERATORS[operator]
+    @simple_query = false unless term.nil?
+    term
   end
 
   # Parse a parenthetical expression, returned as an array of expressions
@@ -91,6 +110,7 @@ class SearchParser
       parenthetical = parse_expression
       parse_regexp(/^(\))/)
     end
+    @simple_query = false unless parenthetical.nil?
     parenthetical
   end
 
@@ -102,6 +122,7 @@ class SearchParser
         terms << term
       end
       parse_regexp(/^(")/)
+      @simple_query = false unless terms.empty?
       terms.join('<->')
     end
   end
@@ -131,7 +152,22 @@ class SearchParser
     array_to_string = lambda do |array|
       array.map { |e| e.is_a?(Array) ? "(#{array_to_string[e]})" : e }.join
     end
-    # Instantiate a parser, parse the search string, and return the results with parentheticals converted
-    array_to_string[new(search_string).parse_expression]
+
+    # Instantiate a parser, parse the search string
+    parser = new(search_string)
+    tokens = parser.parse_expression
+
+    # For simple searches (just a list of words separated by AND) add in an OR for synonyms of
+    # the complete phrase (if there are any)
+    if parser.simple_query && parser.simple_query_terms.size > 1
+      has_hyphens = parser.simple_query_terms.any? { |term| term.include?('-') }
+      simple_synonyms = parser.synonym_list(parser.simple_query_terms.join('<->'))
+      if simple_synonyms.size > (has_hyphens ? 2 : 1)
+        tokens = [tokens, OPERATORS['OR'], parser.synonyms_str(simple_synonyms)]
+      end
+    end
+
+    # return the results with parentheticals converted
+    array_to_string[tokens]
   end
 end
