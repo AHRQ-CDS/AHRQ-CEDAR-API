@@ -25,37 +25,37 @@ describe SearchParser do
     it 'handles synonyms in simple text searches' do
       source = 'aa foo cc'
       result = SearchParser.parse(source)
-      assert_equal('aa&(foo|bar|baz)&cc', result)
+      assert_equal("aa&('foo'|'bar'|'baz')&cc", result)
     end
 
     it 'ignores case for synonym lookup' do
       source = 'aa FOO cc'
       result = SearchParser.parse(source)
-      assert_equal('aa&(foo|bar|baz)&cc', result)
+      assert_equal("aa&('foo'|'bar'|'baz')&cc", result)
     end
 
     it 'handles synonyms when the search word is hyphenated' do
       source = 'aa f-oo cc'
       result = SearchParser.parse(source)
-      assert_equal('aa&(foo|bar|baz)&cc', result)
+      assert_equal("aa&('foo'|'bar'|'baz')&cc", result)
     end
 
     it 'handles hyphenated synonyms' do
       source = 'aa foo-bar cc'
       result = SearchParser.parse(source)
-      assert_equal('aa&(foo-bar|baz)&cc', result)
+      assert_equal("aa&('foo-bar' <-> 'foo' <-> 'bar'|'baz')&cc", result)
     end
 
     it 'handles multi-word synonyms in simple text searches' do
       source = 'aa abc cc'
       result = SearchParser.parse(source)
-      assert_equal('aa&(abc|foo<->bar<->baz)&cc', result)
+      assert_equal("aa&('abc'|'foo' <-> 'bar' <-> 'baz')&cc", result)
     end
 
     it 'ignores stop words when looking for synonyms' do
       source = 'aa of foo'
       result = SearchParser.parse(source)
-      assert_equal('aa&of&(foo|bar|baz)', result)
+      assert_equal("aa&of&('foo'|'bar'|'baz')", result)
     end
 
     it 'handles simple parenthetical, adding implicit &s' do
@@ -73,7 +73,7 @@ describe SearchParser do
     it 'handles synonyms within more complex implicit &s mixed with parentheticals' do
       source = 'aa (foo cc)'
       result = SearchParser.parse(source)
-      assert_equal('aa&((foo|bar|baz)&cc)', result)
+      assert_equal("aa&(('foo'|'bar'|'baz')&cc)", result)
     end
 
     it 'handles more complex implicit &s mixed with negation' do
@@ -85,7 +85,7 @@ describe SearchParser do
     it 'handles synonyms with more complex implicit &s mixed with negation' do
       source = 'aa NOT foo'
       result = SearchParser.parse(source)
-      assert_equal('aa&!(foo|bar|baz)', result)
+      assert_equal("aa&!('foo'|'bar'|'baz')", result)
     end
 
     it 'handles complex full text search expression' do
@@ -97,13 +97,13 @@ describe SearchParser do
     it 'ignores synonyms that do not match a multi-word full text search expression' do
       source = '"aa foo" AND (cc OR NOT foo)'
       result = SearchParser.parse(source)
-      assert_equal('aa<->foo&(cc|!(foo|bar|baz))', result)
+      assert_equal("aa<->foo&(cc|!('foo'|'bar'|'baz'))", result)
     end
 
     it 'handles multi-word synonyms within multi-word full text search expression' do
       source = '"foo bar" AND (cc OR NOT foo)'
       result = SearchParser.parse(source)
-      assert_equal('(foo<->bar|baz)&(cc|!(foo|bar|baz))', result)
+      assert_equal("('foo' <-> 'bar'|'baz')&(cc|!('foo'|'bar'|'baz'))", result)
     end
 
     it 'handles complex full text search expression with multiple double quotes' do

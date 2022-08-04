@@ -30,9 +30,16 @@ class SearchParser
   # Returns a Concept for which the supplied term is a synonym or nil if none found
   def get_concepts(term, normalized_term)
     synonyms_op = Sequel.pg_jsonb_op(:synonyms_psql)
-
     # Concept.where(...).empty? is very slow (20X) compared to Concept.where(...).all.empty?
-    Concept.where(synonyms_op.contain_any([term, normalized_term].uniq)).all
+    Concept.where(synonyms_op.contain_any([stem(term), stem(normalized_term)].uniq)).all
+  end
+
+  def stem(term)
+    DB['select to_tsquery(?) as query', term].first[:query].gsub('&', '<->')
+    # the final gsub in the above is to account for the differences in handling hyphens in
+    # phraseto_tsquery (used in the cedar_admin concepts importer, 'foo-bar' ->  "'foo-bar' <-> 'foo' <-> 'bar'")
+    # and to_tsquery (used here since the parser inserts <-> between words, 'foo-bar' -> "'foo-bar' & 'foo' & 'bar'")
+    # Here we are only concerned with finding matching synonyms so the gsub takes care of that.
   end
 
   # Returns the supplied term if no synonyms are found or a bracketed set of synonyms
