@@ -4,14 +4,14 @@
 class CedarLogger
   extend SingleForwardable
 
-  def_delegators :logger, :info, :error, :warn, :level
+  def_delegators :logger, :info, :error, :warn, :debug, :level
 
   class << self
     def logger
       return @_logger unless @_logger.nil?
 
       @_logger = Logger.new $stdout
-      @_logger.level = Logger::INFO
+      @_logger.level = ENV['CEDAR_LOG_LEVEL'] || Logger::INFO
     end
 
     def suppress_logging
