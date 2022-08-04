@@ -172,6 +172,15 @@ DB[:concepts].insert(
   created_at: timestamp,
   updated_at: timestamp
 )
+DB[:concepts].insert(
+  id: 306,
+  umls_cui: 'CUI6',
+  umls_description: 'CUI6 desc',
+  synonyms_text: '["def ghi klm", "nop"]',
+  synonyms_psql: %(["'def' <-> 'ghi' <-> 'klm'", "nop"]),
+  created_at: timestamp,
+  updated_at: timestamp
+)
 DB[:artifacts_concepts].insert(
   artifact_id: 201,
   concept_id: 301

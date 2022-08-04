@@ -58,6 +58,12 @@ describe SearchParser do
       assert_equal("aa&of&('foo'|'bar'|'baz')", result)
     end
 
+    it 'handles phrase synonyms in simple text searches' do
+      source = 'def ghi klm'
+      result = SearchParser.parse(source)
+      assert_equal("(def&ghi&klm)|('def' <-> 'ghi' <-> 'klm'|nop)", result)
+    end
+
     it 'handles simple parenthetical, adding implicit &s' do
       source = '(aa bb cc)'
       result = SearchParser.parse(source)
