@@ -163,6 +163,15 @@ DB[:concepts].insert(
   created_at: timestamp,
   updated_at: timestamp
 )
+DB[:concepts].insert(
+  id: 305,
+  umls_cui: 'CUI5',
+  umls_description: 'CUI5 desc',
+  synonyms_text: '["of", "off", "offf"]',
+  synonyms_psql: '["of", "off", "offf"]',
+  created_at: timestamp,
+  updated_at: timestamp
+)
 DB[:artifacts_concepts].insert(
   artifact_id: 201,
   concept_id: 301

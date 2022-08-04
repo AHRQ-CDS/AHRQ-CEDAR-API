@@ -6,6 +6,8 @@ class CedarLogger
 
   def_delegators :logger, :info, :error, :warn, :debug, :level
 
+  @_logger = nil
+
   class << self
     def logger
       return @_logger unless @_logger.nil?

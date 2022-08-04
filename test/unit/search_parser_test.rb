@@ -52,6 +52,12 @@ describe SearchParser do
       assert_equal('aa&(abc|foo<->bar<->baz)&cc', result)
     end
 
+    it 'ignores stop words when looking for synonyms' do
+      source = 'aa of foo'
+      result = SearchParser.parse(source)
+      assert_equal('aa&of&(foo|bar|baz)', result)
+    end
+
     it 'handles simple parenthetical, adding implicit &s' do
       source = '(aa bb cc)'
       result = SearchParser.parse(source)
