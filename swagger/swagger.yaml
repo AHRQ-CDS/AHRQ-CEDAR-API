@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   version: 1.0.0
   title: CEDAR API
-basePath: /api
+basePath: /cedar/api
 tags:
   - name: FHIR CapabilityStatement
   - name: FHIR Citation
