@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.6.0 - 2022-10-03
+
+* Supports hyphens in title search
+* Extends the CEDAR logger to support debug logging level
+* Fixes issue where text search for exact title did not return matching item
+* Updates synonym expansion to use database stemming
+* Updates synonym handling to include phrase synonyms for simple queries
+* Updates Swagger documentation
+
 ## v0.5.1 - 2022-07-13
 
 * Updates API to return search results with a Bundle ID set to the search ID
