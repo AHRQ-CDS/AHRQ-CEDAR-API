@@ -5348,6 +5348,3 @@ definitions:
       version:
         description: Business version of the structure definition
         type: string
-externalDocs:
-  description: Find out more about Swagger
-  url: http://swagger.io
