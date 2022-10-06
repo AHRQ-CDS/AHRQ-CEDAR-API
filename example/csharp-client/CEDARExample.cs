@@ -14,14 +14,8 @@ namespace CEDARExample
    * the CEDAR API into locally usable objects.
    */
   class APIClient {
-    private static readonly string apiHost = "https://cedar.ahrqdev.org/api";
+    private static readonly string apiHost = "https://cds.ahrq.gov/cedar/api";
     private static HttpClient client = new HttpClient();
-
-    // Setup common HttpClient Authentication method
-    private static readonly string? username = Environment.GetEnvironmentVariable("CEDAR_USER");
-    private static readonly string? password = Environment.GetEnvironmentVariable("CEDAR_PASS");
-    private static string authToken = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
-
 
     /**
      * CEDAR API responses don't exactly match SDK definitions because the SDK 
@@ -44,7 +38,6 @@ namespace CEDARExample
       client.DefaultRequestHeaders.Accept.Clear();
       client.DefaultRequestHeaders.Accept.Add(
         new MediaTypeWithQualityHeaderValue("application/fhir+json"));
-      client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authToken);
 
       try {
         var request = client.GetStreamAsync(apiHost + "/fhir/Citation/$get-artifact-types");
@@ -80,7 +73,6 @@ namespace CEDARExample
       client.DefaultRequestHeaders.Accept.Clear();
       client.DefaultRequestHeaders.Accept.Add(
         new MediaTypeWithQualityHeaderValue("application/fhir+json"));
-      client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authToken);
 
       UriBuilder queryBuilder = new UriBuilder(apiHost + "/fhir/Citation");
       queryBuilder.Query = String.Format(
@@ -135,11 +127,6 @@ namespace CEDARExample
     );
 
     static async Task Main(string[] args) {
-      if (!File.Exists(".env")) {
-        Console.WriteLine("ERROR: Unable to authenticate requests; missing .env");
-        Environment.Exit(126);  // Command invoked cannot execute
-      }
-      DotNetEnv.Env.Load();
       Console.WriteLine("CEDAR API C# Client Demo:");
       Console.WriteLine("  1. Get Artifact Types");
       Console.WriteLine("  2. Text Search");

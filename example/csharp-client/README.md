@@ -1,6 +1,6 @@
 # CEDAR C# Client Example
 This is a basic .NET console application that demonstrates usage of the
-[CEDAR API](https://cedar.ahrqdev.org/) as well as interoperability supported
+[CEDAR API](https://cds.ahrq.gov/cedar/) as well as interoperability supported
 by the [FHIR standard](https://www.hl7.org/fhir/). CEDAR API features you can see
 in action include:
 - Basic resource retrieval
@@ -24,14 +24,6 @@ This example was built using the following libraries and versions:
 Note that the FHIR library is currently for the R5 experimental version of FHIR because the Citation resource is not yet part of normative FHIR.
 
 ## Getting Started
-The CEDAR API requires Basic Authentication in order to complete requests. To obtain
-credentials this application searches for `CEDAR_USER` and `CEDAR_PASS` in `System.Environment`.
-It also uses `DotNetEnv` to support `.env` files as an alternative. To quickly
-provide credentials, create a `.env` file in this directory and fill in the values:
-```
-CEDAR_USER=
-CEDAR_PASS=
-```
 
 To build and run the application simply:
 ```
