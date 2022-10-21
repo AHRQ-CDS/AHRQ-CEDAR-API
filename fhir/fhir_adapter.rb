@@ -319,12 +319,13 @@ class FHIRAdapter
   end
 
   def self.create_organization(repository)
-    FHIR::Organization.new(
+    organization = FHIR::Organization.new(
       id: repository.fhir_id,
       name: repository.name,
       alias: [
         repository.alias
       ],
+      description: repository.description,
       telecom: [
         {
           system: 'url',
@@ -332,6 +333,15 @@ class FHIRAdapter
         }
       ]
     )
+
+    if repository.description.present?
+      organization.extension << FHIR::Extension.new(
+          url: 'http://cedar.arhq.gov/fhir/StructureDefinition/extension-organization-description',
+          valueString: repository.description
+      )
+    end
+
+    organization
   end
 
   def self.create_organization_bundle(repositories)

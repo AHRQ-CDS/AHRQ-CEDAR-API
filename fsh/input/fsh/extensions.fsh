@@ -59,3 +59,13 @@ Description: "Specifies how many artifacts are indirectly associated with a MeSH
 * ^context.expression = "Coding"
 * value[x] only unsignedInt
 * valueUnsignedInt 1..1
+
+Extension: OrganizationDescription
+Id: extension-organization-description
+Title: "Organization Description Extension"
+Description: "Specifies the description text of an Organization"
+* . ^max = "1"
+* ^context.type = #element
+* ^context.expression = "Organization"
+* value[x] only string
+* valueString 1..1

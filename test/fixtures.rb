@@ -10,6 +10,7 @@ DB[:repositories].insert(id: 101,
                          alias: 'USPSTF',
                          fhir_id: 'uspstf',
                          home_page: 'https://www.uspreventiveservicestaskforce.org/uspstf/',
+                         description: 'USPSTF description',
                          created_at: timestamp,
                          updated_at: timestamp)
 DB[:repositories].insert(id: 102,
@@ -246,6 +247,6 @@ DB[:versions].insert(
   item_type: 'Artifact',
   event: 'update',
   import_run_id: 501,
-  object: '{"id": 201, "cedar_identifier": "abc-1", "title": "title v1", "keywords": ["cancer", "adult"], '\
+  object: '{"id": 201, "cedar_identifier": "abc-1", "title": "title v1", "keywords": ["cancer", "adult"], ' \
           '"repository_id": 101}'
 )
