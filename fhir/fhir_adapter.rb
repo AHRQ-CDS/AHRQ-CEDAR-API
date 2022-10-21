@@ -335,8 +335,8 @@ class FHIRAdapter
 
     if repository.description.present?
       organization.extension << FHIR::Extension.new(
-          url: 'http://cedar.arhq.gov/fhir/StructureDefinition/extension-organization-description',
-          valueString: repository.description
+        url: 'http://cedar.arhq.gov/fhir/StructureDefinition/extension-organization-description',
+        valueString: repository.description
       )
     end
 
