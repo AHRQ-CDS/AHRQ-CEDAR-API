@@ -325,7 +325,6 @@ class FHIRAdapter
       alias: [
         repository.alias
       ],
-      description: repository.description,
       telecom: [
         {
           system: 'url',
