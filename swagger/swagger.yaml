@@ -31,7 +31,7 @@ paths:
         - FHIR Citation
       summary: Search Citations
       description: >-
-        Search parameter __artifact-current-state__ is required.  
+        Search parameter __artifact-current-state__ is required.
 
 
         By default, search results are sorted by:
@@ -68,12 +68,16 @@ paths:
           in: query
           type: string
         - name: article-date:missing
-          description: >- 
+          description: >-
             cited artifact without (true) or with (false) publishing date
           in: query
           type: boolean
         - name: classification
           description: concept in keywords.
+          in: query
+          type: string
+        - name: classification:text
+          description: display text for keywords
           in: query
           type: string
         - name: artifact-publisher
@@ -93,25 +97,25 @@ paths:
           in: query
           type: string
         - name: strength-of-recommendation
-          description: >- 
+          description: >-
             comma-separated list of recommendation strength (low, moderate,
             high)
           in: query
           type: string
         - name: strength-of-recommendation:missing
-          description: >- 
+          description: >-
             cited artifact without (true) or with (false) a stated strength
             of recommendation
           in: query
           type: boolean
         - name: quality-of-evidence
-          description: >- 
+          description: >-
             comma-separated list of quality of evidence (low, moderate,
             high)
           in: query
           type: string
         - name: quality-evidence:missing
-          description: >- 
+          description: >-
             cited artifact without (true) or with (false) a stated quality
             of evidence
           in: query

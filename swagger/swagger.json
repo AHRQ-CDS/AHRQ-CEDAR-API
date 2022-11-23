@@ -98,6 +98,12 @@
             "type": "string"
           },
           {
+            "name": "classification:text",
+            "description": "display text for keywords",
+            "in": "query",
+            "type": "string"
+          },
+          {
             "name": "artifact-publisher",
             "description": "publisher for cited artifact",
             "in": "query",
