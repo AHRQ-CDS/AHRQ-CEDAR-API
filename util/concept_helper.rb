@@ -11,7 +11,6 @@ class ConceptHelper
     search_terms = terms.map { |term| stem(term) }.uniq.reject(&:blank?)
     return [] if search_terms.empty?
 
-    # Concept.where(synonyms_op.contain_any([stem(term), stem(normalized_term)].uniq)).all
     Concept.where(synonyms_op.contain_any(search_terms)).all
   end
 
