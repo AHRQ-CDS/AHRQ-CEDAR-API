@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+# Ignore warnings from included gems
+# The Sequel gem generates a lot of (harmless) uninitialized instance variable warnings
+Gem.path.each do |path|
+  Warning.ignore(//, path)
+end
+
 require 'simplecov'
 SimpleCov.start
 
@@ -22,6 +28,7 @@ ActiveRecord::Base.connection.create_database(test_db_config['database'])
 
 # Load the database schema dumped from cedar_admin
 ActiveRecord::Base.establish_connection(test_db_config)
+ActiveRecord::Migration.verbose = false
 require_relative 'db/schema'
 
 # Load the Sequel gem database config and set up fixtures

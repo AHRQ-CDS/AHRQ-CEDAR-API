@@ -104,7 +104,8 @@ Conveniently, the API also includes links in the returned `Bundle.link` element 
   {
     "relation": "next",
     "url": "http://cedar.ahrqdev.org/fhir/Citation?_count=10&artifact-current-state=active&page=2&title:contains=hypertension"
-  }
+  },
+  ...
 ]
 ```
 
@@ -236,6 +237,75 @@ The resulting list is formatted the same as the top level concept list as shown 
 
 The `system` and `code` values (note `D003933` _not_ the tree number `E01`) can be used in a concept search to retrieve a list of artifacts associated with that MeSH concept:  `classification=http://terminology.hl7.org/CodeSystem/MSH|D003933`. See above for additional details on searching by concept.
 
+#### Related Searches
+
+The MeSH tree is also used to identify additional related searches. In addition to the paging links described above, search responses may also include links to searches for related MeSH concepts. E.g. a search for [hypertension](http://cds.ahrq.gov/cedar/api/fhir/Citation?_content=hypertension&artifact-current-state=active) would include the following additional related search links:
+
+```json
+"link": [
+  ...
+  {
+    "extension": [
+      {
+        "url": "http://cedar.arhq.gov/StructureDefinition/extension-mesh-concept",
+        "valueCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/MSH",
+              "code": "D014652",
+              "display": "Vascular Diseases"
+            }
+          ],
+          "text": "Pathological processes involving any of the BLOOD VESSELS in the cardiac or peripheral circulation. They include diseases of ARTERIES; VEINS; and rest of the vasculature system in the body."
+        }
+      }
+    ],
+    "relation": "related",
+    "url": "http://cds.ahrq.gov/cedar/api/fhir/Citation?artifact-current-state=active,draft,unknown,archived,retracted&classification=http://terminology.hl7.org/CodeSystem/MSH%7CD014652"
+  },
+  {
+    "extension": [
+      {
+        "url": "http://cedar.arhq.gov/StructureDefinition/extension-mesh-concept",
+        "valueCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/MSH",
+              "code": "D046110",
+              "display": "Hypertension, Pregnancy-Induced"
+            }
+          ],
+          "text": "A condition in pregnant women with elevated systolic (>140 mm Hg) and diastolic (>90 mm Hg) blood pressure on at least two occasions 6 h apart. HYPERTENSION complicates 8-10% of all pregnancies, generally after 20 weeks of gestation. Gestational hypertension can be divided into several broad categories according to the complexity and associated symptoms, such as EDEMA; PROTEINURIA; SEIZURES; abnormalities in BLOOD COAGULATION and liver functions.\n    HYPERTENSION that develops as a result of PREGNANCY and regresses post partum. It is hypertension without PROTEINURIA or pathological EDEMA."
+        }
+      }
+    ],
+    "relation": "related",
+    "url": "http://cds.ahrq.gov/cedar/api/fhir/Citation?artifact-current-state=active,draft,unknown,archived,retracted&classification=http://terminology.hl7.org/CodeSystem/MSH%7CD046110"
+  },
+  {
+    "extension": [
+      {
+        "url": "http://cedar.arhq.gov/StructureDefinition/extension-mesh-concept",
+        "valueCodeableConcept": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/MSH",
+              "code": "D006976",
+              "display": "Hypertension, Pulmonary"
+            }
+          ],
+          "text": "Increased VASCULAR RESISTANCE in the PULMONARY CIRCULATION, usually secondary to HEART DISEASES or LUNG DISEASES."
+        }
+      }
+    ],
+    "relation": "related",
+    "url": "http://cds.ahrq.gov/cedar/api/fhir/Citation?artifact-current-state=active,draft,unknown,archived,retracted&classification=http://terminology.hl7.org/CodeSystem/MSH%7CD006976"
+  }
+]
+```
+
+The above shows three related searches, the first for the more general MeSH concept of vascular diseases, the second and third for the more specific MeSH concepts of pregnancy-induced hypertension and pulmonary hypertension. Such search links will only be included if at least one artifact matches the associated MeSH cxoncept. These links can be used by client applications to offer users more general or more specific searches related to their original search.
+
 ### Searching By Date
 
 The API supports search by last modification date using the [`FHIR _lastUpdated` search parameter](https://www.hl7.org/fhir/search.html#lastUpdated). E.g., `_lastUpdated=gt2021-10-26` would match any artifact updated after 10/26/2021. Note that the last modification date is the date that CEDAR last noted a change in an artifact (e.g., change in title text, description, keywords etc) - this may be different from the artifact publication date.
@@ -297,6 +367,10 @@ As illustrated earlier, the [`CodeSystem/$get-mesh-children`](http://cedar.ahrqd
 - [`StructureDefinition/extension-mesh-has-children`](http://cedar.ahrqdev.org/api/fhir/StructureDefinition/extension-mesh-has-children): an extension to indicate whether a MeSH concept has child concepts
 
 - [`StructureDefinition/extension-mesh-tree-number`](http://cedar.ahrqdev.org/api/fhir/StructureDefinition/extension-mesh-tree-number): an extension to hold the MeSH tree number
+
+Finally, related search links include an extension that provides the code, name and description of the associated MeSH concept. The formal definition of this extension is available at:
+
+- [`StructureDefinition/extension-mesh-concept`](http://cedar.ahrqdev.org/api/fhir/StructureDefinition/extension-mesh-concept): an extension to hold the MeSH concept that corresponds to a related search
 
 ## Comma-Separated Values (CSV) Download
 

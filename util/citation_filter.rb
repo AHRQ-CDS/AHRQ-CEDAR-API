@@ -41,6 +41,7 @@ class CitationFilter
     @client_ip = client_ip
     @log_to_db = log_to_db
     @sort_order = DEFAULT_SORT_ORDER
+    @all_search_terms_that_match_concepts = []
   end
 
   def build_link_url(page_no, page_size)
@@ -61,15 +62,11 @@ class CitationFilter
     if code.nil?
       code = system
       system = nil
+    else
+      system = UMLS_CODE_SYSTEM_IDS[system]
     end
-    synonyms_op = Sequel.pg_jsonb_op(:codes)
-    concepts = if system.nil?
-                 Concept.where(synonyms_op.contains([{ code: code }])).or(umls_cui: code)
-               elsif UMLS_CODE_SYSTEM_IDS[system] == 'MTH'
-                 Concept.where(umls_cui: code)
-               else
-                 Concept.where(synonyms_op.contains([{ system: UMLS_CODE_SYSTEM_IDS[system], code: code }]))
-               end
+
+    concepts = ConceptHelper.concepts_with_code(system, code)
     concepts.map { |c| c.artifacts.collect(&:id) }.flatten.uniq
   end
 
@@ -160,14 +157,15 @@ class CitationFilter
       begin
         case key
         when '_content'
-          cols = SearchParser.parse(value)
+          parser = SearchParser.new(value)
+          @all_search_terms_that_match_concepts << parser.all_query_terms_that_match_concepts
           opt = {
             language: 'english',
             rank: true,
             tsvector: true
           }
 
-          filter = filter.full_text_search(:content_search, cols, opt)
+          filter = filter.full_text_search(:content_search, parser.to_postgres_query, opt)
         when '_lastUpdated'
           postgres_search_terms = self.class.fhir_datetime_to_postgres_search(value, 'updated_at')
           filter = filter.where(Sequel.lit(*postgres_search_terms))
@@ -209,14 +207,15 @@ class CitationFilter
             id_frequency_counts = artifact_id_list.flatten.tally
           end
         when 'classification:text'
-          cols = SearchParser.parse(value)
+          parser = SearchParser.new(value)
+          @all_search_terms_that_match_concepts << parser.all_query_terms_that_match_concepts
           opt = {
             language: 'english',
             rank: true
           }
 
           # Need to decide if we need use ts_vector to get better performance
-          filter = filter.full_text_search(:keyword_text, cols, opt)
+          filter = filter.full_text_search(:keyword_text, parser.to_postgres_query, opt)
         when 'title'
           search_terms.map! { |t| "#{t}%" }
           terms_no_hyphens = search_terms.map { |s| s.gsub(/(\w)-(\w)/, '\1\2') }
@@ -378,6 +377,40 @@ class CitationFilter
           url: build_link_url(@page_no + 1, @page_size)
         }
       )
+    end
+
+    # Add alternate links to search for parent and child MeSH concepts
+    unique_search_terms = @all_search_terms_that_match_concepts.flatten.uniq
+    parent_mesh_concepts = ConceptHelper.parents_of_mesh_nodes_matching(*unique_search_terms)
+    child_mesh_concepts = ConceptHelper.children_of_mesh_nodes_matching(*unique_search_terms)
+    all_mesh_concepts = [parent_mesh_concepts, child_mesh_concepts].flatten.reject(&:nil?).uniq(&:code)
+    all_mesh_concepts.reject { |mesh_node| mesh_node.direct_artifact_count.zero? }.each do |mesh_node|
+      uri = Addressable::URI.parse(@request_url)
+      uri.query_values = {
+        classification: "#{FHIRAdapter::FHIR_CODE_SYSTEM_URLS['MSH']}|#{mesh_node.code}",
+        'artifact-current-state': STATUS_SORT_ORDER.keys.join(',')
+      }
+      link = FHIR::Bundle::Link.new(
+        {
+          relation: 'related',
+          url: uri.normalize.to_str
+        }
+      )
+      ext = FHIR::Extension.new(
+        url: 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-concept',
+        valueCodeableConcept: FHIR::CodeableConcept.new(
+          text: mesh_node.description,
+          coding: [
+            FHIR::Coding.new(
+              code: mesh_node.code,
+              system: FHIRAdapter::FHIR_CODE_SYSTEM_URLS['MSH'],
+              display: mesh_node.name
+            )
+          ]
+        )
+      )
+      link.extension << ext
+      bundle.link << link
     end
   end
 

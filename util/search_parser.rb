@@ -1,16 +1,19 @@
 # frozen_string_literal: true
 
 require_relative 'stop_words'
+require_relative 'concept_helper'
 
 # Parser that converts FHIR search strings into the format expected by PostgreSQL full text search
 class SearchParser
-  attr_reader :simple_query, :simple_query_terms
+  attr_reader :all_query_terms_that_match_concepts, :tokens
 
   def initialize(search_string)
     @search_string = search_string
     @offset = 0
     @simple_query = true
     @simple_query_terms = []
+    @all_query_terms_that_match_concepts = []
+    @tokens = tokenize
   end
 
   # Return the not-yet-processed characters in the search string
@@ -31,24 +34,6 @@ class SearchParser
     end
   end
 
-  # Returns a Concept for which the supplied term is a synonym or nil if none found
-  def get_concepts(term, normalized_term)
-    synonyms_op = Sequel.pg_jsonb_op(:synonyms_psql)
-    # Concept.where(...).empty? is very slow (20X) compared to Concept.where(...).all.empty?
-    search_terms = [stem(term), stem(normalized_term)].uniq.reject(&:blank?)
-    return [] if search_terms.empty?
-
-    Concept.where(synonyms_op.contain_any([stem(term), stem(normalized_term)].uniq)).all
-  end
-
-  def stem(term)
-    DB['select to_tsquery(?) as query', term].first[:query].gsub('&', '<->')
-    # the final gsub in the above is to account for the differences in handling hyphens in
-    # phraseto_tsquery (used in the cedar_admin concepts importer, 'foo-bar' ->  "'foo-bar' <-> 'foo' <-> 'bar'")
-    # and to_tsquery (used here since the parser inserts <-> between words, 'foo-bar' -> "'foo-bar' & 'foo' & 'bar'")
-    # Here we are only concerned with finding matching synonyms so the gsub takes care of that.
-  end
-
   # Returns the supplied term if no synonyms are found or a bracketed set of synonyms
   # if any are found
   def synonyms(term)
@@ -61,11 +46,20 @@ class SearchParser
     term = term.downcase
     return [term] if StopWords.include? term
 
-    term_no_hyphens = term.gsub(/(\w)-(\w)/, '\1\2') # ignores <-> word separators
-    concepts = get_concepts(term, term_no_hyphens)
-    if concepts.nil? || concepts.empty?
-      [term, term_no_hyphens].uniq
+    concepts = []
+    terms = [term, term.gsub(/(\w)-(\w)/, '\1\2')].uniq # the gsub ignores <-> word separators
+    terms.each do |t|
+      matching_concepts = ConceptHelper.concepts_matching(t)
+      if !matching_concepts.nil? && !matching_concepts.empty?
+        @all_query_terms_that_match_concepts << t
+        concepts << matching_concepts
+      end
+    end
+
+    if concepts.empty?
+      terms
     else
+      concepts = concepts.flatten.uniq(&:id)
       concepts.map(&:synonyms_psql).flatten.map { |s| s.gsub(/<->[&|!]<->/, '<->') }.uniq
     end
   end
@@ -146,28 +140,33 @@ class SearchParser
     processed_tokens
   end
 
-  # Return the resulting search term in the format expected by PostgreSQL
-  def self.parse(search_string)
-    # Helper to recursively convert inner parenthetical expressions to strings surrounded by '(' and ')'
-    array_to_string = lambda do |array|
-      array.map { |e| e.is_a?(Array) ? "(#{array_to_string[e]})" : e }.join
-    end
-
-    # Instantiate a parser, parse the search string
-    parser = new(search_string)
-    tokens = parser.parse_expression
+  def tokenize
+    tokens = parse_expression
 
     # For simple searches (just a list of words separated by AND) add in an OR for synonyms of
     # the complete phrase (if there are any)
-    if parser.simple_query && parser.simple_query_terms.size > 1
-      has_hyphens = parser.simple_query_terms.any? { |term| term.include?('-') }
-      simple_synonyms = parser.synonym_list(parser.simple_query_terms.join('<->'))
-      if simple_synonyms.size > (has_hyphens ? 2 : 1)
-        tokens = [tokens, OPERATORS['OR'], parser.synonyms_str(simple_synonyms)]
-      end
+    if @simple_query && @simple_query_terms.size > 1
+      has_hyphens = @simple_query_terms.any? { |term| term.include?('-') }
+      simple_synonyms = synonym_list(@simple_query_terms.join('<->'))
+      tokens = [tokens, OPERATORS['OR'], synonyms_str(simple_synonyms)] if simple_synonyms.size > (has_hyphens ? 2 : 1)
     end
+    tokens
+  end
 
-    # return the results with parentheticals converted
-    array_to_string[tokens]
+  # Return the resulting search term in the format expected by PostgreSQL
+  def to_postgres_query
+    stringify_search(@tokens)
+  end
+
+  # Helper to recursively convert inner parenthetical expressions to strings surrounded by '(' and ')'
+  def stringify_search(tokenized_expr)
+    tokenized_expr.map { |e| e.is_a?(Array) ? "(#{stringify_search(e)})" : e }.join
+  end
+
+  # Class method helper
+  def self.to_postgres_query(search_string)
+    # Instantiate a parser, parse the search string
+    parser = new(search_string)
+    parser.to_postgres_query
   end
 end
