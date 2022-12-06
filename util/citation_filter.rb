@@ -402,6 +402,12 @@ class CitationFilter
           text: mesh_node.description,
           coding: [
             FHIR::Coding.new(
+              extension: [
+                FHIR::Extension.new(
+                  url: 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-direct-artifact-count',
+                  valueUnsignedInt: mesh_node.direct_artifact_count
+                )
+              ],
               code: mesh_node.code,
               system: FHIRAdapter::FHIR_CODE_SYSTEM_URLS['MSH'],
               display: mesh_node.name

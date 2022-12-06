@@ -251,6 +251,12 @@ The MeSH tree is also used to identify additional related searches. In addition 
         "valueCodeableConcept": {
           "coding": [
             {
+              "extension": [
+                {
+                  "url": "http://cedar.arhq.gov/StructureDefinition/extension-mesh-direct-artifact-count",
+                  "valueUnsignedInt": 108
+                }
+              ],
               "system": "http://terminology.hl7.org/CodeSystem/MSH",
               "code": "D014652",
               "display": "Vascular Diseases"
@@ -270,6 +276,12 @@ The MeSH tree is also used to identify additional related searches. In addition 
         "valueCodeableConcept": {
           "coding": [
             {
+              "extension": [
+                {
+                  "url": "http://cedar.arhq.gov/StructureDefinition/extension-mesh-direct-artifact-count",
+                  "valueUnsignedInt": 1
+                }
+              ],
               "system": "http://terminology.hl7.org/CodeSystem/MSH",
               "code": "D046110",
               "display": "Hypertension, Pregnancy-Induced"
@@ -289,6 +301,12 @@ The MeSH tree is also used to identify additional related searches. In addition 
         "valueCodeableConcept": {
           "coding": [
             {
+              "extension": [
+                {
+                  "url": "http://cedar.arhq.gov/StructureDefinition/extension-mesh-direct-artifact-count",
+                  "valueUnsignedInt": 2
+                }
+              ],
               "system": "http://terminology.hl7.org/CodeSystem/MSH",
               "code": "D006976",
               "display": "Hypertension, Pulmonary"
@@ -304,7 +322,7 @@ The MeSH tree is also used to identify additional related searches. In addition 
 ]
 ```
 
-The above shows three related searches, the first for the more general MeSH concept of vascular diseases, the second and third for the more specific MeSH concepts of pregnancy-induced hypertension and pulmonary hypertension. Such search links will only be included if at least one artifact matches the associated MeSH cxoncept. These links can be used by client applications to offer users more general or more specific searches related to their original search.
+The above shows three related searches, the first for the more general MeSH concept of vascular diseases, the second and third for the more specific MeSH concepts of pregnancy-induced hypertension and pulmonary hypertension. Such search links will only be included if at least one artifact matches the associated MeSH concept, the `coding` `extension` shows the count of matching artifacts. These links can be used by client applications to offer users more general or more specific searches related to their original search.
 
 ### Searching By Date
 
