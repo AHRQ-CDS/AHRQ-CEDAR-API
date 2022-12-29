@@ -296,6 +296,22 @@ describe CitationFilter do
       assert bundle.entry.all? do |entry|
         entry.resource.title.downcase.start_with?(expected)
       end
+
+      search_text = 'bladder-cancer'
+      expected = 'bladder cancer'
+      params = {
+        'title' => search_text
+      }
+
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
+
+      assert_bundle(bundle)
+
+      assert bundle.entry.all? do |entry|
+        entry.resource.title.downcase.start_with?(expected)
+      end
     end
 
     it 'supports search by title with multiple OR' do
@@ -336,6 +352,22 @@ describe CitationFilter do
 
     it 'supports search by title:contains with hyphens' do
       search_text = 'bladder can-cer'
+      expected = 'bladder cancer'
+      params = {
+        'title:contains' => search_text
+      }
+
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
+
+      assert_bundle(bundle)
+
+      assert bundle.entry.all? do |entry|
+        entry.resource.title.downcase.include?(expected)
+      end
+
+      search_text = 'bladder-cancer'
       expected = 'bladder cancer'
       params = {
         'title:contains' => search_text

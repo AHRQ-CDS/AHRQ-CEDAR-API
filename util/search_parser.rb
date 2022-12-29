@@ -47,7 +47,8 @@ class SearchParser
     return [term] if StopWords.include? term
 
     concepts = []
-    terms = [term, term.gsub(/(\w)-(\w)/, '\1\2')].uniq # the gsub ignores <-> word separators
+    # the following gsubs ignore <-> word separators that are already present
+    terms = [term, term.gsub(/(\w)-(\w)/, '\1\2'), term.gsub(/(\w)-(\w)/, '\1<->\2')].uniq
     terms.each do |t|
       matching_concepts = ConceptHelper.concepts_matching(t)
       if !matching_concepts.nil? && !matching_concepts.empty?

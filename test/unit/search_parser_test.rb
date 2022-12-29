@@ -19,7 +19,7 @@ describe SearchParser do
     it 'handles hyphenated words' do
       source = 'aa-cc'
       result = SearchParser.to_postgres_query(source)
-      assert_equal('(aa-cc|aacc)', result)
+      assert_equal('(aa-cc|aacc|aa<->cc)', result)
     end
 
     it 'handles synonyms in simple text searches' do
@@ -37,13 +37,17 @@ describe SearchParser do
     it 'handles synonyms when the search word is hyphenated' do
       source = 'aa f-oo cc'
       result = SearchParser.to_postgres_query(source)
-      assert_equal("aa&('foo'|'bar'|'baz')&cc", result)
+      assert_equal("(aa&('foo'|'bar'|'baz')&cc)|(aa<->f-oo<->cc|aa<->foo<->cc|aa<->f<->oo<->cc)", result)
     end
 
     it 'handles hyphenated synonyms' do
       source = 'aa foo-bar cc'
       result = SearchParser.to_postgres_query(source)
-      assert_equal("aa&('foo-bar' <-> 'foo' <-> 'bar'|'baz')&cc", result)
+      assert_equal(
+        "(aa&('foo-bar' <-> 'foo' <-> 'bar'|'baz'|'foo' <-> 'bar')&cc)" \
+        '|(aa<->foo-bar<->cc|aa<->foobar<->cc|aa<->foo<->bar<->cc)',
+        result
+      )
     end
 
     it 'handles multi-word synonyms in simple text searches' do

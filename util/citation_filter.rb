@@ -218,8 +218,8 @@ class CitationFilter
           filter = filter.full_text_search(:keyword_text, parser.to_postgres_query, opt)
         when 'title'
           search_terms.map! { |t| "#{t}%" }
-          terms_no_hyphens = search_terms.map { |s| s.gsub(/(\w)-(\w)/, '\1\2') }
-          all_terms = search_terms.concat(terms_no_hyphens).uniq
+          terms_no_hyphens = search_terms.map { |s| [s.gsub(/(\w)-(\w)/, '\1\2'), s.gsub(/(\w)-(\w)/, '\1 \2')] }
+          all_terms = search_terms.concat(terms_no_hyphens).flatten.uniq
           filter = append_boolean_expression(:ILIKE, :title, all_terms, filter)
         when 'title:contains'
           search_terms = [value].flatten.map { |s| s.split(',').map { |v| "%#{v.strip}%" } }
@@ -229,8 +229,8 @@ class CitationFilter
           # [["%foo%", "%bar%"], ["%baz%"]] which in SQL would be
           # WHERE (title ILIKE '%foo%' OR title ILIKE '%bar%') AND (title ILIKE '%baz%')
           search_terms.each do |ored_terms|
-            terms_no_hyphens = ored_terms.map { |s| s.gsub(/(\w)-(\w)/, '\1\2') }
-            all_terms = ored_terms.concat(terms_no_hyphens).uniq
+            terms_no_hyphens = ored_terms.map { |s| [s.gsub(/(\w)-(\w)/, '\1\2'), s.gsub(/(\w)-(\w)/, '\1 \2')] }
+            all_terms = ored_terms.concat(terms_no_hyphens).flatten.uniq
             filter = append_boolean_expression(:ILIKE, :title, all_terms, filter)
           end
         when 'artifact-current-state'
