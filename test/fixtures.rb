@@ -182,6 +182,25 @@ DB[:concepts].insert(
   created_at: timestamp,
   updated_at: timestamp
 )
+DB[:concepts].insert(
+  id: 307,
+  umls_cui: 'CUI7',
+  umls_description: 'CUI7 desc',
+  synonyms_text: '["foo", "bar", "baz"]',
+  synonyms_psql: "[\"'foo'\", \"'bar'\", \"'baz'\"]",
+  created_at: timestamp,
+  updated_at: timestamp
+)
+DB[:concepts].insert(
+  id: 308,
+  umls_cui: 'CUI8',
+  umls_description: 'CUI8 desc',
+  synonyms_text: '["xyzzy"]',
+  synonyms_psql: "[\"'xyzzi'\"]", # different due to stemming
+  codes: '[{"system": "MSH", "code": "D0000"}]',
+  created_at: timestamp,
+  updated_at: timestamp
+)
 DB[:artifacts_concepts].insert(
   artifact_id: 201,
   concept_id: 301
@@ -196,7 +215,7 @@ DB[:artifacts_concepts].insert(
 )
 DB[:mesh_tree_nodes].insert(
   id: 401,
-  code: 'D00',
+  code: 'D0000',
   tree_number: 'A00',
   indirect_artifact_count: 2,
   direct_artifact_count: 0,
@@ -206,7 +225,7 @@ DB[:mesh_tree_nodes].insert(
 )
 DB[:mesh_tree_nodes].insert(
   id: 411,
-  code: 'D00',
+  code: 'D0001',
   tree_number: 'A00.1',
   indirect_artifact_count: 0,
   direct_artifact_count: 1,
@@ -217,7 +236,7 @@ DB[:mesh_tree_nodes].insert(
 )
 DB[:mesh_tree_nodes].insert(
   id: 412,
-  code: 'D00',
+  code: 'D0002',
   tree_number: 'A00.2',
   indirect_artifact_count: 0,
   direct_artifact_count: 1,

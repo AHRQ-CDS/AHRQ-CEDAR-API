@@ -20,6 +20,17 @@ Description: "Specifies the quality of evidence for a cited artifact."
 * valueCodeableConcept 1..1
 * valueCodeableConcept from http://hl7.org/fhir/ValueSet/certainty-rating (required)
 
+Extension: MeshConcept
+Id: extension-mesh-concept
+Title: "MeSH Concept Extension"
+Description: "Specifies the MeSH concept that is the target of a search in a related link."
+* . ^max = "1"
+* ^context.type = #element
+* ^context.expression = "Bundle.link"
+* value[x] only CodeableConcept
+* valueCodeableConcept 1..1
+* valueCodeableConcept.coding.system = "http://terminology.hl7.org/CodeSystem/MSH"
+
 Extension: MeshTreeNumber
 Id: extension-mesh-tree-number
 Title: "Mesh Tree Number Extension"
