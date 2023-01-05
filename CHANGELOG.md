@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.7.0 - 2023-01-05
+
+* Adds related search links to search results
+* Fixes issues with handling punctuation and hyphens in free text searches
+* Adds organization description to API results
+* Updates C# example code
+* Updates swagger documentation
+* Completes move of documentation from API repository to static content repository
+* Updates dependencies
+
 ## v0.6.0 - 2022-10-03
 
 * Supports hyphens in title search
