@@ -16,6 +16,12 @@ describe SearchParser do
       assert_equal('aa&bb+&cc', result)
     end
 
+    it 'handles simple text search, ignoring punctuation' do
+      source = 'aa, bb; cc'
+      result = SearchParser.to_postgres_query(source)
+      assert_equal('aa&bb&cc', result)
+    end
+
     it 'handles hyphenated words' do
       source = 'aa-cc'
       result = SearchParser.to_postgres_query(source)
@@ -136,6 +142,24 @@ describe SearchParser do
 
     it 'skips leading and trailing blank space in phrase' do
       text = '" aa bb "'
+      result = SearchParser.to_postgres_query(text)
+      assert_equal('aa<->bb', result)
+    end
+
+    it 'ignores punctuation in phrases' do
+      text = '"aa, bb"'
+      result = SearchParser.to_postgres_query(text)
+      assert_equal('aa<->bb', result)
+
+      text = '"aa; bb"'
+      result = SearchParser.to_postgres_query(text)
+      assert_equal('aa<->bb', result)
+
+      text = '"aa: bb"'
+      result = SearchParser.to_postgres_query(text)
+      assert_equal('aa<->bb', result)
+
+      text = '"aa. bb"'
       result = SearchParser.to_postgres_query(text)
       assert_equal('aa<->bb', result)
     end

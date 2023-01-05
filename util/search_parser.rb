@@ -23,8 +23,8 @@ class SearchParser
 
   # Handle parsing any arbitrary regexp; must have key content in an () expression
   def parse_regexp(regexp)
-    # First consume any leading whitespace
-    if (match = remaining.match(/^(\s+)/))
+    # First consume any leading whitespace and punctuation (,:;.)
+    if (match = remaining.match(/^([,:;.\s]+)/))
       @offset += match[1].length
     end
     # Consume and return content matching the regexp
