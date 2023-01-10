@@ -68,7 +68,7 @@ class FHIRAdapter
         }
       ],
       # classification: Does CEDAR citation have its own keywords?
-      # copyright: need CEDAR copyright declaration here
+      copyright: get_copyright_markdown(artifact.repository),
       citedArtifact: {
         identifier: [
           {
@@ -269,6 +269,24 @@ class FHIRAdapter
     end
 
     citation
+  end
+
+  def self.get_copyright_markdown(repository)
+    copyright_markdown = 'CEDAR indexes data from multiple source repositories and these repositories may have their ' \
+                         'own content guidelines that govern the use of their data. More information on these ' \
+                         'content guidelines can be found at the source repository sites.'
+
+    case repository.fhir_id
+    when 'srdr'
+      return "#{copyright_markdown}\n\n* [SRDR Usage Policies](https://srdrplus.ahrq.gov/usage)"
+    when 'uspstf'
+      return "#{copyright_markdown}\n\n* [U.S. Preventive Services Task Force Copyright Notice]" \
+             '(https://www.uspreventiveservicestaskforce.org/uspstf/recommendation-topics/copyright-notice)'
+    when 'cds-connect'
+      return "#{copyright_markdown}\n\n* [CDS Connect Disclaimer](https://cds.ahrq.gov/disclaimer)"
+    end
+
+    copyright_markdown
   end
 
   def self.to_quality_code(score)
