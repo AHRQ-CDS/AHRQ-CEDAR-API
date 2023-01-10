@@ -241,7 +241,7 @@ describe 'cedar_api' do
       get "fhir/Citation/#{cedar_identifier}"
 
       resource = assert_fhir_response(FHIR::Citation)
-      assert_includes(resource.copyright, "\n\n*")
+      assert_includes(resource.copyright, 'U.S. Preventive Services Task Force Copyright')
     end
   end
 
