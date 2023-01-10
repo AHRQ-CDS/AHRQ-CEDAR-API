@@ -241,7 +241,6 @@ describe 'cedar_api' do
       get "fhir/Citation/#{cedar_identifier}"
 
       resource = assert_fhir_response(FHIR::Citation)
-      require 'pry'; require 'pry-byebug'; byebug
       assert_includes(resource.copyright, "\n\n*")
     end
   end
