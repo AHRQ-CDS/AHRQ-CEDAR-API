@@ -328,7 +328,8 @@ class FHIRAdapter
     return bundle if artifacts.nil?
 
     artifacts.each_with_index do |artifact, result_index|
-      citation = create_citation(artifact, artifact_base_url, redirect_base_url, artifact.versions.count + 1,
+      citation = create_citation(artifact, artifact_base_url, redirect_base_url,
+                                 artifact.public_version_history.count + 1,
                                  result_index: offset + result_index, search_id: search_id)
       bundle.entry << FHIR::Bundle::Entry.new(
         resource: citation

@@ -231,12 +231,13 @@ namespace '/fhir' do
       halt(404)
     end
 
-    citation = FHIRAdapter.create_citation(artifact, uri('fhir/Citation'), uri('redirect'), artifact.versions.count + 1)
+    citation = FHIRAdapter.create_citation(artifact, uri('fhir/Citation'), uri('redirect'),
+                                           artifact.public_version_history.count + 1)
     citation.to_json
   end
 
   # Return a particular historical version of an artifact. If an artifact has N versions, we can return one of
-  # the N - 1 historical versions stored in Artifact#versions or we can return the current version
+  # the N - 1 historical versions retrieved via Artifact#public_version_history or we can return the current version
   get '/Citation/:id/_history/:version_id' do
     id = params[:id]
     version_id = params[:version_id].to_i
@@ -251,15 +252,16 @@ namespace '/fhir' do
       halt(404)
     end
 
-    if version_id > base_artifact.versions.count + 1
+    version_history = base_artifact.public_version_history
+    if version_id > version_history.count + 1
       logger.info "Request for invalid artifact (#{id}) version id (#{version_id})"
       halt(404)
     end
 
     citation = nil
 
-    if version_id <= base_artifact.versions.count
-      versioned_artifact = base_artifact.versions[version_id - 1].build_artifact
+    if version_id <= version_history.count
+      versioned_artifact = version_history[version_id - 1].build_artifact
       citation = FHIRAdapter.create_citation(versioned_artifact, uri('fhir/Citation'), uri('redirect'),
                                              version_id, skip_concept: true)
     else
