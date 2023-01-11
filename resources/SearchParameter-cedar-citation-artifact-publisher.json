@@ -1,33 +1,28 @@
 {
   "resourceType": "SearchParameter",
   "id": "cedar-citation-artifact-publisher",
-  "url": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-artifact-publisher",
+  "url": "https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-artifact-publisher",
   "version": "0.1.0",
   "name": "CedarCitationArtifactPublisher",
   "status": "active",
   "experimental": false,
   "date": "2021-02-17",
-  "publisher": "ARHQ CEDAR",
-  "alias": [
-    "CedarCitationArtifactPublisherAlias"
-  ],
+  "publisher": "AHRQ CEDAR",
   "contact": [
     {
       "telecom": [
         {
           "system": "url",
-          "value": "http://cedar.arhq.gov"
+          "value": "https://cds.ahrq.gov/cedar"
         }
       ]
     }
   ],
-  "code": "artifact-publisher",
   "base": [
     "Citation"
   ],
-  "description" : "Publisher of the cited artifact",
+  "code": "artifact-publisher",
+  "description": "Publisher of the cited artifact",
   "type": "string",
-  "expression": "Citation.citedArtifact.publicationForm.publishedIn.publisher.display",
-  "xpath" : "f:Citation/f:citedArtifact/f:publicationForm/f:publishedIn/f:publisher/f:display",
-  "xpathUsage" : "normal"
+  "expression": "Citation.citedArtifact.publicationForm.publishedIn.publisher.display"
 }

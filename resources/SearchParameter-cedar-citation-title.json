@@ -1,33 +1,31 @@
 {
   "resourceType": "SearchParameter",
   "id": "cedar-citation-title",
-  "url": "http://cedar-ahrq.gov/fhir/SearchParameter/cedar-citation-title",
+  "url": "https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-title",
   "version": "0.1.0",
   "name": "CedarCitationTitle",
   "derivedFrom": "http://hl7.org/fhir/SearchParameter/Citation-title",
   "status": "active",
   "experimental": false,
   "date": "2021-02-17",
-  "publisher": "ARHQ CEDAR",
+  "publisher": "AHRQ CEDAR",
   "contact": [
     {
       "telecom": [
         {
           "system": "url",
-          "value": "http://cedar.arhq.gov"
+          "value": "https://cds.ahrq.gov/cedar"
         }
       ]
     }
   ],
-  "code": "title",
   "base": [
     "Citation"
   ],
-  "description" : "The human-friendly name of the citation",
+  "code": "title",
+  "description": "The human-friendly name of the citation",
   "type": "string",
   "expression": "Citation.title",
-  "xpath" : "f:Citation/f:title",
-  "xpathUsage" : "normal",
   "multipleOr": true,
   "modifier": [
     "contains"

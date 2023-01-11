@@ -495,7 +495,7 @@ describe CitationFilter do
 
       assert bundle.entry.all? do |entry|
         entry.resource.citedArtifact.extension.any? do |ext|
-          ext.url == 'http://cedar.arhq.gov/StructureDefinition/extension-strength-of-recommendation' &&
+          ext.url == "#{FHIRAdapter.HOSTNAME}/StructureDefinition/extension-strength-of-recommendation" &&
             ext.valueCodeableConcept.coding.any? { |coding| coding.code == expected_code }
         end
       end
@@ -514,7 +514,7 @@ describe CitationFilter do
 
       assert bundle.entry.all? do |entry|
         entry.resource.citedArtifact.extension.none? do |ext|
-          ext.url == 'http://cedar.arhq.gov/StructureDefinition/extension-strength-of-recommendation'
+          ext.url == "#{FHIRAdapter.HOSTNAME}/StructureDefinition/extension-strength-of-recommendation"
         end
       end
 
@@ -527,7 +527,7 @@ describe CitationFilter do
 
       assert bundle.entry.all? do |entry|
         entry.resource.citedArtifact.extension.all? do |ext|
-          ext.url == 'http://cedar.arhq.gov/StructureDefinition/extension-strength-of-recommendation'
+          ext.url == "#{FHIRAdapter.HOSTNAME}/StructureDefinition/extension-strength-of-recommendation"
         end
       end
     end
@@ -546,7 +546,7 @@ describe CitationFilter do
 
       assert bundle.entry.all? do |entry|
         entry.resource.citedArtifact.extension.any? do |ext|
-          ext.url == 'http://cedar.arhq.gov/StructureDefinition/extension-quality-of-evidence' &&
+          ext.url == "#{FHIRAdapter.HOSTNAME}/StructureDefinition/extension-quality-of-evidence" &&
             ext.valueCodeableConcept.coding.any? { |coding| coding.code == expected_code }
         end
       end
@@ -565,7 +565,7 @@ describe CitationFilter do
 
       assert bundle.entry.all? do |entry|
         entry.resource.citedArtifact.extension.none? do |ext|
-          ext.url == 'http://cedar.arhq.gov/StructureDefinition/extension-quality-of-evidence'
+          ext.url == "#{FHIRAdapter.HOSTNAME}/StructureDefinition/extension-quality-of-evidence"
         end
       end
 
@@ -578,7 +578,7 @@ describe CitationFilter do
 
       assert bundle.entry.all? do |entry|
         entry.resource.citedArtifact.extension.all? do |ext|
-          ext.url == 'http://cedar.arhq.gov/StructureDefinition/extension-quality-of-evidence'
+          ext.url == "#{FHIRAdapter.HOSTNAME}/StructureDefinition/extension-quality-of-evidence"
         end
       end
     end

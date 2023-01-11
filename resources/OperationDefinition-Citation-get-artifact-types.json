@@ -1,20 +1,20 @@
 {
   "resourceType": "OperationDefinition",
   "id": "Citation-get-artifact-types",
-  "url": "http://cedar.arhq.gov/fhir/OperationDefinition/Citation-get-artifact-types",
+  "url": "https://cds.ahrq.gov/cedar/api/fhir/OperationDefinition/Citation-get-artifact-types",
   "version": "0.1.0",
   "name": "get-artifact-types",
   "title": "Get Citation knowledge artifact types",
   "status": "draft",
   "kind": "operation",
   "date": "2021-12-14",
-  "publisher": "ARHQ CEDAR",
+  "publisher": "AHRQ CEDAR",
   "contact": [
     {
       "telecom": [
         {
           "system": "url",
-          "value": "http://cedar.arhq.gov"
+          "value": "https://cds.ahrq.gov/cedar"
         }
       ]
     }

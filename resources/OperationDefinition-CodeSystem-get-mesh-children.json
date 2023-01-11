@@ -1,20 +1,20 @@
 {
   "resourceType": "OperationDefinition",
   "id": "CodeSystem-get-mesh-children",
-  "url": "http://cedar.arhq.gov/fhir/OperationDefinition/CodeSystem-get-mesh-children",
+  "url": "https://cds.ahrq.gov/cedar/api/fhir/OperationDefinition/CodeSystem-get-mesh-children",
   "version": "0.1.0",
   "name": "get-mesh-children",
   "title": "Get MeSH child concepts from MeSH Tree Number",
   "status": "draft",
   "kind": "operation",
   "date": "2021-08-25",
-  "publisher": "ARHQ CEDAR",
+  "publisher": "AHRQ CEDAR",
   "contact": [
     {
       "telecom": [
         {
           "system": "url",
-          "value": "http://cedar.arhq.gov"
+          "value": "https://cds.ahrq.gov/cedar"
         }
       ]
     }

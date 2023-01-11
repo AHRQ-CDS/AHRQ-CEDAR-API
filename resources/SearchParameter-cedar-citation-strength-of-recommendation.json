@@ -1,33 +1,31 @@
 {
   "resourceType": "SearchParameter",
   "id": "cedar-citation-strength-of-recommendation",
-  "url": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-strength-of-recommendation",
+  "url": "https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-strength-of-recommendation",
   "version": "0.1.0",
   "name": "CedarCitationStrengthOfRecommendation",
   "status": "active",
   "experimental": false,
   "date": "2022-05-04",
-  "publisher": "ARHQ CEDAR",
+  "publisher": "AHRQ CEDAR",
   "contact": [
     {
       "telecom": [
         {
           "system": "url",
-          "value": "http://cedar.arhq.gov"
+          "value": "https://cds.ahrq.gov/cedar"
         }
       ]
     }
   ],
-  "code": "strength-of-recommendation",
   "base": [
     "Citation"
   ],
+  "code": "strength-of-recommendation",
   "description": "Strength of recommendations included in the citation",
   "type": "token",
-  "expression": "Citation.citedArtifact.extension.where(url='http://cedar.arhq.gov/StructureDefinition/extension-strength-of-recommendation')",
-  "xpath": "f:Citation/f:citedArtifact/f:extension[@url='http://cedar.arhq.gov/StructureDefinition/extension-strength-of-recommendation']",
-  "xpathUsage": "normal",
-  "multipleOr": "true",
+  "expression": "Citation.citedArtifact.extension.where(url='https://cds.ahrq.gov/cedar/api/fhir/StructureDefinition/extension-strength-of-recommendation')",
+  "multipleOr": true,
   "modifier": [
     "missing"
   ]

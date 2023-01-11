@@ -1,32 +1,30 @@
 {
   "resourceType": "SearchParameter",
   "id": "cedar-citation-article-date",
-  "url": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-article-date",
+  "url": "https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-article-date",
   "version": "0.1.0",
   "name": "CedarCitationArticleDate",
   "status": "active",
   "experimental": false,
   "date": "2021-12-02",
-  "publisher": "ARHQ CEDAR",
+  "publisher": "AHRQ CEDAR",
   "contact": [
     {
       "telecom": [
         {
           "system": "url",
-          "value": "http://cedar.arhq.gov"
+          "value": "https://cds.ahrq.gov/cedar"
         }
       ]
     }
   ],
-  "code": "article-date",
   "base": [
     "Citation"
   ],
+  "code": "article-date",
   "description": "Publishing date of the cited artifact",
   "type": "date",
   "expression": "Citation.citedArtifact.publicationForm.articleDate",
-  "xpath": "f:Citation/f:citedArtifact/f:publicationForm/f:articleDate",
-  "xpathUsage": "normal",
   "comparator": [
     "eq",
     "ne",

@@ -1,34 +1,32 @@
 {
   "resourceType": "SearchParameter",
   "id": "cedar-citation-classification",
-  "url": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-classification",
+  "url": "https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-classification",
   "version": "0.1.0",
   "name": "CedarCitationClassification",
   "status": "active",
   "experimental": false,
   "date": "2021-02-17",
-  "publisher": "ARHQ CEDAR",
+  "publisher": "AHRQ CEDAR",
   "contact": [
     {
       "telecom": [
         {
           "system": "url",
-          "value": "http://cedar.arhq.gov"
+          "value": "https://cds.ahrq.gov/cedar"
         }
       ]
     }
   ],
-  "code": "classification",
   "base": [
     "Citation"
   ],
+  "code": "classification",
   "description": "Classification of the citation",
   "type": "token",
   "expression": "Citation.citedArtifact.classification.classifier",
-  "xpath": "f:Citation/f:citedArtifact/f:classification/f:classifier",
-  "xpathUsage": "normal",
-  "multipleOr": "true",
-  "multipleAnd": "true",
+  "multipleOr": true,
+  "multipleAnd": true,
   "modifier": [
     "text"
   ]
