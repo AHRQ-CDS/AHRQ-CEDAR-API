@@ -234,6 +234,15 @@ describe 'cedar_api' do
       resource = assert_fhir_response(FHIR::Citation)
       assert_equal(artifact.published_on.strftime('%F'), resource.citedArtifact.publicationForm[0].articleDate)
     end
+
+    it 'supports repository specific copyright' do
+      cedar_identifier = 'abc-1'
+
+      get "fhir/Citation/#{cedar_identifier}"
+
+      resource = assert_fhir_response(FHIR::Citation)
+      assert_includes(resource.copyright, 'U.S. Preventive Services Task Force Copyright')
+    end
   end
 
   describe '/fhir/Citation/$get-artifact-types endpoint' do

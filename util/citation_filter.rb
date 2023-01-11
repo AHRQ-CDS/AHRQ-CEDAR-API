@@ -383,7 +383,7 @@ class CitationFilter
     unique_search_terms = @all_search_terms_that_match_concepts.flatten.uniq
     parent_mesh_concepts = ConceptHelper.parents_of_mesh_nodes_matching(*unique_search_terms)
     child_mesh_concepts = ConceptHelper.children_of_mesh_nodes_matching(*unique_search_terms)
-    all_mesh_concepts = [parent_mesh_concepts, child_mesh_concepts].flatten.reject(&:nil?).uniq(&:code)
+    all_mesh_concepts = [parent_mesh_concepts, child_mesh_concepts].flatten.compact.uniq(&:code)
     all_mesh_concepts.reject { |mesh_node| mesh_node.direct_artifact_count.zero? }.each do |mesh_node|
       uri = Addressable::URI.parse(@request_url)
       uri.query_values = {
