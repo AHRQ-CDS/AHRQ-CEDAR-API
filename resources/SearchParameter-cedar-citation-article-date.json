@@ -18,10 +18,10 @@
       ]
     }
   ],
+  "code": "article-date",
   "base": [
     "Citation"
   ],
-  "code": "article-date",
   "description": "Publishing date of the cited artifact",
   "type": "date",
   "expression": "Citation.citedArtifact.publicationForm.articleDate",

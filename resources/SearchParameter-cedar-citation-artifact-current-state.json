@@ -18,10 +18,10 @@
       ]
     }
   ],
+  "code": "artifact-current-state",
   "base": [
     "Citation"
   ],
-  "code": "artifact-current-state",
   "description": "Current state of the cited artifact",
   "type": "token",
   "expression": "Citation.citedArtifact.currentState"

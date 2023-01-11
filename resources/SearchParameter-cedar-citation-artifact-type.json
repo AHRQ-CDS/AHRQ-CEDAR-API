@@ -18,10 +18,10 @@
       ]
     }
   ],
+  "code": "artifact-type",
   "base": [
     "Citation"
   ],
-  "code": "artifact-type",
   "description": "Type of the cited artifact",
   "type": "string",
   "expression": "Citation.citedArtifact.classification.where(type.coding.code = 'knowledge-artifact-type').classifier"

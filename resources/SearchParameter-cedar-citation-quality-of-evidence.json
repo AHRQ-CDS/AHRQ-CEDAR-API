@@ -18,10 +18,10 @@
       ]
     }
   ],
+  "code": "quality-of-evidence",
   "base": [
     "Citation"
   ],
-  "code": "quality-of-evidence",
   "description": "Quality of evidence included in the citation",
   "type": "token",
   "expression": "Citation.citedArtifact.extension.where(url='https://cds.ahrq.gov/cedar/api/fhir/StructureDefinition/extension-quality-of-evidence')",

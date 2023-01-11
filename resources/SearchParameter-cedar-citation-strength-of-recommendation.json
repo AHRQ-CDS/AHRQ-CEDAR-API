@@ -18,10 +18,10 @@
       ]
     }
   ],
+  "code": "strength-of-recommendation",
   "base": [
     "Citation"
   ],
-  "code": "strength-of-recommendation",
   "description": "Strength of recommendations included in the citation",
   "type": "token",
   "expression": "Citation.citedArtifact.extension.where(url='https://cds.ahrq.gov/cedar/api/fhir/StructureDefinition/extension-strength-of-recommendation')",

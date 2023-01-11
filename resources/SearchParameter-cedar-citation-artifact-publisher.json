@@ -18,10 +18,10 @@
       ]
     }
   ],
+  "code": "artifact-publisher",
   "base": [
     "Citation"
   ],
-  "code": "artifact-publisher",
   "description": "Publisher of the cited artifact",
   "type": "string",
   "expression": "Citation.citedArtifact.publicationForm.publishedIn.publisher.display"

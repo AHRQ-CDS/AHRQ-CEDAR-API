@@ -19,10 +19,10 @@
       ]
     }
   ],
+  "code": "title",
   "base": [
     "Citation"
   ],
-  "code": "title",
   "description": "The human-friendly name of the citation",
   "type": "string",
   "expression": "Citation.title",
