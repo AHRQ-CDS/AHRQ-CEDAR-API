@@ -1,9 +1,4 @@
 
-RuleSet: Publisher
-* publisher = "AHRQ CEDAR"
-* contact.telecom.system = #url
-* contact.telecom.value = "https://cds.ahrq.gov/cedar"
-
 Instance: Citation-get-artifact-types
 InstanceOf: OperationDefinition
 Usage: #definition
@@ -12,8 +7,6 @@ Usage: #definition
 * title = "Get Citation knowledge artifact types"
 * status = #draft
 * kind = #operation
-* date = "2021-12-14"
-* insert Publisher
 * description = "Get all knowledge artifact types for Citation"
 * code = #get-artifact-types
 * resource = #Citation
@@ -35,8 +28,6 @@ Usage: #definition
 * title = "Get MeSH child concepts from MeSH Tree Number"
 * status = #draft
 * kind = #operation
-* date = "2021-08-25"
-* insert Publisher
 * description = "Given a MeSH Tree Number, get MeSH child concepts"
 * code = #get-mesh-children
 * resource = #CodeSystem

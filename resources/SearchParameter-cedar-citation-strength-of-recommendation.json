@@ -3,14 +3,14 @@
   "id" : "cedar-citation-strength-of-recommendation",
   "text" : {
     "status" : "generated",
-    "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative: SearchParameter</b><a name=\"cedar-citation-strength-of-recommendation\"> </a></p><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\">Resource SearchParameter &quot;cedar-citation-strength-of-recommendation&quot; </p></div><p><b>url</b>: <code>https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-strength-of-recommendation</code></p><p><b>version</b>: 0.1.0</p><p><b>name</b>: CedarCitationStrengthOfRecommendation</p><p><b>status</b>: active</p><p><b>experimental</b>: false</p><p><b>date</b>: 2022-05-04</p><p><b>publisher</b>: AHRQ CEDAR</p><p><b>contact</b>: AHRQ CEDAR: <a href=\"https://digital.ahrq.gov/ahrq-funded-projects/cepi-evidence-discovery-and-retrieval-cedar-project\">https://digital.ahrq.gov/ahrq-funded-projects/cepi-evidence-discovery-and-retrieval-cedar-project</a></p><p><b>description</b>: Strength of recommendations included in the citation</p><p><b>code</b>: strength-of-recommendation</p><p><b>base</b>: Citation</p><p><b>type</b>: token</p><p><b>expression</b>: Citation.citedArtifact.extension.where(url='https://cds.ahrq.gov/cedar/api/fhir/StructureDefinition/extension-strength-of-recommendation')</p><p><b>multipleOr</b>: true</p><p><b>modifier</b>: missing</p></div>"
+    "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative: SearchParameter</b><a name=\"cedar-citation-strength-of-recommendation\"> </a></p><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\">Resource SearchParameter &quot;cedar-citation-strength-of-recommendation&quot; </p></div><p><b>url</b>: <code>https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-strength-of-recommendation</code></p><p><b>version</b>: 0.1.0</p><p><b>name</b>: CedarCitationStrengthOfRecommendation</p><p><b>status</b>: active</p><p><b>experimental</b>: false</p><p><b>date</b>: 2023-01-11 14:59:33-0600</p><p><b>publisher</b>: AHRQ CEDAR</p><p><b>contact</b>: AHRQ CEDAR: <a href=\"https://digital.ahrq.gov/ahrq-funded-projects/cepi-evidence-discovery-and-retrieval-cedar-project\">https://digital.ahrq.gov/ahrq-funded-projects/cepi-evidence-discovery-and-retrieval-cedar-project</a></p><p><b>description</b>: Strength of recommendations included in the citation</p><p><b>code</b>: strength-of-recommendation</p><p><b>base</b>: Citation</p><p><b>type</b>: token</p><p><b>expression</b>: Citation.citedArtifact.extension.where(url='https://cds.ahrq.gov/cedar/api/fhir/StructureDefinition/extension-strength-of-recommendation')</p><p><b>multipleOr</b>: true</p><p><b>modifier</b>: missing</p></div>"
   },
   "url" : "https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-strength-of-recommendation",
   "version" : "0.1.0",
   "name" : "CedarCitationStrengthOfRecommendation",
   "status" : "active",
   "experimental" : false,
-  "date" : "2022-05-04",
+  "date" : "2023-01-11T14:59:33-06:00",
   "publisher" : "AHRQ CEDAR",
   "contact" : [{
     "name" : "AHRQ CEDAR",

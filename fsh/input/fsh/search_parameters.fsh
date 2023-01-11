@@ -5,8 +5,6 @@ Usage: #definition
 * name = "CedarCitationArticleDate"
 * status = #active
 * experimental = false
-* date = "2021-12-02"
-* insert Publisher
 * code = #article-date
 * base = #Citation
 * description = "Publishing date of the cited artifact"
@@ -30,8 +28,6 @@ Usage: #definition
 * name = "CedarCitationArtifactCurrentState"
 * status = #active
 * experimental = false
-* date = "2021-04-20"
-* insert Publisher
 * code = #artifact-current-state
 * base = #Citation
 * description = "Current state of the cited artifact"
@@ -45,8 +41,6 @@ Usage: #definition
 * name = "CedarCitationArtifactPublisher"
 * status = #active
 * experimental = false
-* date = "2021-02-17"
-* insert Publisher
 * code = #artifact-publisher
 * base = #Citation
 * description = "Publisher of the cited artifact"
@@ -60,8 +54,6 @@ Usage: #definition
 * name = "CedarCitationArtifactType"
 * status = #active
 * experimental = false
-* date = "2021-12-07"
-* insert Publisher
 * code = #artifact-type
 * base = #Citation
 * description = "Type of the cited artifact"
@@ -75,8 +67,6 @@ Usage: #definition
 * name = "CedarCitationClassification"
 * status = #active
 * experimental = false
-* date = "2021-02-17"
-* insert Publisher
 * code = #classification
 * base = #Citation
 * description = "Classification of the citation"
@@ -93,8 +83,6 @@ Usage: #definition
 * name = "CedarCitationQualityOfEvidence"
 * status = #active
 * experimental = false
-* date = "2022-05-04"
-* insert Publisher
 * code = #quality-of-evidence
 * base = #Citation
 * description = "Quality of evidence included in the citation"
@@ -110,8 +98,6 @@ Usage: #definition
 * name = "CedarCitationStrengthOfRecommendation"
 * status = #active
 * experimental = false
-* date = "2022-05-04"
-* insert Publisher
 * code = #strength-of-recommendation
 * base = #Citation
 * description = "Strength of recommendations included in the citation"
@@ -128,8 +114,6 @@ Usage: #definition
 * derivedFrom = "http://hl7.org/fhir/SearchParameter/Citation-title"
 * status = #active
 * experimental = false
-* date = "2021-02-17"
-* insert Publisher
 * code = #title
 * base = #Citation
 * description = "The human-friendly name of the citation"
