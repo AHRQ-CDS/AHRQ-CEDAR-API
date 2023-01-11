@@ -1,48 +1,45 @@
 {
-  "resourceType": "OperationDefinition",
-  "id": "CodeSystem-get-mesh-children",
-  "url": "https://cds.ahrq.gov/cedar/api/fhir/OperationDefinition/CodeSystem-get-mesh-children",
-  "version": "0.1.0",
-  "name": "get-mesh-children",
-  "title": "Get MeSH child concepts from MeSH Tree Number",
-  "status": "draft",
-  "kind": "operation",
-  "date": "2021-08-25",
-  "publisher": "AHRQ CEDAR",
-  "contact": [
-    {
-      "telecom": [
-        {
-          "system": "url",
-          "value": "https://cds.ahrq.gov/cedar"
-        }
-      ]
-    }
-  ],
-  "description": "Given a MeSH Tree Number, get MeSH child concepts",
-  "code": "get-mesh-children",
-  "resource": [
-    "CodeSystem"
-  ],
-  "system": false,
-  "type": true,
-  "instance": false,
-  "parameter": [
-    {
-      "name": "code",
-      "use": "in",
-      "min": 0,
-      "max": "1",
-      "documentation": "MESH Tree Number for parent concept. If the parameter is not provided, operation SHALL return the first level nodes in MeSH Tree.",
-      "type": "code"
-    },
-    {
-      "name": "concept",
-      "use": "out",
-      "min": 0,
-      "max": "*",
-      "documentation": "Coding for child concepts. Each concept has an extension for the tree number of that concept, whether that concept has children and the number of artifacts directly or indirectly (via child concepts) associated with that concept. If the parent concept does not have any child, server SHALL return an empty array",
-      "type": "Coding"
-    }
-  ]
+  "resourceType" : "OperationDefinition",
+  "id" : "CodeSystem-get-mesh-children",
+  "text" : {
+    "status" : "extensions",
+    "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>URL: [base]/CodeSystem/$get-mesh-children</p><p>Parameters</p><table class=\"grid\"><tr><td><b>Use</b></td><td><b>Name</b></td><td><b>Cardinality</b></td><td><b>Type</b></td><td><b>Binding</b></td><td><b>Documentation</b></td></tr><tr><td>IN</td><td>code</td><td>0..1</td><td><a href=\"http://hl7.org/fhir/R4/datatypes.html#code\">code</a></td><td/><td><div><p>MESH Tree Number for parent concept. If the parameter is not provided, operation SHALL return the first level nodes in MeSH Tree.</p>\n</div></td></tr><tr><td>OUT</td><td>concept</td><td>0..*</td><td><a href=\"http://hl7.org/fhir/R4/datatypes.html#Coding\">Coding</a></td><td/><td><div><p>Coding for child concepts. Each concept has an extension for the tree number of that concept, whether that concept has children and the number of artifacts directly or indirectly (via child concepts) associated with that concept. If the parent concept does not have any child, server SHALL return an empty array</p>\n</div></td></tr></table></div>"
+  },
+  "url" : "https://cds.ahrq.gov/cedar/api/fhir/OperationDefinition/CodeSystem-get-mesh-children",
+  "version" : "0.1.0",
+  "name" : "get-mesh-children",
+  "title" : "Get MeSH child concepts from MeSH Tree Number",
+  "status" : "draft",
+  "kind" : "operation",
+  "date" : "2021-08-25",
+  "publisher" : "AHRQ CEDAR",
+  "contact" : [{
+    "name" : "AHRQ CEDAR",
+    "telecom" : [{
+      "system" : "url",
+      "value" : "https://digital.ahrq.gov/ahrq-funded-projects/cepi-evidence-discovery-and-retrieval-cedar-project"
+    }]
+  }],
+  "description" : "Given a MeSH Tree Number, get MeSH child concepts",
+  "code" : "get-mesh-children",
+  "resource" : ["CodeSystem"],
+  "system" : false,
+  "type" : true,
+  "instance" : false,
+  "parameter" : [{
+    "name" : "code",
+    "use" : "in",
+    "min" : 0,
+    "max" : "1",
+    "documentation" : "MESH Tree Number for parent concept. If the parameter is not provided, operation SHALL return the first level nodes in MeSH Tree.",
+    "type" : "code"
+  },
+  {
+    "name" : "concept",
+    "use" : "out",
+    "min" : 0,
+    "max" : "*",
+    "documentation" : "Coding for child concepts. Each concept has an extension for the tree number of that concept, whether that concept has children and the number of artifacts directly or indirectly (via child concepts) associated with that concept. If the parent concept does not have any child, server SHALL return an empty array",
+    "type" : "Coding"
+  }]
 }

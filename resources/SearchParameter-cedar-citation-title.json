@@ -1,33 +1,30 @@
 {
-  "resourceType": "SearchParameter",
-  "id": "cedar-citation-title",
-  "url": "https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-title",
-  "version": "0.1.0",
-  "name": "CedarCitationTitle",
-  "derivedFrom": "http://hl7.org/fhir/SearchParameter/Citation-title",
-  "status": "active",
-  "experimental": false,
-  "date": "2021-02-17",
-  "publisher": "AHRQ CEDAR",
-  "contact": [
-    {
-      "telecom": [
-        {
-          "system": "url",
-          "value": "https://cds.ahrq.gov/cedar"
-        }
-      ]
-    }
-  ],
-  "code": "title",
-  "base": [
-    "Citation"
-  ],
-  "description": "The human-friendly name of the citation",
-  "type": "string",
-  "expression": "Citation.title",
-  "multipleOr": true,
-  "modifier": [
-    "contains"
-  ]
+  "resourceType" : "SearchParameter",
+  "id" : "cedar-citation-title",
+  "text" : {
+    "status" : "generated",
+    "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative: SearchParameter</b><a name=\"cedar-citation-title\"> </a></p><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\">Resource SearchParameter &quot;cedar-citation-title&quot; </p></div><p><b>url</b>: <code>https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-title</code></p><p><b>version</b>: 0.1.0</p><p><b>name</b>: CedarCitationTitle</p><p><b>derivedFrom</b>: <a href=\"http://hl7.org/fhir/SearchParameter/Citation-title\">http://hl7.org/fhir/SearchParameter/Citation-title</a></p><p><b>status</b>: active</p><p><b>experimental</b>: false</p><p><b>date</b>: 2021-02-17</p><p><b>publisher</b>: AHRQ CEDAR</p><p><b>contact</b>: AHRQ CEDAR: <a href=\"https://digital.ahrq.gov/ahrq-funded-projects/cepi-evidence-discovery-and-retrieval-cedar-project\">https://digital.ahrq.gov/ahrq-funded-projects/cepi-evidence-discovery-and-retrieval-cedar-project</a></p><p><b>description</b>: The human-friendly name of the citation</p><p><b>code</b>: title</p><p><b>base</b>: Citation</p><p><b>type</b>: string</p><p><b>expression</b>: Citation.title</p><p><b>multipleOr</b>: true</p><p><b>modifier</b>: contains</p></div>"
+  },
+  "url" : "https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-title",
+  "version" : "0.1.0",
+  "name" : "CedarCitationTitle",
+  "derivedFrom" : "http://hl7.org/fhir/SearchParameter/Citation-title",
+  "status" : "active",
+  "experimental" : false,
+  "date" : "2021-02-17",
+  "publisher" : "AHRQ CEDAR",
+  "contact" : [{
+    "name" : "AHRQ CEDAR",
+    "telecom" : [{
+      "system" : "url",
+      "value" : "https://digital.ahrq.gov/ahrq-funded-projects/cepi-evidence-discovery-and-retrieval-cedar-project"
+    }]
+  }],
+  "description" : "The human-friendly name of the citation",
+  "code" : "title",
+  "base" : ["Citation"],
+  "type" : "string",
+  "expression" : "Citation.title",
+  "multipleOr" : true,
+  "modifier" : ["contains"]
 }

@@ -1,40 +1,37 @@
 {
-  "resourceType": "OperationDefinition",
-  "id": "Citation-get-artifact-types",
-  "url": "https://cds.ahrq.gov/cedar/api/fhir/OperationDefinition/Citation-get-artifact-types",
-  "version": "0.1.0",
-  "name": "get-artifact-types",
-  "title": "Get Citation knowledge artifact types",
-  "status": "draft",
-  "kind": "operation",
-  "date": "2021-12-14",
-  "publisher": "AHRQ CEDAR",
-  "contact": [
-    {
-      "telecom": [
-        {
-          "system": "url",
-          "value": "https://cds.ahrq.gov/cedar"
-        }
-      ]
-    }
-  ],
-  "description": "Get all knowledge artifact types for Citation",
-  "code": "get-artifact-types",
-  "resource": [
-    "Citation"
-  ],
-  "system": false,
-  "type": true,
-  "instance": false,
-  "parameter": [
-    {
-      "name": "artifact-type",
-      "use": "out",
-      "min": 0,
-      "max": "*",
-      "documentation": "Coding for artifact types used by citedArtifact's classifier",
-      "type": "Coding"
-    }
-  ]
+  "resourceType" : "OperationDefinition",
+  "id" : "Citation-get-artifact-types",
+  "text" : {
+    "status" : "extensions",
+    "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>URL: [base]/Citation/$get-artifact-types</p><p>Parameters</p><table class=\"grid\"><tr><td><b>Use</b></td><td><b>Name</b></td><td><b>Cardinality</b></td><td><b>Type</b></td><td><b>Binding</b></td><td><b>Documentation</b></td></tr><tr><td>OUT</td><td>artifact-type</td><td>0..*</td><td><a href=\"http://hl7.org/fhir/R4/datatypes.html#Coding\">Coding</a></td><td/><td><div><p>Coding for artifact types used by citedArtifact's classifier</p>\n</div></td></tr></table></div>"
+  },
+  "url" : "https://cds.ahrq.gov/cedar/api/fhir/OperationDefinition/Citation-get-artifact-types",
+  "version" : "0.1.0",
+  "name" : "get-artifact-types",
+  "title" : "Get Citation knowledge artifact types",
+  "status" : "draft",
+  "kind" : "operation",
+  "date" : "2021-12-14",
+  "publisher" : "AHRQ CEDAR",
+  "contact" : [{
+    "name" : "AHRQ CEDAR",
+    "telecom" : [{
+      "system" : "url",
+      "value" : "https://digital.ahrq.gov/ahrq-funded-projects/cepi-evidence-discovery-and-retrieval-cedar-project"
+    }]
+  }],
+  "description" : "Get all knowledge artifact types for Citation",
+  "code" : "get-artifact-types",
+  "resource" : ["Citation"],
+  "system" : false,
+  "type" : true,
+  "instance" : false,
+  "parameter" : [{
+    "name" : "artifact-type",
+    "use" : "out",
+    "min" : 0,
+    "max" : "*",
+    "documentation" : "Coding for artifact types used by citedArtifact's classifier",
+    "type" : "Coding"
+  }]
 }
