@@ -9,6 +9,7 @@ class FHIRAdapter
 
   BASE_URL = 'https://cds.ahrq.gov/cedar/api/fhir'
   HOSTNAME = ENV['HOSTNAME'] || 'cds.ahrq.gov'
+  SERVER_URL = "https://#{HOSTNAME}/cedar"
   ARTIFACT_URL_CLICK_LOGGING = ENV['ARTIFACT_URL_CLICK_LOGGING'].to_s.downcase == 'true'
 
   def self.create_citation(artifact, artifact_base_url, redirect_base_url, version_id,
@@ -50,7 +51,7 @@ class FHIRAdapter
       url: "#{artifact_base_url}/#{cedar_identifier}",
       identifier: [
         {
-          system: HOSTNAME,
+          system: SERVER_URL,
           value: cedar_identifier
         }
       ],
@@ -63,7 +64,7 @@ class FHIRAdapter
           name: 'CEDAR',
           telecom: {
             system: 'url',
-            value: HOSTNAME,
+            value: SERVER_URL,
             use: 'work'
           }
         }
