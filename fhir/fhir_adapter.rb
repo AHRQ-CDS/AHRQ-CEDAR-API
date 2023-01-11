@@ -8,7 +8,7 @@ class FHIRAdapter
   include FHIRCodeSystems
 
   BASE_URL = 'https://cds.ahrq.gov/cedar/api/fhir'
-  HOSTNAME = ENV['HOSTNAME'] || BASE_URL
+  HOSTNAME = ENV['HOSTNAME'] || 'cds.ahrq.gov'
   ARTIFACT_URL_CLICK_LOGGING = ENV['ARTIFACT_URL_CLICK_LOGGING'].to_s.downcase == 'true'
 
   def self.create_citation(artifact, artifact_base_url, redirect_base_url, version_id,

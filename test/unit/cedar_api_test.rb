@@ -326,7 +326,7 @@ describe 'cedar_api' do
 
   describe '/fhir/SearchParameter endpoint' do
     it 'supports search by url' do
-      url = "#{FHIRAdapter::HOSTNAME}/SearchParameter/cedar-citation-artifact-current-state"
+      url = "#{FHIRAdapter::BASE_URL}/SearchParameter/cedar-citation-artifact-current-state"
       get "/fhir/SearchParameter?url=#{url}"
 
       resource = assert_fhir_response(FHIR::SearchParameter)
