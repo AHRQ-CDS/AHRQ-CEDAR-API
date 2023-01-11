@@ -287,13 +287,13 @@ describe 'cedar_api' do
         p.valueCoding.extension.each do |e|
           extensions_present[e.url] = true
           case e.url
-          when "#{FHIRAdapter::HOSTNAME}/StructureDefinition/extension-mesh-tree-number"
+          when "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-tree-number"
             assert_includes(['A00.1', 'A00.2'], e.valueCode)
-          when "#{FHIRAdapter::HOSTNAME}/StructureDefinition/extension-mesh-has-children"
+          when "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-has-children"
             refute e.valueBoolean
-          when "#{FHIRAdapter::HOSTNAME}/StructureDefinition/extension-mesh-direct-artifact-count"
+          when "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-direct-artifact-count"
             assert_equal(1, e.valueUnsignedInt)
-          when "#{FHIRAdapter::HOSTNAME}/StructureDefinition/extension-mesh-indirect-artifact-count"
+          when "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-indirect-artifact-count"
             assert_equal(0, e.valueUnsignedInt)
           end
         end
@@ -310,13 +310,13 @@ describe 'cedar_api' do
       resource.parameter[0].valueCoding.extension.each do |e|
         extensions_present[e.url] = true
         case e.url
-        when "#{FHIRAdapter::HOSTNAME}/StructureDefinition/extension-mesh-tree-number"
+        when "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-tree-number"
           assert_equal('A00', e.valueCode)
-        when "#{FHIRAdapter::HOSTNAME}/StructureDefinition/extension-mesh-has-children"
+        when "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-has-children"
           assert e.valueBoolean
-        when "#{FHIRAdapter::HOSTNAME}/StructureDefinition/extension-mesh-direct-artifact-count"
+        when "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-direct-artifact-count"
           assert_equal(0, e.valueUnsignedInt)
-        when "#{FHIRAdapter::HOSTNAME}/StructureDefinition/extension-mesh-indirect-artifact-count"
+        when "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-indirect-artifact-count"
           assert_equal(2, e.valueUnsignedInt)
         end
       end

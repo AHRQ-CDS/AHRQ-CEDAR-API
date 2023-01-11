@@ -397,14 +397,14 @@ class CitationFilter
         }
       )
       ext = FHIR::Extension.new(
-        url: "#{FHIRAdapter::HOSTNAME}/StructureDefinition/extension-mesh-concept",
+        url: "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-concept",
         valueCodeableConcept: FHIR::CodeableConcept.new(
           text: mesh_node.description,
           coding: [
             FHIR::Coding.new(
               extension: [
                 FHIR::Extension.new(
-                  url: "#{FHIRAdapter::HOSTNAME}/StructureDefinition/extension-mesh-direct-artifact-count",
+                  url: "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-direct-artifact-count",
                   valueUnsignedInt: mesh_node.direct_artifact_count
                 )
               ],
