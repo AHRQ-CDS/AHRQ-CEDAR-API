@@ -1,30 +1,27 @@
 {
-  "resourceType": "SearchParameter",
-  "id": "cedar-citation-artifact-current-state",
-  "url": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-artifact-current-state",
-  "version": "0.1.0",
-  "name": "CedarCitationArtifactCurrentState",
-  "status": "active",
-  "experimental": false,
-  "date": "2021-04-20",
-  "publisher": "ARHQ CEDAR",
-  "contact": [
-    {
-      "telecom": [
-        {
-          "system": "url",
-          "value": "http://cedar.arhq.gov"
-        }
-      ]
-    }
-  ],
-  "code": "artifact-current-state",
-  "base": [
-    "Citation"
-  ],
+  "resourceType" : "SearchParameter",
+  "id" : "cedar-citation-artifact-current-state",
+  "text" : {
+    "status" : "generated",
+    "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative: SearchParameter</b><a name=\"cedar-citation-artifact-current-state\"> </a></p><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\">Resource SearchParameter &quot;cedar-citation-artifact-current-state&quot; </p></div><p><b>url</b>: <code>https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-artifact-current-state</code></p><p><b>version</b>: 0.1.0</p><p><b>name</b>: CedarCitationArtifactCurrentState</p><p><b>status</b>: active</p><p><b>experimental</b>: false</p><p><b>date</b>: 2023-01-11 14:59:33-0600</p><p><b>publisher</b>: AHRQ CEDAR</p><p><b>contact</b>: AHRQ CEDAR: <a href=\"https://digital.ahrq.gov/ahrq-funded-projects/cepi-evidence-discovery-and-retrieval-cedar-project\">https://digital.ahrq.gov/ahrq-funded-projects/cepi-evidence-discovery-and-retrieval-cedar-project</a></p><p><b>description</b>: Current state of the cited artifact</p><p><b>code</b>: artifact-current-state</p><p><b>base</b>: Citation</p><p><b>type</b>: token</p><p><b>expression</b>: Citation.citedArtifact.currentState</p></div>"
+  },
+  "url" : "https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-artifact-current-state",
+  "version" : "0.1.0",
+  "name" : "CedarCitationArtifactCurrentState",
+  "status" : "active",
+  "experimental" : false,
+  "date" : "2023-01-11T14:59:33-06:00",
+  "publisher" : "AHRQ CEDAR",
+  "contact" : [{
+    "name" : "AHRQ CEDAR",
+    "telecom" : [{
+      "system" : "url",
+      "value" : "https://digital.ahrq.gov/ahrq-funded-projects/cepi-evidence-discovery-and-retrieval-cedar-project"
+    }]
+  }],
   "description" : "Current state of the cited artifact",
-  "type": "token",
-  "expression": "Citation.citedArtifact.currentState",
-  "xpath" : "f:Citation/f:citedArtifact/f:currentState",
-  "xpathUsage" : "normal"
+  "code" : "artifact-current-state",
+  "base" : ["Citation"],
+  "type" : "token",
+  "expression" : "Citation.citedArtifact.currentState"
 }

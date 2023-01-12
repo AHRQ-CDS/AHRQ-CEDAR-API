@@ -1,35 +1,30 @@
 {
-  "resourceType": "SearchParameter",
-  "id": "cedar-citation-classification",
-  "url": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-classification",
-  "version": "0.1.0",
-  "name": "CedarCitationClassification",
-  "status": "active",
-  "experimental": false,
-  "date": "2021-02-17",
-  "publisher": "ARHQ CEDAR",
-  "contact": [
-    {
-      "telecom": [
-        {
-          "system": "url",
-          "value": "http://cedar.arhq.gov"
-        }
-      ]
-    }
-  ],
-  "code": "classification",
-  "base": [
-    "Citation"
-  ],
-  "description": "Classification of the citation",
-  "type": "token",
-  "expression": "Citation.citedArtifact.classification.classifier",
-  "xpath": "f:Citation/f:citedArtifact/f:classification/f:classifier",
-  "xpathUsage": "normal",
-  "multipleOr": "true",
-  "multipleAnd": "true",
-  "modifier": [
-    "text"
-  ]
+  "resourceType" : "SearchParameter",
+  "id" : "cedar-citation-classification",
+  "text" : {
+    "status" : "generated",
+    "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative: SearchParameter</b><a name=\"cedar-citation-classification\"> </a></p><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\">Resource SearchParameter &quot;cedar-citation-classification&quot; </p></div><p><b>url</b>: <code>https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-classification</code></p><p><b>version</b>: 0.1.0</p><p><b>name</b>: CedarCitationClassification</p><p><b>status</b>: active</p><p><b>experimental</b>: false</p><p><b>date</b>: 2023-01-11 14:59:33-0600</p><p><b>publisher</b>: AHRQ CEDAR</p><p><b>contact</b>: AHRQ CEDAR: <a href=\"https://digital.ahrq.gov/ahrq-funded-projects/cepi-evidence-discovery-and-retrieval-cedar-project\">https://digital.ahrq.gov/ahrq-funded-projects/cepi-evidence-discovery-and-retrieval-cedar-project</a></p><p><b>description</b>: Classification of the citation</p><p><b>code</b>: classification</p><p><b>base</b>: Citation</p><p><b>type</b>: token</p><p><b>expression</b>: Citation.citedArtifact.classification.classifier</p><p><b>multipleOr</b>: true</p><p><b>multipleAnd</b>: true</p><p><b>modifier</b>: text</p></div>"
+  },
+  "url" : "https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-classification",
+  "version" : "0.1.0",
+  "name" : "CedarCitationClassification",
+  "status" : "active",
+  "experimental" : false,
+  "date" : "2023-01-11T14:59:33-06:00",
+  "publisher" : "AHRQ CEDAR",
+  "contact" : [{
+    "name" : "AHRQ CEDAR",
+    "telecom" : [{
+      "system" : "url",
+      "value" : "https://digital.ahrq.gov/ahrq-funded-projects/cepi-evidence-discovery-and-retrieval-cedar-project"
+    }]
+  }],
+  "description" : "Classification of the citation",
+  "code" : "classification",
+  "base" : ["Citation"],
+  "type" : "token",
+  "expression" : "Citation.citedArtifact.classification.classifier",
+  "multipleOr" : true,
+  "multipleAnd" : true,
+  "modifier" : ["text"]
 }

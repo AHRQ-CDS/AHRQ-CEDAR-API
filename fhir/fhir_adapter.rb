@@ -7,7 +7,9 @@ require_relative './fhir_code_systems'
 class FHIRAdapter
   include FHIRCodeSystems
 
-  HOSTNAME = ENV['HOSTNAME'] || 'http://cedar.arhq.gov'
+  BASE_URL = 'https://cds.ahrq.gov/cedar/api/fhir'
+  HOSTNAME = ENV['HOSTNAME'] || 'cds.ahrq.gov'
+  SERVER_URL = "https://#{HOSTNAME}/cedar"
   ARTIFACT_URL_CLICK_LOGGING = ENV['ARTIFACT_URL_CLICK_LOGGING'].to_s.downcase == 'true'
 
   def self.create_citation(artifact, artifact_base_url, redirect_base_url, version_id,
@@ -49,7 +51,7 @@ class FHIRAdapter
       url: "#{artifact_base_url}/#{cedar_identifier}",
       identifier: [
         {
-          system: HOSTNAME,
+          system: SERVER_URL,
           value: cedar_identifier
         }
       ],
@@ -62,7 +64,7 @@ class FHIRAdapter
           name: 'CEDAR',
           telecom: {
             system: 'url',
-            value: HOSTNAME,
+            value: SERVER_URL,
             use: 'work'
           }
         }
@@ -247,7 +249,7 @@ class FHIRAdapter
 
       code = to_quality_code(artifact.send("#{property}_sort"))
       ext = FHIR::Extension.new(
-        url: "http://cedar.arhq.gov/StructureDefinition/extension-#{property.gsub('_', '-')}",
+        url: "#{BASE_URL}/StructureDefinition/extension-#{property.gsub('_', '-')}",
         valueCodeableConcept: FHIR::CodeableConcept.new(
           text: artifact.send("#{property}_statement"),
           coding: [
@@ -353,7 +355,7 @@ class FHIRAdapter
 
     if repository.description.present?
       organization.extension << FHIR::Extension.new(
-        url: 'http://cedar.arhq.gov/fhir/StructureDefinition/extension-organization-description',
+        url: "#{BASE_URL}/StructureDefinition/extension-organization-description",
         valueString: repository.description
       )
     end
@@ -388,19 +390,19 @@ class FHIRAdapter
           valueCoding: FHIR::Coding.new(
             extension: [
               FHIR::Extension.new(
-                url: 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-tree-number',
+                url: "#{BASE_URL}/StructureDefinition/extension-mesh-tree-number",
                 valueCode: r.tree_number
               ),
               FHIR::Extension.new(
-                url: 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-has-children',
+                url: "#{BASE_URL}/StructureDefinition/extension-mesh-has-children",
                 valueBoolean: !(r.children.nil? || r.children.empty?)
               ),
               FHIR::Extension.new(
-                url: 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-direct-artifact-count',
+                url: "#{BASE_URL}/StructureDefinition/extension-mesh-direct-artifact-count",
                 valueUnsignedInt: r.direct_artifact_count
               ),
               FHIR::Extension.new(
-                url: 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-indirect-artifact-count',
+                url: "#{BASE_URL}/StructureDefinition/extension-mesh-indirect-artifact-count",
                 valueUnsignedInt: r.indirect_artifact_count
               )
             ],

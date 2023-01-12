@@ -24,7 +24,7 @@
           "operation": [
             {
               "name": "get-mesh-children",
-              "definition": "http://cedar.arhq.gov/fhir/OperationDefinition/CodeSystem-get-mesh-children"
+              "definition": "https://cds.ahrq.gov/cedar/api/fhir/OperationDefinition/CodeSystem-get-mesh-children"
             }
           ]
         },
@@ -57,12 +57,12 @@
             },
             {
               "name": "classification",
-              "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-classification",
+              "definition": "https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-classification",
               "type": "string"
             },
             {
               "name": "article-date",
-              "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-article-date",
+              "definition": "https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-article-date",
               "type": "date"
             },
             {
@@ -77,39 +77,39 @@
                 }
               ],
               "name": "artifact-current-state",
-              "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-artifact-current-state",
+              "definition": "https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-artifact-current-state",
               "type": "token"
             },
             {
               "name": "artifact-publisher",
-              "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-artifact-publisher",
+              "definition": "https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-artifact-publisher",
               "type": "string"
             },
             {
               "name": "title",
-              "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-title",
+              "definition": "https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-title",
               "type": "string"
             },
             {
               "name": "artifact-type",
-              "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-artifact-type",
+              "definition": "https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-artifact-type",
               "type": "string"
             },
             {
               "name": "strength-of-recommendation",
-              "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-strength-of-recommendation",
+              "definition": "https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-strength-of-recommendation",
               "type": "token"
             },
             {
               "name": "quality-of-evidence",
-              "definition": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-quality-of-evidence",
+              "definition": "https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-quality-of-evidence",
               "type": "token"
             }
           ],
           "operation": [
             {
               "name": "get-artifact-types",
-              "definition": "http://cedar.arhq.gov/fhir/OperationDefinition/Citation-get-artifact-types"
+              "definition": "https://cds.ahrq.gov/cedar/api/fhir/OperationDefinition/Citation-get-artifact-types"
             }
           ]
         },

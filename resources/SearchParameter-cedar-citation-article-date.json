@@ -1,44 +1,37 @@
 {
-  "resourceType": "SearchParameter",
-  "id": "cedar-citation-article-date",
-  "url": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-article-date",
-  "version": "0.1.0",
-  "name": "CedarCitationArticleDate",
-  "status": "active",
-  "experimental": false,
-  "date": "2021-12-02",
-  "publisher": "ARHQ CEDAR",
-  "contact": [
-    {
-      "telecom": [
-        {
-          "system": "url",
-          "value": "http://cedar.arhq.gov"
-        }
-      ]
-    }
-  ],
-  "code": "article-date",
-  "base": [
-    "Citation"
-  ],
-  "description": "Publishing date of the cited artifact",
-  "type": "date",
-  "expression": "Citation.citedArtifact.publicationForm.articleDate",
-  "xpath": "f:Citation/f:citedArtifact/f:publicationForm/f:articleDate",
-  "xpathUsage": "normal",
-  "comparator": [
-    "eq",
-    "ne",
-    "gt",
-    "lt",
-    "ge",
-    "le",
-    "sa",
-    "eb",
-    "ap"
-  ],
-  "modifier": [
-    "missing"
-  ]
+  "resourceType" : "SearchParameter",
+  "id" : "cedar-citation-article-date",
+  "text" : {
+    "status" : "generated",
+    "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative: SearchParameter</b><a name=\"cedar-citation-article-date\"> </a></p><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\">Resource SearchParameter &quot;cedar-citation-article-date&quot; </p></div><p><b>url</b>: <code>https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-article-date</code></p><p><b>version</b>: 0.1.0</p><p><b>name</b>: CedarCitationArticleDate</p><p><b>status</b>: active</p><p><b>experimental</b>: false</p><p><b>date</b>: 2023-01-11 14:59:33-0600</p><p><b>publisher</b>: AHRQ CEDAR</p><p><b>contact</b>: AHRQ CEDAR: <a href=\"https://digital.ahrq.gov/ahrq-funded-projects/cepi-evidence-discovery-and-retrieval-cedar-project\">https://digital.ahrq.gov/ahrq-funded-projects/cepi-evidence-discovery-and-retrieval-cedar-project</a></p><p><b>description</b>: Publishing date of the cited artifact</p><p><b>code</b>: article-date</p><p><b>base</b>: Citation</p><p><b>type</b>: date</p><p><b>expression</b>: Citation.citedArtifact.publicationForm.articleDate</p><p><b>comparator</b>: eq, ne, gt, lt, ge, le, sa, eb, ap</p><p><b>modifier</b>: missing</p></div>"
+  },
+  "url" : "https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-article-date",
+  "version" : "0.1.0",
+  "name" : "CedarCitationArticleDate",
+  "status" : "active",
+  "experimental" : false,
+  "date" : "2023-01-11T14:59:33-06:00",
+  "publisher" : "AHRQ CEDAR",
+  "contact" : [{
+    "name" : "AHRQ CEDAR",
+    "telecom" : [{
+      "system" : "url",
+      "value" : "https://digital.ahrq.gov/ahrq-funded-projects/cepi-evidence-discovery-and-retrieval-cedar-project"
+    }]
+  }],
+  "description" : "Publishing date of the cited artifact",
+  "code" : "article-date",
+  "base" : ["Citation"],
+  "type" : "date",
+  "expression" : "Citation.citedArtifact.publicationForm.articleDate",
+  "comparator" : ["eq",
+  "ne",
+  "gt",
+  "lt",
+  "ge",
+  "le",
+  "sa",
+  "eb",
+  "ap"],
+  "modifier" : ["missing"]
 }

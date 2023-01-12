@@ -4,6 +4,7 @@ require 'warning'
 require_relative '../test_helper'
 require_relative '../../database/models'
 require_relative '../../fhir/fhir_code_systems'
+require_relative '../../fhir/fhir_adapter'
 
 describe 'cedar_api' do
   include Rack::Test::Methods
@@ -286,13 +287,13 @@ describe 'cedar_api' do
         p.valueCoding.extension.each do |e|
           extensions_present[e.url] = true
           case e.url
-          when 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-tree-number'
+          when "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-tree-number"
             assert_includes(['A00.1', 'A00.2'], e.valueCode)
-          when 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-has-children'
+          when "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-has-children"
             refute e.valueBoolean
-          when 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-direct-artifact-count'
+          when "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-direct-artifact-count"
             assert_equal(1, e.valueUnsignedInt)
-          when 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-indirect-artifact-count'
+          when "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-indirect-artifact-count"
             assert_equal(0, e.valueUnsignedInt)
           end
         end
@@ -309,13 +310,13 @@ describe 'cedar_api' do
       resource.parameter[0].valueCoding.extension.each do |e|
         extensions_present[e.url] = true
         case e.url
-        when 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-tree-number'
+        when "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-tree-number"
           assert_equal('A00', e.valueCode)
-        when 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-has-children'
+        when "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-has-children"
           assert e.valueBoolean
-        when 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-direct-artifact-count'
+        when "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-direct-artifact-count"
           assert_equal(0, e.valueUnsignedInt)
-        when 'http://cedar.arhq.gov/StructureDefinition/extension-mesh-indirect-artifact-count'
+        when "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-indirect-artifact-count"
           assert_equal(2, e.valueUnsignedInt)
         end
       end
@@ -325,7 +326,7 @@ describe 'cedar_api' do
 
   describe '/fhir/SearchParameter endpoint' do
     it 'supports search by url' do
-      url = 'http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-artifact-current-state'
+      url = "#{FHIRAdapter::BASE_URL}/SearchParameter/cedar-citation-artifact-current-state"
       get "/fhir/SearchParameter?url=#{url}"
 
       resource = assert_fhir_response(FHIR::SearchParameter)

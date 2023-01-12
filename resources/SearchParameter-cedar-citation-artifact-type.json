@@ -1,31 +1,27 @@
 {
-  "resourceType": "SearchParameter",
-  "id": "cedar-citation-artifact-type",
-  "url": "http://cedar.ahrq.gov/fhir/SearchParameter/cedar-citation-artifact-type",
-  "version": "0.1.0",
-  "name": "CedarCitationArtifactType",
-  "status": "active",
-  "experimental": false,
-  "date": "2021-12-07",
-  "publisher": "ARHQ CEDAR",
-  "alias": [
-    "CedarCitationArtifactTypeAlias"
-  ],
-  "contact": [
-    {
-      "telecom": [
-        {
-          "system": "url",
-          "value": "http://cedar.arhq.gov"
-        }
-      ]
-    }
-  ],
-  "code": "artifact-type",
-  "base": [
-    "Citation"
-  ],
+  "resourceType" : "SearchParameter",
+  "id" : "cedar-citation-artifact-type",
+  "text" : {
+    "status" : "generated",
+    "div" : "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>Generated Narrative: SearchParameter</b><a name=\"cedar-citation-artifact-type\"> </a></p><div style=\"display: inline-block; background-color: #d9e0e7; padding: 6px; margin: 4px; border: 1px solid #8da1b4; border-radius: 5px; line-height: 60%\"><p style=\"margin-bottom: 0px\">Resource SearchParameter &quot;cedar-citation-artifact-type&quot; </p></div><p><b>url</b>: <code>https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-artifact-type</code></p><p><b>version</b>: 0.1.0</p><p><b>name</b>: CedarCitationArtifactType</p><p><b>status</b>: active</p><p><b>experimental</b>: false</p><p><b>date</b>: 2023-01-11 14:59:33-0600</p><p><b>publisher</b>: AHRQ CEDAR</p><p><b>contact</b>: AHRQ CEDAR: <a href=\"https://digital.ahrq.gov/ahrq-funded-projects/cepi-evidence-discovery-and-retrieval-cedar-project\">https://digital.ahrq.gov/ahrq-funded-projects/cepi-evidence-discovery-and-retrieval-cedar-project</a></p><p><b>description</b>: Type of the cited artifact</p><p><b>code</b>: artifact-type</p><p><b>base</b>: Citation</p><p><b>type</b>: string</p><p><b>expression</b>: Citation.citedArtifact.classification.where(type.coding.code = 'knowledge-artifact-type').classifier</p></div>"
+  },
+  "url" : "https://cds.ahrq.gov/cedar/api/fhir/SearchParameter/cedar-citation-artifact-type",
+  "version" : "0.1.0",
+  "name" : "CedarCitationArtifactType",
+  "status" : "active",
+  "experimental" : false,
+  "date" : "2023-01-11T14:59:33-06:00",
+  "publisher" : "AHRQ CEDAR",
+  "contact" : [{
+    "name" : "AHRQ CEDAR",
+    "telecom" : [{
+      "system" : "url",
+      "value" : "https://digital.ahrq.gov/ahrq-funded-projects/cepi-evidence-discovery-and-retrieval-cedar-project"
+    }]
+  }],
   "description" : "Type of the cited artifact",
-  "type": "string",
-  "expression": "Citation.citedArtifact.classification.where(type.coding.code = 'knowledge-artifact-type').classifier"
+  "code" : "artifact-type",
+  "base" : ["Citation"],
+  "type" : "string",
+  "expression" : "Citation.citedArtifact.classification.where(type.coding.code = 'knowledge-artifact-type').classifier"
 }
