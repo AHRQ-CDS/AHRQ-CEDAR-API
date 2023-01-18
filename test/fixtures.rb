@@ -252,6 +252,22 @@ DB[:import_runs].insert(
   created_at: timestamp,
   updated_at: timestamp
 )
+DB[:import_runs].insert(
+  id: 502,
+  repository_id: 101,
+  total_count: 1,
+  status: 'suppressed',
+  created_at: timestamp,
+  updated_at: timestamp
+)
+DB[:import_runs].insert(
+  id: 503,
+  repository_id: 101,
+  total_count: 1,
+  status: 'flagged',
+  created_at: timestamp,
+  updated_at: timestamp
+)
 
 DB[:versions].insert(
   id: 601,
@@ -267,5 +283,23 @@ DB[:versions].insert(
   event: 'update',
   import_run_id: 501,
   object: '{"id": 201, "cedar_identifier": "abc-1", "title": "title v1", "keywords": ["cancer", "adult"], ' \
+          '"repository_id": 101}'
+)
+DB[:versions].insert(
+  id: 603,
+  item_id: 201,
+  item_type: 'Artifact',
+  event: 'update',
+  import_run_id: 502,
+  object: '{"id": 201, "cedar_identifier": "abc-1", "title": "title invalid", "keywords": [], ' \
+          '"repository_id": 101}'
+)
+DB[:versions].insert(
+  id: 604,
+  item_id: 201,
+  item_type: 'Artifact',
+  event: 'update',
+  import_run_id: 503,
+  object: '{"id": 201, "cedar_identifier": "abc-1", "title": "title invalid", "keywords": [], ' \
           '"repository_id": 101}'
 )

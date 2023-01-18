@@ -105,7 +105,8 @@ describe 'cedar_api' do
       assert_equal FHIRCodeSystems::FHIR_CODE_SYSTEM_URLS['SNOMEDCT_US'],
                    resource.citedArtifact.classification[1].classifier[0].coding[1].system
       assert_equal 2, resource.citedArtifact.classification[1].classifier[1].coding.size
-      assert_equal artifact.versions.count + 1, resource.meta.versionId
+      assert_equal artifact.public_version_history.count + 1, resource.meta.versionId
+      assert_equal 2, resource.meta.versionId
     end
 
     it 'supports deleted artifacts' do
@@ -161,7 +162,7 @@ describe 'cedar_api' do
       bundle = assert_fhir_response(FHIR::Bundle)
       bundle.entry.each do |entry|
         artifact = Artifact.first(cedar_identifier: entry.resource.id)
-        assert_equal artifact.versions.count + 1, entry.resource.meta.versionId
+        assert_equal artifact.public_version_history.count + 1, entry.resource.meta.versionId
       end
     end
 
@@ -180,13 +181,13 @@ describe 'cedar_api' do
       resource = assert_fhir_response(FHIR::Citation)
       assert_equal cedar_identifier, resource.id
       assert_equal 1, resource.meta.versionId
-      assert_equal artifact.versions.first.object['title'], resource.title
+      assert_equal artifact.public_version_history.first.object['title'], resource.title
     end
 
     it 'supports read history with version id for the current version' do
       cedar_identifier = 'abc-1'
       artifact = Artifact.first(cedar_identifier: cedar_identifier)
-      latest_version = artifact.versions.count + 1
+      latest_version = artifact.public_version_history.count + 1
 
       get "fhir/Citation/#{cedar_identifier}/_history/#{latest_version}"
 
@@ -199,7 +200,7 @@ describe 'cedar_api' do
     it 'returns 404 if version id is > latest version' do
       cedar_identifier = 'abc-1'
       artifact = Artifact.first(cedar_identifier: cedar_identifier)
-      latest_version = artifact.versions.count + 1
+      latest_version = artifact.public_version_history.count + 1
 
       get "fhir/Citation/#{cedar_identifier}/_history/#{latest_version + 1}"
 
