@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.7.1 - 2023-01-18
+
+* Removes flagged and suppressed artifact versions from search results
+* Fixes the base URL used in structure definitions and search results
+* Adds copyright information on source repositories to results
+
 ## v0.7.0 - 2023-01-05
 
 * Adds related search links to search results
