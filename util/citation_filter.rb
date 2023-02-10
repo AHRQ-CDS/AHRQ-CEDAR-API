@@ -46,7 +46,7 @@ class CitationFilter
 
   def build_link_url(page_no, page_size)
     uri = Addressable::URI.parse(@request_url)
-    new_params = @search_params.reject { |key, _value| %w[_count page].include?(key) }
+    new_params = @search_params.except('_count', 'page')
 
     if page_size.positive?
       new_params[:_count] = page_size

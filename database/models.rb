@@ -4,6 +4,8 @@ require_relative 'setup'
 require_relative '../fhir/citation'
 
 # Data models
+
+# Represents an artifact (report, study protocol, etc) within a repository.
 class Artifact < Sequel::Model
   many_to_one :repository
   many_to_many :concepts
@@ -23,19 +25,23 @@ class Artifact < Sequel::Model
   end
 end
 
+# Represents a repository of artifacts, e.g. CDS Connect.
 class Repository < Sequel::Model
   one_to_many :artifacts
 end
 
+# Represents a UMLS clinical concept, its synonyms and equivalents from other standard taxonomies.
 class Concept < Sequel::Model
   many_to_many :artifacts
 end
 
+# Represents a search performed against the API.
 class SearchLog < Sequel::Model
   # Add Timestamps to automatically populate created_at and updated_at columns
   plugin :timestamps, update_on_create: true
 end
 
+# Represents a concept within the MeSH taxonomy.
 class MeshTreeNode < Sequel::Model
   many_to_one :parent, class: self
   one_to_many :children, key: :parent_id, order: :name, class: self
