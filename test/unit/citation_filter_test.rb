@@ -119,6 +119,28 @@ describe CitationFilter do
       end
     end
 
+    it '_content search results have rank' do
+      expected = 'cancer'
+      params = {
+        '_content' => expected
+      }
+
+      bundle = CitationFilter.new(params: params, artifact_base_url: @artifact_base_url,
+                                  redirect_base_url: @redirect_base_url,
+                                  request_url: @request_url).citations
+
+      assert_bundle(bundle)
+
+      has_rank_extension = bundle.entry.all? do |entry|
+        entry.resource.extension.any? do |extension|
+          extension.url.include?('extension-content-search-rank') &&
+            extension.valueDecimal < 1
+        end
+      end
+
+      assert has_rank_extension
+    end
+
     it 'includes related links' do
       expected = 'xyzzy'
       params = {

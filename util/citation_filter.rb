@@ -161,11 +161,13 @@ class CitationFilter
           @all_search_terms_that_match_concepts << parser.all_query_terms_that_match_concepts
           opt = {
             language: 'english',
-            rank: true,
             tsvector: true
           }
 
-          filter = filter.full_text_search(:content_search, parser.to_postgres_query, opt)
+          terms = parser.to_postgres_query
+          filter = filter.full_text_search(:content_search, terms, opt)
+                         .select_append { ts_rank_cd('{0.0, 0.1, 0.4, 1.0}', :content_search, terms, 32).as(:rank) }
+                         .reverse(:rank)
         when '_lastUpdated'
           postgres_search_terms = self.class.fhir_datetime_to_postgres_search(value, 'updated_at')
           filter = filter.where(Sequel.lit(*postgres_search_terms))
@@ -190,8 +192,8 @@ class CitationFilter
           #     [ artifact ids for concept C],
           #   ]
           # ]
-          artifact_id_list = Array(value).map do |terms|
-            terms.split(',').map { |term| get_artifacts_with_concept(term) }
+          artifact_id_list = Array(value).map do |original_terms|
+            original_terms.split(',').map { |term| get_artifacts_with_concept(term) }
           end
 
           # distinct list of matching artifacts after applying ORs and ANDs between sets
