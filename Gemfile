@@ -14,7 +14,7 @@ gem 'erb'
 gem 'sinatra-contrib'
 gem 'sinatra-cross_origin'
 gem 'warning'
-gem 'activesupport', '~> 6.0.3', '>= 6.0.3.4'
+gem 'activesupport', '~> 6.1.7', '< 7.0'
 
 group :development do
   gem 'pry'
@@ -29,5 +29,5 @@ group :test do
   gem 'rubocop-rake', require: false
   gem 'rubocop-sequel', require: false
   gem 'simplecov', require: false
-  gem 'activerecord', '~> 6.0.3', '>= 6.0.3.4'
+  gem 'activerecord', '~> 6.1.7', '< 7.0'
 end

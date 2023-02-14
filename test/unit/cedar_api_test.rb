@@ -13,7 +13,7 @@ describe 'cedar_api' do
   let(:code_system_consts) { Class.new { extend FHIRCodeSystems } }
 
   def assert_fhir_response(resource_class)
-    assert last_response.ok?
+    assert_predicate last_response, :ok?
     resource = FHIR.from_contents(last_response.body)
 
     refute_nil resource
@@ -25,25 +25,29 @@ describe 'cedar_api' do
   describe 'root' do
     it 'returns count of artifacts' do
       get '/'
-      assert last_response.ok?
+
+      assert_predicate last_response, :ok?
       assert_equal "Artifact count: #{Artifact.count}", last_response.body
     end
 
     it 'returns not found when endpoint does not exist' do
       get '/foobar'
-      assert last_response.not_found?
+
+      assert_predicate last_response, :not_found?
     end
   end
 
   describe '/redirect endpoint' do
     it 'returns 404 for unknown artifacts' do
       get '/redirect/foo'
-      assert last_response.not_found?
+
+      assert_predicate last_response, :not_found?
     end
 
     it 'returns a redirect for known artifacts' do
       get '/redirect/abc-1'
-      assert last_response.redirect?
+
+      assert_predicate last_response, :redirect?
       assert_equal 'http://example.org/abc-1', last_response.location
     end
   end
@@ -52,19 +56,20 @@ describe 'cedar_api' do
     it 'returns a valid CSV file' do
       get '/csv?_content=cancer&artifact-current-state=active'
 
-      assert last_response.ok?
+      assert_predicate last_response, :ok?
       data = CSV.parse(last_response.body, headers: true)
       row = data.first.to_h
+
       assert_includes row.keys, 'Repository'
-      refute row['Repository'].nil?
+      refute_nil row['Repository']
       assert_includes row.keys, 'Title'
-      refute row['Title'].nil?
+      refute_nil row['Title']
     end
 
     it 'validates search parameter values' do
       get 'csv?_content=cancer&artifact-current-state=active&_lastUpdated=et1990-01-01'
 
-      assert last_response.server_error?
+      assert_predicate last_response, :server_error?
     end
   end
 
@@ -77,7 +82,8 @@ describe 'cedar_api' do
 
     it 'returns not found for not supported resource type' do
       get '/fhir/EvidenceReport/1000'
-      assert last_response.not_found?
+
+      assert_predicate last_response, :not_found?
     end
   end
 
@@ -92,7 +98,7 @@ describe 'cedar_api' do
       assert_equal 'abc-1', resource.id
       assert_equal 'active', resource.status
       assert_equal 'active', resource.citedArtifact.currentState[0].coding[0].code
-      refute resource.url.nil?
+      refute_nil resource.url
       assert_equal 2, resource.citedArtifact.classification.size
       assert_equal 2, resource.citedArtifact.classification[1].classifier.size
       assert_equal 'CUI1 desc', resource.citedArtifact.classification[1].classifier[0].text
@@ -122,7 +128,8 @@ describe 'cedar_api' do
 
     it 'returns not found when read with invalid id' do
       get '/fhir/Citation/1000'
-      assert last_response.not_found?
+
+      assert_predicate last_response, :not_found?
     end
 
     it 'supports search by _content' do
@@ -130,7 +137,7 @@ describe 'cedar_api' do
       Warning.ignore(/instance variable @\w+ not initialized/)
       get '/fhir/Citation?_content=cancer&artifact-current-state=active'
       bundle = assert_fhir_response(FHIR::Bundle)
-      assert bundle.entry.all? do |entry|
+      assert_predicate bundle.entry, :all? do |entry|
         entry.resource.title.downcase.include?('cancer') ||
           entry.resource.description.downcase.include?('cancer')
       end
@@ -140,8 +147,9 @@ describe 'cedar_api' do
       get 'fhir/Citation?_content=cancer'
 
       resource = assert_fhir_response(FHIR::OperationOutcome)
-      assert resource.issue.size.positive?
-      assert resource.issue.any? do |issue|
+
+      assert_predicate resource.issue.size, :positive?
+      assert_predicate resource.issue, :any? do |issue|
         issue.severity == 'error' && issue.code == 'required'
       end
     end
@@ -150,8 +158,9 @@ describe 'cedar_api' do
       get 'fhir/Citation?_content=cancer&artifact-current-state=active&_lastUpdated=et1990-01-01'
 
       resource = assert_fhir_response(FHIR::OperationOutcome)
-      assert resource.issue.size.positive?
-      assert resource.issue.any? do |issue|
+
+      assert_predicate resource.issue.size, :positive?
+      assert_predicate resource.issue, :any? do |issue|
         issue.severity == 'error' && issue.code == 'value'
       end
     end
@@ -162,6 +171,7 @@ describe 'cedar_api' do
       bundle = assert_fhir_response(FHIR::Bundle)
       bundle.entry.each do |entry|
         artifact = Artifact.first(cedar_identifier: entry.resource.id)
+
         assert_equal artifact.public_version_history.count + 1, entry.resource.meta.versionId
       end
     end
@@ -169,7 +179,8 @@ describe 'cedar_api' do
     it 'returns 404 if version id is 0' do
       cedar_identifier = 'abc-1'
       get "fhir/Citation/#{cedar_identifier}/_history/0"
-      assert last_response.not_found?
+
+      assert_predicate last_response, :not_found?
     end
 
     it 'supports read history with version id for a historical version' do
@@ -179,6 +190,7 @@ describe 'cedar_api' do
       get "fhir/Citation/#{cedar_identifier}/_history/1"
 
       resource = assert_fhir_response(FHIR::Citation)
+
       assert_equal cedar_identifier, resource.id
       assert_equal 1, resource.meta.versionId
       assert_equal artifact.public_version_history.first.object['title'], resource.title
@@ -192,6 +204,7 @@ describe 'cedar_api' do
       get "fhir/Citation/#{cedar_identifier}/_history/#{latest_version}"
 
       resource = assert_fhir_response(FHIR::Citation)
+
       assert_equal cedar_identifier, resource.id
       assert_equal latest_version, resource.meta.versionId
       assert_equal artifact.title, resource.title
@@ -204,7 +217,7 @@ describe 'cedar_api' do
 
       get "fhir/Citation/#{cedar_identifier}/_history/#{latest_version + 1}"
 
-      assert last_response.not_found?
+      assert_predicate last_response, :not_found?
     end
 
     it 'shows the articleDate with the appropriate precision for year precision' do
@@ -214,6 +227,7 @@ describe 'cedar_api' do
       get "fhir/Citation/#{cedar_identifier}"
 
       resource = assert_fhir_response(FHIR::Citation)
+
       assert_equal(artifact.published_on.strftime('%Y'), resource.citedArtifact.publicationForm[0].articleDate)
     end
 
@@ -224,6 +238,7 @@ describe 'cedar_api' do
       get "fhir/Citation/#{cedar_identifier}"
 
       resource = assert_fhir_response(FHIR::Citation)
+
       assert_equal(artifact.published_on.strftime('%Y-%m'), resource.citedArtifact.publicationForm[0].articleDate)
     end
 
@@ -234,6 +249,7 @@ describe 'cedar_api' do
       get "fhir/Citation/#{cedar_identifier}"
 
       resource = assert_fhir_response(FHIR::Citation)
+
       assert_equal(artifact.published_on.strftime('%F'), resource.citedArtifact.publicationForm[0].articleDate)
     end
 
@@ -243,6 +259,7 @@ describe 'cedar_api' do
       get "fhir/Citation/#{cedar_identifier}"
 
       resource = assert_fhir_response(FHIR::Citation)
+
       assert_includes(resource.copyright, 'U.S. Preventive Services Task Force Copyright')
     end
   end
@@ -254,7 +271,7 @@ describe 'cedar_api' do
       resource = assert_fhir_response(FHIR::Parameters)
       resource.parameter.each do |p|
         assert_equal('artifact-type', p.name)
-        assert p.valueCoding.display.present?
+        assert_predicate p.valueCoding.display, :present?
       end
     end
   end
@@ -265,6 +282,7 @@ describe 'cedar_api' do
       get "/fhir/Organization/#{repo_id}"
 
       resource = assert_fhir_response(FHIR::Organization)
+
       assert_equal(repo_id, resource.id)
     end
 
@@ -272,6 +290,7 @@ describe 'cedar_api' do
       get '/fhir/Organization'
 
       resource = assert_fhir_response(FHIR::Bundle)
+
       assert_equal(resource.total, Repository.count)
       assert_equal(resource.total, resource.entry.length)
     end
@@ -282,6 +301,7 @@ describe 'cedar_api' do
       get '/fhir/CodeSystem/$get-mesh-children?code=A00'
 
       resource = assert_fhir_response(FHIR::Parameters)
+
       assert_equal(MeshTreeNode.where(parent_id: 401).count, resource.parameter.count)
       resource.parameter.each do |p|
         extensions_present = {}
@@ -289,15 +309,20 @@ describe 'cedar_api' do
           extensions_present[e.url] = true
           case e.url
           when "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-tree-number"
+
             assert_includes(['A00.1', 'A00.2'], e.valueCode)
           when "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-has-children"
+
             refute e.valueBoolean
           when "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-direct-artifact-count"
+
             assert_equal(1, e.valueUnsignedInt)
           when "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-indirect-artifact-count"
+
             assert_equal(0, e.valueUnsignedInt)
           end
         end
+
         assert_equal(4, extensions_present.size)
       end
     end
@@ -306,21 +331,27 @@ describe 'cedar_api' do
       get '/fhir/CodeSystem/$get-mesh-children'
 
       resource = assert_fhir_response(FHIR::Parameters)
+
       assert_equal(1, resource.parameter.count)
       extensions_present = {}
       resource.parameter[0].valueCoding.extension.each do |e|
         extensions_present[e.url] = true
         case e.url
         when "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-tree-number"
+
           assert_equal('A00', e.valueCode)
         when "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-has-children"
+
           assert e.valueBoolean
         when "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-direct-artifact-count"
+
           assert_equal(0, e.valueUnsignedInt)
         when "#{FHIRAdapter::BASE_URL}/StructureDefinition/extension-mesh-indirect-artifact-count"
+
           assert_equal(2, e.valueUnsignedInt)
         end
       end
+
       assert_equal(4, extensions_present.size)
     end
   end
@@ -331,6 +362,7 @@ describe 'cedar_api' do
       get "/fhir/SearchParameter?url=#{url}"
 
       resource = assert_fhir_response(FHIR::SearchParameter)
+
       assert_equal(resource.url, url)
     end
 
@@ -338,13 +370,15 @@ describe 'cedar_api' do
       id = 'cedar-citation-artifact-current-state'
       get "/fhir/SearchParameter/#{id}"
       resource = assert_fhir_response(FHIR::SearchParameter)
+
       assert_equal(id, resource.id)
     end
 
     it 'returns 404 if not found' do
       id = 'unknown'
       get "/fhir/SearchParameter/#{id}"
-      assert last_response.not_found?
+
+      assert_predicate last_response, :not_found?
     end
   end
 end
