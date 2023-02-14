@@ -80,3 +80,13 @@ Description: "Specifies the description text of an Organization"
 * ^context.expression = "Organization"
 * value[x] only string
 * valueString 1..1
+
+Extension: ContentSearchRank
+Id: extension-content-search-rank
+Title: "Rank of Content Search Extension"
+Description: "Specifies the rank of citation within content search results."
+* . ^max = "1"
+* ^context.type = #element
+* ^context.expression = "Citation"
+* value[x] only decimal
+* valueDecimal 1..1

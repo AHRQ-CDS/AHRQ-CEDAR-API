@@ -270,6 +270,15 @@ class FHIRAdapter
       citation.citedArtifact.extension << ext
     end
 
+    if artifact[:rank].present?
+      ext = FHIR::Extension.new(
+        url: "#{BASE_URL}/StructureDefinition/extension-content-search-rank",
+        valueDecimal: artifact[:rank]
+      )
+
+      citation.extension << ext
+    end
+
     citation
   end
 
