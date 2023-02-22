@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.7.2 - 2023-02-22
+
+* Adds support for returning numerical content rankings with search results
+* Updates to Ruby 3.0.3, Sinatra 3.0.5, and Rails 6.1.7
+
 ## v0.7.1 - 2023-01-18
 
 * Removes flagged and suppressed artifact versions from search results
