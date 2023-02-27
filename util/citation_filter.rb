@@ -87,6 +87,7 @@ class CitationFilter
       search_log.count = paged_results.count unless paged_results.nil?
       search_log.end_time = Time.now.utc
       search_log.repository_results = repository_result_counts
+      search_log.returned_artifact_ids = paged_results.map(&:id) unless paged_results.nil?
 
       begin
         search_log.save_changes
