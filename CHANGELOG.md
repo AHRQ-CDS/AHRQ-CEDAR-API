@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.8.0 - 2023-03-14
+
+* Tracks returned artifacts for each search
+
 ## v0.7.2 - 2023-02-22
 
 * Adds support for returning numerical content rankings with search results
