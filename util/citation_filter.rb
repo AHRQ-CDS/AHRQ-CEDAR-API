@@ -33,12 +33,14 @@ class CitationFilter
   CERTAINTY_VALUES = FHIRAdapter::QUALITY_OF_EVIDENCE_CODES.to_h { |entry| [entry[:code], entry[:sort_value]] }.freeze
   DEFAULT_PAGE_SIZE = 10
 
-  def initialize(params:, artifact_base_url:, redirect_base_url:, request_url:, client_ip: nil, log_to_db: false)
+  def initialize(params:, artifact_base_url:, redirect_base_url:, request_url:, client_ip: nil,
+                 client_id: nil, log_to_db: false)
     @search_params = params
     @artifact_base_url = artifact_base_url
     @redirect_base_url = redirect_base_url
     @request_url = request_url
     @client_ip = client_ip
+    @client_id = client_id
     @log_to_db = log_to_db
     @sort_order = DEFAULT_SORT_ORDER
     @all_search_terms_that_match_concepts = []
@@ -71,7 +73,11 @@ class CitationFilter
   end
 
   def init_search_log
-    SearchLog.create(search_params: @search_params, client_ip: @client_ip, start_time: Time.now.utc) if @log_to_db
+    if @log_to_db
+      sl = SearchLog.create(search_params: @search_params, client_ip: @client_ip,
+                            client_id: @client_id, start_time: Time.now.utc)
+    end
+    sl
   end
 
   def finalize_search_log(search_log, all_results, paged_results)

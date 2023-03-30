@@ -896,6 +896,7 @@ describe CitationFilter do
                                      redirect_base_url: @redirect_base_url,
                                      request_url: @request_url,
                                      client_ip: '::1',
+                                     client_id: 'dev@null',
                                      log_to_db: true)
                                 .citations
 
@@ -908,6 +909,7 @@ describe CitationFilter do
       refute_nil log.count
       refute_nil log.total
       refute_nil log.client_ip
+      refute_nil log.client_id
       refute_nil log.start_time
       refute_nil log.end_time
       refute_nil log.repository_results

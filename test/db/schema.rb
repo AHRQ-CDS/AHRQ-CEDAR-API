@@ -87,6 +87,14 @@ ActiveRecord::Schema.define(version: 2023_04_03_224647) do
     t.index ["repository_id"], name: "index_import_runs_on_repository_id"
   end
 
+  create_table "ip_lookups", force: :cascade do |t|
+    t.string "ip_address"
+    t.jsonb "rdap_result", default: {}
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["ip_address"], name: "index_ip_lookups_on_ip_address"
+  end
+
   create_table "mesh_tree_nodes", force: :cascade do |t|
     t.string "code"
     t.string "tree_number"
@@ -127,6 +135,7 @@ ActiveRecord::Schema.define(version: 2023_04_03_224647) do
     t.jsonb "repository_results", default: {}
     t.jsonb "link_clicks", default: []
     t.jsonb "returned_artifact_ids", default: []
+    t.string "client_id"
   end
 
   create_table "users", force: :cascade do |t|
