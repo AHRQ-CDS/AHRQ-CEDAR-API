@@ -7,6 +7,7 @@ require 'json'
 require 'sinatra'
 require 'sinatra/namespace'
 require 'sinatra/cross_origin'
+require 'sinatra/required_params'
 
 require_relative 'util/cedar_logger'
 require_relative 'database/models'
@@ -58,6 +59,26 @@ get '/demo' do
       <button type="submit">Search</button>
     </form>
   DEMO_FORM
+end
+
+get '/suggestions' do
+  required_params :term
+  term = params[:term]
+  begin
+    result_names = if term.empty?
+                     []
+                   else
+                     MeshTreeNode.similar_to_name(term).collect { |r| r[:name] }
+                   end
+
+    content_type 'application/json'
+    { suggestions: result_names, term: term }.to_json
+  rescue StandardError => e
+    logger.error "Suggestions error: #{e.full_message}"
+    content_type 'text/plain'
+    status 500
+    return 'Error finding suggestions.'
+  end
 end
 
 get '/redirect/:id' do

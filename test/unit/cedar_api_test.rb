@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'set'
 require 'warning'
 require_relative '../test_helper'
 require_relative '../../database/models'
@@ -34,6 +35,39 @@ describe 'cedar_api' do
       get '/foobar'
 
       assert_predicate last_response, :not_found?
+    end
+  end
+
+  describe 'suggestions' do
+    it 'returns distinct suggestions and term' do
+      get '/suggestions?term=Child'
+
+      assert_predicate last_response, :ok?
+      assert 'application/json', last_response.content_type
+
+      json_data = JSON.parse(last_response.body)
+      assert_kind_of Array, json_data['suggestions']
+      assert_kind_of String, json_data['term']
+
+      assert_equal json_data['suggestions'].to_set.length, json_data['suggestions'].length
+      assert_equal 'Child', json_data[:term]
+    end
+
+    it 'returns empty suggestions for empty term' do
+      get '/suggestions?term='
+
+      assert_predicate last_response, :ok?
+      assert 'application/json', last_response.content_type
+
+      json_data = JSON.parse(last_response.body)
+      assert_equal 0, json_data['suggestions'].length
+      assert_equal '', json_data['term']
+    end
+
+    it 'returns 400 when missing term' do
+      get '/suggestions'
+
+      assert_predicate last_response, :bad_request?
     end
   end
 
