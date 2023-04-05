@@ -29,7 +29,7 @@ Description: "Specifies the MeSH concept that is the target of a search in a rel
 * ^context.expression = "Bundle.link"
 * value[x] only CodeableConcept
 * valueCodeableConcept 1..1
-* valueCodeableConcept.coding.system = "http://terminology.hl7.org/CodeSystem/MSH"
+* valueCodeableConcept.coding.system = "https://www.nlm.nih.gov/mesh"
 
 Extension: MeshTreeNumber
 Id: extension-mesh-tree-number
@@ -87,6 +87,6 @@ Title: "Rank of Content Search Extension"
 Description: "Specifies the rank of citation within content search results."
 * . ^max = "1"
 * ^context.type = #element
-* ^context.expression = "Citation"
+* ^context.expression = "Bundle.entry"
 * value[x] only decimal
 * valueDecimal 1..1

@@ -46,7 +46,7 @@ class FHIRAdapter
     citation = FHIR::Citation.new(
       id: cedar_identifier,
       meta: {
-        versionId: version_id
+        versionId: version_id.to_s
       },
       url: "#{artifact_base_url}/#{cedar_identifier}",
       identifier: [
@@ -86,7 +86,7 @@ class FHIRAdapter
         currentState: [
           {
             coding: {
-              system: 'http://terminology.hl7.org/CodeSystem/cited-artifact-status-type',
+              system: 'http://hl7.org/fhir/cited-artifact-status-type',
               code: artifact.artifact_status
             }
           }
@@ -97,7 +97,7 @@ class FHIRAdapter
             type: {
               coding: [
                 {
-                  system: 'http://terminology.hl7.org/CodeSystem/title-type',
+                  system: 'http://hl7.org/fhir/title-type',
                   code: 'primary',
                   display: 'Primary title'
                 }
@@ -120,7 +120,7 @@ class FHIRAdapter
             type: {
               coding: [
                 {
-                  system: 'http://terminology.hl7.org/CodeSystem/cited-artifact-abstract-type',
+                  system: 'http://hl7.org/fhir/cited-artifact-abstract-type',
                   code: 'primary-human-use',
                   display: 'Primary human use'
                 }
@@ -149,7 +149,7 @@ class FHIRAdapter
               type: {
                 coding: [
                   {
-                    system: 'http://terminology.hl7.org/CodeSystem/published-in-type',
+                    system: 'http://hl7.org/fhir/published-in-type',
                     code: 'D019991',
                     display: 'Database'
                   }
@@ -176,7 +176,7 @@ class FHIRAdapter
                            classifier: {
                              coding: [
                                {
-                                 system: 'http://terminology.hl7.org/CodeSystem/artifact-url-classifier',
+                                 system: 'http://hl7.org/fhir/artifact-url-classifier',
                                  code: artifact.url&.end_with?('.pdf') ? 'pdf' : 'full-text'
                                }
                              ]
@@ -204,7 +204,7 @@ class FHIRAdapter
         type: {
           coding: [
             {
-              system: 'http://terminology.hl7.org/CodeSystem/cited-artifact-classification-type',
+              system: 'http://hl7.org/fhir/cited-artifact-classification-type',
               code: 'keyword'
             }
           ]
@@ -218,7 +218,7 @@ class FHIRAdapter
         type: {
           coding: [
             {
-              system: 'http://terminology.hl7.org/CodeSystem/cited-artifact-classification-type',
+              system: 'http://hl7.org/fhir/cited-artifact-classification-type',
               code: 'keyword'
             }
           ]
@@ -235,7 +235,7 @@ class FHIRAdapter
         type: {
           coding: [
             {
-              system: 'http://terminology.hl7.org/CodeSystem/cited-artifact-classification-type',
+              system: 'http://hl7.org/fhir/cited-artifact-classification-type',
               code: 'knowledge-artifact-type'
             }
           ]
@@ -268,15 +268,6 @@ class FHIRAdapter
         )
       end
       citation.citedArtifact.extension << ext
-    end
-
-    if artifact[:rank].present?
-      ext = FHIR::Extension.new(
-        url: "#{BASE_URL}/StructureDefinition/extension-content-search-rank",
-        valueDecimal: artifact[:rank]
-      )
-
-      citation.extension << ext
     end
 
     citation
@@ -340,9 +331,18 @@ class FHIRAdapter
       citation = create_citation(artifact, artifact_base_url, redirect_base_url,
                                  artifact.public_version_history.count + 1,
                                  result_index: offset + result_index, search_id: search_id)
-      bundle.entry << FHIR::Bundle::Entry.new(
+      bundle_entry = FHIR::Bundle::Entry.new(
         resource: citation
       )
+
+      if artifact[:rank].present?
+        bundle_entry.extension << FHIR::Extension.new(
+          url: "#{BASE_URL}/StructureDefinition/extension-content-search-rank",
+          valueDecimal: artifact[:rank]
+        )
+      end
+
+      bundle.entry << bundle_entry
     end
 
     bundle

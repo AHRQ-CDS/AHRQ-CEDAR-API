@@ -111,8 +111,7 @@ describe 'cedar_api' do
       assert_equal FHIRCodeSystems::FHIR_CODE_SYSTEM_URLS['SNOMEDCT_US'],
                    resource.citedArtifact.classification[1].classifier[0].coding[1].system
       assert_equal 2, resource.citedArtifact.classification[1].classifier[1].coding.size
-      assert_equal artifact.public_version_history.count + 1, resource.meta.versionId
-      assert_equal 2, resource.meta.versionId
+      assert_equal (artifact.public_version_history.count + 1).to_s, resource.meta.versionId
     end
 
     it 'supports deleted artifacts' do
@@ -172,7 +171,7 @@ describe 'cedar_api' do
       bundle.entry.each do |entry|
         artifact = Artifact.first(cedar_identifier: entry.resource.id)
 
-        assert_equal artifact.public_version_history.count + 1, entry.resource.meta.versionId
+        assert_equal (artifact.public_version_history.count + 1).to_s, entry.resource.meta.versionId
       end
     end
 
@@ -192,7 +191,7 @@ describe 'cedar_api' do
       resource = assert_fhir_response(FHIR::Citation)
 
       assert_equal cedar_identifier, resource.id
-      assert_equal 1, resource.meta.versionId
+      assert_equal '1', resource.meta.versionId
       assert_equal artifact.public_version_history.first.object['title'], resource.title
     end
 
@@ -206,7 +205,7 @@ describe 'cedar_api' do
       resource = assert_fhir_response(FHIR::Citation)
 
       assert_equal cedar_identifier, resource.id
-      assert_equal latest_version, resource.meta.versionId
+      assert_equal latest_version.to_s, resource.meta.versionId
       assert_equal artifact.title, resource.title
     end
 
