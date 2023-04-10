@@ -27,12 +27,21 @@ class FHIRAdapter
     else
       umls_concepts = artifact.concepts
       umls_concept_list = umls_concepts.map do |concept|
-        codes = concept.codes.map do |c|
-          {
-            system: FHIR_CODE_SYSTEM_URLS[c['system']],
-            code: c['code'],
-            display: c['description']
-          }
+        codes = concept.codes.map do |code|
+          if code['system'] == 'SCTSPA'
+            {
+              system: FHIR_CODE_SYSTEM_URLS['SNOMEDCT_US'],
+              version: FHIR_CODE_SYSTEM_URLS['SCTSPA'],
+              code: code['code'],
+              display: code['description']
+            }
+          else
+            {
+              system: FHIR_CODE_SYSTEM_URLS[code['system']],
+              code: code['code'],
+              display: code['description']
+            }
+          end
         end
         codes << {
           system: FHIR_CODE_SYSTEM_URLS['MTH'],

@@ -46,6 +46,8 @@ class ConceptHelper
       Concept.where(synonyms_op.contains([{ code: code }])).or(umls_cui: code)
     elsif system == 'MTH'
       Concept.where(umls_cui: code)
+    elsif system == 'SNOMEDCT_US' # search both English and Spanish edition
+      Concept.where(synonyms_op.contains([{ system: system, code: code }, { system: 'SCTSPA', code: code }]))
     else
       Concept.where(synonyms_op.contains([{ system: system, code: code }]))
     end
