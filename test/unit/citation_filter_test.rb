@@ -132,7 +132,7 @@ describe CitationFilter do
       assert_bundle(bundle)
 
       has_rank_extension = bundle.entry.all? do |entry|
-        entry.resource.extension.any? do |extension|
+        entry.extension.any? do |extension|
           extension.url.include?('extension-content-search-rank') &&
             extension.valueDecimal < 1
         end

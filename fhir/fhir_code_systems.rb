@@ -3,7 +3,7 @@
 module FHIRCodeSystems
   FHIR_CODE_SYSTEM_URLS = {
     'MTH' => 'http://www.nlm.nih.gov/research/umls/mth',
-    'MSH' => 'http://terminology.hl7.org/CodeSystem/MSH',
+    'MSH' => 'https://www.nlm.nih.gov/mesh',
     'MEDLINEPLUS' => 'http://www.nlm.nih.gov/research/umls/medlineplus',
     'SNOMEDCT_US' => 'http://snomed.info/sct',
     'SCTSPA' => 'http://snomed.info/sct/449081005',
