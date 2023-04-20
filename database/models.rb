@@ -45,6 +45,16 @@ end
 class MeshTreeNode < Sequel::Model
   many_to_one :parent, class: self
   one_to_many :children, key: :parent_id, order: :name, class: self
+  dataset_module do
+    def similar_to_name(term)
+      select(:name, :direct_artifact_count)
+        .distinct # remove any remaining duplicates
+        .select_append { similarity(:name, term).as(:score) } # requires pg_trgm
+        .where(Sequel.ilike(:name, "%#{term}%"))
+        .order(Sequel.desc(:direct_artifact_count), Sequel.desc(:score))
+        .limit(20)
+    end
+  end
 end
 
 # Data model for versions table
