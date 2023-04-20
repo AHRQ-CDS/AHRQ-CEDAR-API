@@ -22,9 +22,10 @@ class FHIRAdapter
     keywords = artifact.keywords
     keyword_list = keywords.map { |k| FHIR::CodeableConcept.new(text: k) }
 
-    if skip_concept
-      umls_concept_list = []
-    else
+    mesh_heading_list = []
+    umls_concept_list = []
+
+    unless skip_concept
       umls_concepts = artifact.concepts
       umls_concept_list = umls_concepts.map do |concept|
         codes = concept.codes.map do |code|
@@ -43,11 +44,13 @@ class FHIRAdapter
             }
           end
         end
-        codes << {
+        mesh_heading = {
           system: FHIR_CODE_SYSTEM_URLS['MTH'],
           code: concept.umls_cui,
           display: concept.umls_description
         }
+        codes << mesh_heading
+        mesh_heading_list << FHIR::CodeableConcept.new(coding: [mesh_heading])
         FHIR::CodeableConcept.new(text: concept.umls_description, coding: codes)
       end
     end
@@ -233,6 +236,23 @@ class FHIRAdapter
           ]
         },
         classifier: umls_concept_list,
+        artifactAssessment: {
+          display: 'Classified by AHRQ CEDAR'
+        }
+      )
+    end
+
+    if mesh_heading_list.any?
+      citation.citedArtifact.classification << FHIR::Citation::CitedArtifact::Classification.new(
+        type: {
+          coding: [
+            {
+              system: 'http://hl7.org/fhir/cited-artifact-classification-type',
+              code: 'mesh-heading'
+            }
+          ]
+        },
+        classifier: mesh_heading_list,
         artifactAssessment: {
           display: 'Classified by AHRQ CEDAR'
         }
