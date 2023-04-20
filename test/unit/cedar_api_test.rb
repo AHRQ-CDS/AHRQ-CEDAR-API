@@ -135,7 +135,7 @@ describe 'cedar_api' do
       assert_equal 'active', resource.status
       assert_equal 'active', resource.citedArtifact.currentState[0].coding[0].code
       refute_nil resource.url
-      assert_equal 2, resource.citedArtifact.classification.size
+      assert_equal 3, resource.citedArtifact.classification.size
       assert_equal 2, resource.citedArtifact.classification[1].classifier.size
       assert_equal 'CUI1 desc', resource.citedArtifact.classification[1].classifier[0].text
       assert_equal 'CUI2 desc', resource.citedArtifact.classification[1].classifier[1].text
