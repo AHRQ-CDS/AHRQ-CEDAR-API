@@ -46,11 +46,11 @@ class MeshTreeNode < Sequel::Model
   many_to_one :parent, class: self
   one_to_many :children, key: :parent_id, order: :name, class: self
   dataset_module do
-    # assumes pg_trgm extension for similarity()
     def similar_to_name(term)
       select(:name)
-        .distinct
-        .select_append { similarity(:name, term).as(:score) }
+        .order(Sequel.desc(:direct_artifact_count)) # filter for terms with > 0 artifacts
+        .distinct # remove any remaining duplicates
+        .select_append { similarity(:name, term).as(:score) } # requires pg_trgm
         .where(Sequel.ilike(:name, "%#{term}%"))
         .order(Sequel.desc(:score))
         .limit(20)

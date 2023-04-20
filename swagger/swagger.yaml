@@ -10,6 +10,7 @@ tags:
   - name: FHIR Organization
   - name: FHIR Profiles
   - name: CSV
+  - name: Search
 schemes:
   - https
 paths:
@@ -418,6 +419,52 @@ paths:
           description: successful operation
           schema:
             type: string
+  /suggestions:
+    get:
+      summary: Search suggestions
+      tags:
+        - Search
+      description: >-
+        Provides up to 20 MeSH terms similar to the provided term as a way to
+        support clients wishing to implement type-ahead functionality in search-bars
+      produces:
+        - application/json
+        - text/plain
+      parameters:
+        - name: term
+          description: url-safe format of term one wishes to compare to existing terms
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: object
+            properties:
+              suggestions:
+                description: list of similar terms
+                type: array
+                items:
+                  type: string
+                example: [
+                  "Mental Health",
+                  "Mental Healing",
+                  "Mental Health Recovery",
+                  "Mental Health Services",
+                  "Mental Health Associations"
+                ]
+              term:
+                description: the original query
+                type: string
+                example: "mental h"
+        '400':
+          description: Bad Request. Sent if no term parameter is provided.
+        '500':
+          description: Unexpected Error.
+          schema:
+            type: string
+            example: "Error finding suggestions."
 definitions:
   Address:
     description: >-
