@@ -123,6 +123,7 @@ get '/csv' do
                               redirect_base_url: redirect_base_url,
                               request_url: request_url,
                               client_ip: request.ip,
+                              client_id: request.env['HTTP_FROM'],
                               log_to_db: true)
   begin
     artifacts = filter.all_artifacts
@@ -321,6 +322,7 @@ namespace '/fhir' do
                                 redirect_base_url: uri('redirect').to_s,
                                 request_url: request_url,
                                 client_ip: request.ip,
+                                client_id: request.env['HTTP_FROM'],
                                 log_to_db: true)
     begin
       bundle = filter.citations
