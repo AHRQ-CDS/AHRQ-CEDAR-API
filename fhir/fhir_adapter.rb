@@ -188,9 +188,7 @@ class FHIRAdapter
       if ARTIFACT_URL_CLICK_LOGGING
         citation.citedArtifact.webLocation << {
           classifier: {
-            coding: [
-              text: 'CEDAR redirect'
-            ]
+            text: 'CEDAR redirect'
           },
           url: "#{redirect_base_url}/#{cedar_identifier}?search=#{search_id}&result=#{result_index}"
         }
