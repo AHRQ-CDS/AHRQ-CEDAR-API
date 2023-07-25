@@ -168,7 +168,8 @@ class CitationFilter
           @all_search_terms_that_match_concepts << parser.all_query_terms_that_match_concepts
           opt = {
             language: 'english',
-            tsvector: true
+            tsvector: true,
+            tsquery: true
           }
 
           terms = parser.to_postgres_query
