@@ -179,30 +179,32 @@ class FHIRAdapter
               ]
             }
           }
-        ],
-        webLocation: if artifact.artifact_status == 'retracted'
-                       nil
-                     else
-                       [
-                         {
-                           classifier: {
-                             coding: [
-                               {
-                                 system: 'http://hl7.org/fhir/artifact-url-classifier',
-                                 code: artifact.url&.end_with?('.pdf') ? 'pdf' : 'full-text'
-                               }
-                             ]
-                           },
-                           url: if ARTIFACT_URL_CLICK_LOGGING
-                                  "#{redirect_base_url}/#{cedar_identifier}?search=#{search_id}&result=#{result_index}"
-                                else
-                                  artifact.url
-                                end
-                         }
-                       ]
-                     end
+        ]
       }
     )
+
+    if artifact.artifact_status != 'retracted'
+      citation.citedArtifact.webLocation = []
+      if ARTIFACT_URL_CLICK_LOGGING
+        citation.citedArtifact.webLocation << {
+          classifier: {
+            text: 'CEDAR redirect'
+          },
+          url: "#{redirect_base_url}/#{cedar_identifier}?search=#{search_id}&result=#{result_index}"
+        }
+      end
+      citation.citedArtifact.webLocation << {
+        classifier: {
+          coding: [
+            {
+              system: 'http://hl7.org/fhir/artifact-url-classifier',
+              code: artifact.url&.end_with?('.pdf') ? 'pdf' : 'full-text'
+            }
+          ]
+        },
+        url: artifact.url
+      }
+    end
 
     unless artifact.description_html.nil?
       citation.text = FHIR::Narrative.new(
