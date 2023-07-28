@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.9.0 - 2023-07-28
+
+* Adds a suggestions endpoint that returns similar MeSH tree node names
+* Adds MeSH headings to Citation classifications
+* Logs a client id if supplied by the API client
+* Fixes the FHIR Citation implementation to pass FHIR R5 validation
+* Fixes a double stemming issue that affected certain search terms
+* Updates Citation webLocation to always include the original link to the cited artifact
+* Updates dependencies
+
 ## v0.8.0 - 2023-03-14
 
 * Tracks returned artifacts for each search
